@@ -161,7 +161,7 @@ const CMDS = {
     'commands:',
     '  whoami         · ls            · cat skills',
     '  cat experience · ping          · traceroute',
-    '  cd ops         · cd tracker    · clear · exit',
+    '  cd ops         · cd noc        · cd tracker    · clear · exit',
     '',
   ],
   whoami: () => [
@@ -195,6 +195,7 @@ const CMDS = {
     '',
   ],
   'cd ops': () => { setTimeout(() => { window.location.href = '/ops.html'; }, 300); return ['→ navigating to ops.html...', '']; },
+  'cd noc': () => { setTimeout(() => { window.location.href = '/noc.html'; }, 300); return ['→ navigating to noc.html...', '']; },
   'cd tracker': () => { setTimeout(() => { window.location.href = '/tracker.html'; }, 300); return ['→ navigating to tracker.html...', '']; },
   traceroute: () => [
     'traceroute to next-role.career',
