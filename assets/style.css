@@ -694,6 +694,49 @@ footer a:hover { text-decoration: underline; }
   font-size: 16px;
 }
 
+/* ── NOW ────────────────────────────────────────────── */
+.now-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px 32px;
+}
+.now-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 40px;
+}
+.now-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.now-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  flex-shrink: 0;
+  margin-top: 4px;
+  animation: pulse 2s infinite;
+}
+.now-item-title {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.now-item-desc {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .now-list { grid-template-columns: 1fr; }
+  .now-card { padding: 20px; }
+}
+
 /* ── SCROLL PROGRESS ────────────────────────────────── */
 #scroll-progress {
   position: fixed;
