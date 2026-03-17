@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOC — Project Tracker</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/main.js"></script>
+<style>
+/* ── NOC LAYOUT ───────────────────────────────────── */
+.noc-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 20px 60px;
+}
+
+/* ── HEADER ───────────────────────────────────────── */
+.noc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.noc-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.noc-title span { color: var(--muted); }
+.noc-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.noc-theme-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--dim);
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.noc-theme-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── STATS BAR ────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.stat-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  white-space: nowrap;
+}
+.stat-pill .n { font-weight: 600; margin-right: 4px; }
+.stat-pill.backlog  .n { color: var(--dim); }
+.stat-pill.inprog   .n { color: var(--amber); }
+.stat-pill.review   .n { color: var(--purple); }
+.stat-pill.done     .n { color: var(--green); }
+.stat-pill.idea     .n { color: var(--accent); }
+.stat-pill.total    .n { color: var(--text); }
+
+/* ── FILTER BAR ───────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.filter-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-right: 4px;
+}
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--border2); color: var(--text); }
+.filter-btn.active { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+.filter-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* ── SEARCH ───────────────────────────────────────── */
+.noc-search {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 12px;
+  outline: none;
+  width: 200px;
+  margin-left: auto;
+}
+.noc-search:focus { border-color: var(--accent); }
+.noc-search::placeholder { color: var(--muted); }
+
+/* ── KANBAN BOARD ─────────────────────────────────── */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 1100px) { .kanban-board { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px)  { .kanban-board { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px)  { .kanban-board { grid-template-columns: 1fr; } }
+
+.kb-col {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.kb-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+.kb-col-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+.kb-col-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1px 7px;
+  color: var(--muted);
+}
+.col-backlog  .kb-col-title { color: var(--dim); }
+.col-inprog   .kb-col-title { color: var(--amber); }
+.col-review   .kb-col-title { color: var(--purple); }
+.col-done     .kb-col-title { color: var(--green); }
+.col-idea     .kb-col-title { color: var(--accent); }
+
+.kb-cards {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 60px;
+}
+.kb-empty {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  padding: 16px 8px;
+}
+
+/* ── TICKET CARD ──────────────────────────────────── */
+.ticket {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.ticket:hover { border-color: var(--border2); transform: translateY(-1px); }
+.ticket-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 6px;
+}
+.ticket-id {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.ticket-priority {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.ticket-priority.P1 { background: rgba(248,113,113,0.15); color: var(--red); }
+.ticket-priority.P2 { background: rgba(251,191,36,0.12); color: var(--amber); }
+.ticket-priority.P3 { background: rgba(148,163,184,0.1); color: var(--muted); }
+.ticket-priority.idea { background: rgba(56,189,248,0.1); color: var(--accent); }
+.ticket-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.ticket-proj-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.ticket-date {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.ticket.done-card { opacity: 0.55; }
+.ticket.done-card:hover { opacity: 0.85; }
+
+/* ── MODAL ────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 28px 30px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.modal-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.modal-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.modal-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.modal-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.modal-section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.modal-desc {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.modal-notes {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--dim);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+.modal-dates {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+}
+.modal-status-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+.status-backlog  { background: rgba(148,163,184,0.1); color: var(--dim); border: 1px solid var(--border); }
+.status-in-progress { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+.status-review   { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.status-done     { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+.status-idea     { background: rgba(56,189,248,0.1); color: var(--accent); border: 1px solid rgba(56,189,248,0.2); }
+
+/* ── SHOW DONE TOGGLE ─────────────────────────────── */
+.show-done-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.toggle-check {
+  appearance: none;
+  width: 32px;
+  height: 18px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-check::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--muted);
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s, background 0.2s;
+}
+.toggle-check:checked { background: rgba(56,189,248,0.15); border-color: var(--accent); }
+.toggle-check:checked::after { left: 16px; background: var(--accent); }
+.toggle-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── LOADING ──────────────────────────────────────── */
+.noc-loading {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 60px 20px;
+}
+</style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+
+<div class="noc-wrap">
+
+  <!-- HEADER -->
+  <div class="noc-header">
+    <div>
+      <div class="noc-title">NOC <span>/</span> Project Tracker</div>
+    </div>
+    <div class="noc-meta">
+      <span id="noc-updated">—</span>
+      <a href="ops.html" style="font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none;">[← ops]</a>
+      <button class="noc-theme-btn" onclick="toggleTheme()" id="themeBtn">
+        <span class="toggle-icon">🌙</span> <span id="themeLabel">LIGHT MODE</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="noc-body" class="noc-loading">loading noc-data.json...</div>
+
+</div>
+
+<!-- TICKET MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-id" id="m-id"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-row" id="m-badges"></div>
+    <div class="modal-section-label">Description</div>
+    <div class="modal-desc" id="m-desc"></div>
+    <div id="m-notes-wrap" style="display:none;">
+      <div class="modal-section-label">Notes</div>
+      <div class="modal-notes" id="m-notes"></div>
+    </div>
+    <div class="modal-dates" id="m-dates"></div>
+  </div>
+</div>
+
+<script>
+let allData = null;
+let activeFilter = 'ALL';
+let showDone = false;
+let searchQ = '';
+
+const STATUS_ORDER = ['backlog','in-progress','review','done','idea'];
+const COL_META = {
+  'backlog':     { label: 'Backlog',     cls: 'col-backlog' },
+  'in-progress': { label: 'In Progress', cls: 'col-inprog'  },
+  'review':      { label: 'Review',      cls: 'col-review'  },
+  'done':        { label: 'Done',        cls: 'col-done'    },
+  'idea':        { label: 'Ideas',       cls: 'col-idea'    },
+};
+const PRIO_ORDER = { P1: 0, P2: 1, P3: 2, idea: 3 };
+
+// ── THEME (already in main.js but need label sync on load) ──
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('theme') === 'light') {
+    const lbl = document.getElementById('themeLabel');
+    const ico = document.querySelector('.toggle-icon');
+    if (lbl) lbl.textContent = 'DARK MODE';
+    if (ico) ico.textContent = '☀️';
+  }
+});
+
+// ── LOAD DATA ───────────────────────────────────────
+async function loadNOC() {
+  try {
+    const r = await fetch('noc-data.json?t=' + Date.now());
+    allData = await r.json();
+    document.getElementById('noc-updated').textContent =
+      'updated ' + allData.lastUpdated;
+    render();
+  } catch(e) {
+    document.getElementById('noc-body').innerHTML =
+      '<div class="noc-loading" style="color:var(--red);">Failed to load noc-data.json</div>';
+  }
+}
+
+// ── RENDER ──────────────────────────────────────────
+function render() {
+  if (!allData) return;
+
+  const projects  = allData.projects;
+  const tickets   = allData.tickets;
+
+  // apply filter + search
+  let filtered = tickets.filter(t => {
+    if (activeFilter !== 'ALL' && t.project !== activeFilter) return false;
+    if (!showDone && t.status === 'done') return false;
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      return t.title.toLowerCase().includes(q) ||
+             t.id.toLowerCase().includes(q) ||
+             t.description.toLowerCase().includes(q) ||
+             t.notes.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  // stats (from all tickets, ignore filter for counts)
+  const all = tickets;
+  const counts = {};
+  STATUS_ORDER.forEach(s => counts[s] = 0);
+  all.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+
+  let html = '';
+
+  // stats bar
+  html += `<div class="stats-bar">
+    <div class="stat-pill total"><span class="n">${all.length}</span>total</div>
+    <div class="stat-pill inprog"><span class="n">${counts['in-progress']}</span>in progress</div>
+    <div class="stat-pill backlog"><span class="n">${counts['backlog']}</span>backlog</div>
+    <div class="stat-pill review"><span class="n">${counts['review']}</span>review</div>
+    <div class="stat-pill idea"><span class="n">${counts['idea']}</span>ideas</div>
+    <div class="stat-pill done"><span class="n">${counts['done']}</span>done</div>
+  </div>`;
+
+  // filter bar
+  html += `<div class="filter-bar">
+    <span class="filter-label">Project:</span>
+    <button class="filter-btn ${activeFilter==='ALL'?'active':''}" onclick="setFilter('ALL')">All</button>`;
+  projects.forEach(p => {
+    html += `<button class="filter-btn ${activeFilter===p.id?'active':''}" onclick="setFilter('${p.id}')">
+      <span class="filter-dot" style="background:${p.color};"></span>${p.name}
+    </button>`;
+  });
+  html += `<input class="noc-search" id="noc-search" placeholder="search..." value="${searchQ}" oninput="setSearch(this.value)">
+  </div>`;
+
+  // show done toggle
+  html += `<div class="show-done-wrap">
+    <input type="checkbox" class="toggle-check" id="show-done-chk" ${showDone?'checked':''} onchange="toggleShowDone(this.checked)">
+    <label class="toggle-label" for="show-done-chk">Show completed tickets</label>
+  </div>`;
+
+  // kanban columns
+  html += `<div class="kanban-board">`;
+  STATUS_ORDER.forEach(status => {
+    if (status === 'done' && !showDone) return;
+    const meta  = COL_META[status];
+    const cards = filtered.filter(t => t.status === status)
+      .sort((a,b) => (PRIO_ORDER[a.priority]||9) - (PRIO_ORDER[b.priority]||9));
+
+    html += `<div class="kb-col ${meta.cls}">
+      <div class="kb-col-header">
+        <span class="kb-col-title">${meta.label}</span>
+        <span class="kb-col-count">${cards.length}</span>
+      </div>
+      <div class="kb-cards">`;
+
+    if (!cards.length) {
+      html += `<div class="kb-empty">—</div>`;
+    } else {
+      cards.forEach(t => {
+        const proj = projects.find(p => p.id === t.project);
+        const projColor = proj ? proj.color : '#94a3b8';
+        const isDone = t.status === 'done';
+        html += `<div class="ticket ${isDone?'done-card':''}" onclick="openModal('${t.id}')">
+          <div class="ticket-top">
+            <span class="ticket-id">${t.id}</span>
+            <span class="ticket-priority ${t.priority}">${t.priority}</span>
+          </div>
+          <div class="ticket-title">${t.title}</div>
+          <span class="ticket-proj-tag" style="border-color:${projColor}33;color:${projColor};">${t.project}</span>
+          <div class="ticket-date">${t.updated}</div>
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('noc-body').innerHTML = html;
+}
+
+// ── FILTERS ─────────────────────────────────────────
+function setFilter(id) { activeFilter = id; render(); }
+function setSearch(v)  { searchQ = v; render(); }
+function toggleShowDone(v) { showDone = v; render(); }
+
+// ── MODAL ────────────────────────────────────────────
+function openModal(ticketId) {
+  if (!allData) return;
+  const t = allData.tickets.find(x => x.id === ticketId);
+  if (!t) return;
+  const proj = allData.projects.find(p => p.id === t.project);
+
+  document.getElementById('m-id').textContent = t.id;
+  document.getElementById('m-title').textContent = t.title;
+
+  const statusMap = {
+    'backlog':'status-backlog','in-progress':'status-in-progress',
+    'review':'status-review','done':'status-done','idea':'status-idea'
+  };
+  document.getElementById('m-badges').innerHTML = `
+    <span class="modal-status-badge ${statusMap[t.status]||''}">${t.status}</span>
+    <span class="modal-badge ticket-priority ${t.priority}" style="border:1px solid var(--border);">${t.priority}</span>
+    <span class="modal-badge" style="color:${proj?proj.color:'var(--dim)'};">${t.project}</span>
+  `;
+
+  document.getElementById('m-desc').textContent = t.description || '—';
+
+  const notesWrap = document.getElementById('m-notes-wrap');
+  if (t.notes) {
+    notesWrap.style.display = 'block';
+    document.getElementById('m-notes').textContent = t.notes;
+  } else {
+    notesWrap.style.display = 'none';
+  }
+
+  document.getElementById('m-dates').innerHTML =
+    `<span>created ${t.created}</span><span>updated ${t.updated}</span>`;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModalBtn() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModal(e) {
+  if (e.target.id === 'modal-overlay') closeModalBtn();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalBtn();
+});
+
+// ── INIT ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', loadNOC);
+</script>
+</body>
+</html>
