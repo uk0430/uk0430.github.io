@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uzair Khan — Network Operations Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --bg2: #0d1117;
+  --bg3: #111827;
+  --border: #1e2a3a;
+  --border2: #243040;
+  --accent: #38bdf8;
+  --accent2: #0ea5e9;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --purple: #a78bfa;
+  --text: #e2e8f0;
+  --dim: #94a3b8;
+  --muted: #4b5563;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ──────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ── GRID BG ────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── NAV ────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 48px;
+  background: rgba(7,9,15,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.nav-logo span { color: var(--muted); }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── WRAPPER ────────────────────────────────────────── */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px 80px;
+}
+
+/* ── HERO ───────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 80px;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--accent);
+}
+
+h1.hero-name {
+  font-family: var(--display);
+  font-size: clamp(56px, 8vw, 96px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.hero-name .accent { color: var(--accent); }
+
+.hero-role {
+  font-family: var(--display);
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 400;
+  color: var(--dim);
+  margin-bottom: 32px;
+  letter-spacing: -0.01em;
+}
+
+.hero-desc {
+  max-width: 560px;
+  font-size: 15px;
+  color: var(--dim);
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 60px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #07090f;
+  font-weight: 500;
+}
+
+.btn-primary:hover { background: #7dd3fc; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--border2);
+}
+
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-num {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-num span { color: var(--accent); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── SECTION ────────────────────────────────────────── */
+section { padding: 80px 0; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+
+/* ── SKILLS GRID ────────────────────────────────────── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.skill-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.skill-card:hover {
+  border-color: rgba(56,189,248,0.3);
+  transform: translateY(-2px);
+}
+
+.skill-card-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+  line-height: 1.5;
+}
+
+.tag-blue  { color: var(--accent); border-color: rgba(56,189,248,0.25); background: rgba(56,189,248,0.05); }
+.tag-green { color: var(--green);  border-color: rgba(52,211,153,0.25); background: rgba(52,211,153,0.05); }
+.tag-amber { color: var(--amber);  border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.05); }
+.tag-purple{ color: var(--purple); border-color: rgba(167,139,250,0.25);background: rgba(167,139,250,0.05);}
+
+/* ── EXPERIENCE ─────────────────────────────────────── */
+.exp-list { display: flex; flex-direction: column; gap: 24px; }
+
+.exp-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.exp-card:hover { border-color: rgba(56,189,248,0.2); }
+
+.exp-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 20px 24px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.exp-company {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.exp-title {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.exp-meta {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.exp-date { color: var(--dim); display: block; margin-bottom: 2px; }
+.exp-loc  { color: var(--muted); }
+
+.exp-toggle {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--muted);
+  margin-top: 2px;
+  transition: transform 0.3s, color 0.2s;
+  line-height: 1;
+}
+
+.exp-card.open .exp-toggle { transform: rotate(45deg); color: var(--accent); }
+
+.exp-body {
+  padding: 0 24px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.exp-card.open .exp-body {
+  max-height: 2000px;
+  padding: 20px 24px 24px;
+}
+
+.exp-bullets { list-style: none; }
+
+.exp-bullets li {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+
+.exp-bullets li::before {
+  content: '›';
+  color: var(--accent);
+  font-family: var(--mono);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 14px;
+}
+
+.exp-bullets li b { color: var(--text); font-weight: 500; }
+.exp-bullets li .metric { color: var(--green); font-weight: 500; font-family: var(--mono); font-size: 12px; }
+
+.exp-impact {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(56,189,248,0.05);
+  border-left: 3px solid var(--accent);
+  font-size: 12px;
+  color: var(--dim);
+  font-style: italic;
+}
+
+.exp-tools {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+/* ── PROJECTS ───────────────────────────────────────── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.project-card:hover { border-color: rgba(56,189,248,0.3); transform: translateY(-3px); }
+.project-card:hover::before { opacity: 1; }
+
+.project-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.project-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.project-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.project-desc {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.project-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ── CERT ───────────────────────────────────────────── */
+.cert-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  max-width: 500px;
+  transition: border-color 0.2s;
+}
+
+.cert-card:hover { border-color: rgba(56,189,248,0.3); }
+
+.cert-badge {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.cert-name {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.cert-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.cert-valid {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--green);
+}
+
+/* ── EDU ────────────────────────────────────────────── */
+.edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.edu-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  transition: border-color 0.2s;
+}
+
+.edu-card:hover { border-color: rgba(56,189,248,0.2); }
+
+.edu-school {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.edu-degree {
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.edu-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.6s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.1s; }
+.fade-in:nth-child(2) { animation-delay: 0.2s; }
+.fade-in:nth-child(3) { animation-delay: 0.3s; }
+.fade-in:nth-child(4) { animation-delay: 0.4s; }
+.fade-in:nth-child(5) { animation-delay: 0.5s; }
+
+/* cursor glow */
+.glow {
+  position: fixed;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  transition: left 0.1s, top 0.1s;
+}
+</style>
+</head>
+<body>
+
+<div class="glow" id="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>~/</span>uzair-khan</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+  </ul>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span>Open to opportunities</span>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow fade-in">Network Operations Engineer</div>
+    <h1 class="hero-name fade-in">Uzair<br><span class="accent">Khan</span></h1>
+    <div class="hero-role fade-in">NOC · Satellite · Infrastructure · IT Systems</div>
+    <p class="hero-desc fade-in">
+      8+ years engineering and operating enterprise networks across satellite communications,
+      government IT, and global NOC environments. From DVB-S2 carrier management and
+      P1dB test bridging to endpoint automation and AI-powered tooling — I build and
+      operate the systems that keep things running.
+    </p>
+    <div class="hero-links fade-in">
+      <a href="https://linkedin.com/in/uk0430" class="btn btn-primary" target="_blank">↗ LinkedIn</a>
+      <a href="https://github.com/uk0430" class="btn btn-ghost" target="_blank">⌥ GitHub</a>
+      <a href="mailto:uzair@example.com" class="btn btn-ghost">✉ Contact</a>
+    </div>
+    <div class="hero-stats fade-in">
+      <div>
+        <div class="stat-num">8<span>+</span></div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div>
+        <div class="stat-num">3</div>
+        <div class="stat-label">NOC Environments</div>
+      </div>
+      <div>
+        <div class="stat-num">200<span>+</span></div>
+        <div class="stat-label">Endpoints Managed</div>
+      </div>
+      <div>
+        <div class="stat-num">13k<span>+</span></div>
+        <div class="stat-label">Profiles in RAG DB</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-label">Networking & Protocols</div>
+        <div class="skill-tags">
+          <span class="tag tag-blue">OSPF</span><span class="tag tag-blue">BGP</span>
+          <span class="tag tag-blue">EIGRP</span><span class="tag tag-blue">MPLS</span>
+          <span class="tag tag-blue">VLANs</span><span class="tag tag-blue">STP</span>
+          <span class="tag tag-blue">LACP</span><span class="tag tag-blue">DNS</span>
+          <span class="tag tag-blue">DHCP</span><span class="tag tag-blue">NTP</span>
+          <span class="tag tag-blue">IPAM</span><span class="tag tag-blue">VPN</span>
+          <span class="tag tag-blue">LAN/WAN/MAN</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-label">Satellite & RF</div>
+        <div class="skill-tags">
+          <span class="tag tag-amber">iDirect</span><span class="tag tag-amber">Hughes</span>
+          <span class="tag tag-amber">Comtech</span><span class="tag tag-amber">DVB-S2</span>
+          <span class="tag tag-amber">SCPC/MCPC</span><span class="tag tag-amber">ModCod</span>
+          <span class="tag tag-amber">P1dB Testing</span><span class="tag tag-amber">Beam Switching</span>
+          <span class="tag tag-amber">VSAT Commissioning</span><span class="tag tag-amber">HTS/FSS</span>
+          <span class="tag tag-amber">Aero IFC</span><span class="tag tag-amber">Maritime VSAT</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-label">Monitoring & Security</div>
+        <div class="skill-tags">
+          <span class="tag tag-green">SolarWinds NPM/NTA</span>
+          <span class="tag tag-green">Splunk SIEM</span>
+          <span class="tag tag-green">SNMP</span><span class="tag tag-green">NetFlow</span>
+          <span class="tag tag-green">syslog</span><span class="tag tag-green">Wireshark</span>
+          <span class="tag tag-green">tcpdump</span>
+          <span class="tag tag-green">NMS (multi-vendor)</span>
+          <span class="tag tag-green">CompTIA CySA+</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-label">Endpoint & Cloud</div>
+        <div class="skill-tags">
+          <span class="tag tag-purple">Microsoft Intune</span>
+          <span class="tag tag-purple">SCCM</span><span class="tag tag-purple">Autopilot</span>
+          <span class="tag tag-purple">Azure AD/Entra ID</span>
+          <span class="tag tag-purple">Active Directory</span>
+          <span class="tag tag-purple">GPO</span>
+          <span class="tag tag-purple">Windows 10/11</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-label">Automation & Dev</div>
+        <div class="skill-tags">
+          <span class="tag tag-blue">PowerShell</span>
+          <span class="tag tag-blue">Python</span>
+          <span class="tag tag-blue">RAG / LLM</span>
+          <span class="tag tag-blue">SQLite</span>
+          <span class="tag tag-blue">Web Scraping</span>
+          <span class="tag tag-blue">llama.cpp</span>
+          <span class="tag tag-blue">REST APIs</span>
+          <span class="tag tag-blue">Git</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-label">ITSM & Operations</div>
+        <div class="skill-tags">
+          <span class="tag tag-green">ServiceNow</span>
+          <span class="tag tag-green">Jira</span>
+          <span class="tag tag-green">Confluence</span>
+          <span class="tag tag-green">CR Management</span>
+          <span class="tag tag-green">SOP Authoring</span>
+          <span class="tag tag-green">RCA Reports</span>
+          <span class="tag tag-green">Incident Command</span>
+          <span class="tag tag-green">Change Management</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="exp-list">
+
+      <!-- MDThink -->
+      <div class="exp-card open">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">MDThink — DoIT: Maryland Benefits (SNAP/DHS)</div>
+            <div class="exp-title">IT Functional Analyst II / Systems Administrator</div>
+          </div>
+          <div>
+            <div class="exp-meta">
+              <span class="exp-date">2024 – 2025</span>
+              <span class="exp-loc">Linthicum, MD</span>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>Endpoint Fleet:</b> Managed lifecycle of <span class="metric">200+ devices</span> via Intune, SCCM, Autopilot — imaging, provisioning, and day-one onboarding for software engineers on Maryland's SNAP benefits systems.</li>
+            <li><b>Azure AD / Entra ID:</b> Administered Conditional Access policies, MFA enforcement, group-based licensing, and IAM access reviews. Ticket owner for cross-team Jira credential and access requests.</li>
+            <li><b>Policy Automation:</b> Authored PowerShell scripts deployed via SolarWinds to test GPO/Intune baseline propagation across hundreds of endpoints; flagged failures and remediated per change control.</li>
+            <li><b>Firmware & Patch Management:</b> Executed firmware updates and patch deployments per systems architect directives; evaluated change risk and held updates when criteria not met.</li>
+            <li><b>Asset Inventory Script:</b> Built Python/PowerShell scanner for state-owned and vendor electronics; fed custom Jira inventory schema, auto-reported to Confluence, distributed digests to VP and management.</li>
+            <li><b>Jira Dashboard Engineering:</b> Built multi-panel dashboards with custom JQL queries, pie charts, shipping/inventory/lifecycle tracking, and Confluence KB widget integrations.</li>
+            <li><b>KB & SOP Authoring:</b> Authored enterprise KB articles: onboarding/offboarding, Wi-Fi failover, device intake (FedEx/USPS), shared mailbox setup, vendor communication, PTO process documentation.</li>
+            <li><b>AI Chatbot Prototype:</b> Built conversational agent for Google Spaces to handle IT policy Q&A — reducing tier-1 tickets by enabling software engineer self-service.</li>
+            <li><b>Physical Infrastructure:</b> Audited wall jacks, traced switch port assignments, managed patch panel labeling, replaced HDMI/power cabling. Provided AV/network support for executive presentations.</li>
+          </ul>
+          <div class="exp-impact">Impact: Improved endpoint deployment velocity and reduced provisioning errors through automation. Inventory script eliminated manual tracking for 200+ state-owned assets.</div>
+          <div class="exp-tools">
+            <span class="tag tag-purple">Intune</span><span class="tag tag-purple">SCCM</span>
+            <span class="tag tag-purple">Autopilot</span><span class="tag tag-purple">Azure AD</span>
+            <span class="tag tag-blue">PowerShell</span><span class="tag tag-blue">Python</span>
+            <span class="tag tag-green">SolarWinds</span><span class="tag tag-green">ServiceNow</span>
+            <span class="tag tag-green">Jira</span><span class="tag tag-green">Confluence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SES -->
+      <div class="exp-card">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">SES Networks</div>
+            <div class="exp-title">Network Engineer — Network Operations Center</div>
+          </div>
+          <div>
+            <div class="exp-meta">
+              <span class="exp-date">2022 – 2024</span>
+              <span class="exp-loc">Manassas, VA</span>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>Global Satellite NOC (24x7):</b> Tier 2/3 support for global satellite and IP network — maritime vessels, fixed VSAT, and aero IFC customers. Platforms: iDirect, Hughes, Comtech across HTS and FSS orbital assets. Primary NOC contact for SKALA customers and VNOs.</li>
+            <li><b>P1dB Saturation Testing:</b> Bridged P1dB transmit power tests for SKALA and VNO customers — managed three-way call between customer, ground station RF engineers, and NOC; monitored uplink power levels, documented results, and cleared carriers for service.</li>
+            <li><b>Site Commissioning:</b> Commissioned new fixed terminals and small vessel VSAT sites end-to-end: azimuth/elevation verification, modem registration, link margin validation, and service activation sign-off.</li>
+            <li><b>Beam Switching & Vessel Management:</b> Executed manual beam switches across all operational regions; migrated vessels to better-performing orbital slots; updated bandwidth packages per contract terms.</li>
+            <li><b>DVB-S2 / RF:</b> Real-time ModCod adjustments on DVB-S2 forward/return carriers. Managed SCPC and MCPC carrier configs and transponder utilization across active beams.</li>
+            <li><b>OSPF & BGP:</b> OSPF on backbone — checked adjacencies, reviewed routing flags, verified route state. BGP on vessel CPE — neighbor state, prefix advertisements, session reset logs, path selection analysis.</li>
+            <li><b>iDirect Modem Diagnostics:</b> Pulled and analyzed iDirect modem logs; checked Ec/No, symbol rate, upstream/downstream stats to isolate RF vs. network layer faults.</li>
+            <li><b>Backbone Monitoring:</b> Monitored terrestrial backbone links during outage events; checked interface state and routing convergence, escalated to backbone engineering with structured fault summaries.</li>
+            <li><b>CR Management:</b> Authored and issued CR notifications to end customers; tracked lifecycle in ServiceNow from creation through customer confirmation.</li>
+            <li><b>Splunk SIEM:</b> Onboarded ground station and network node log sources; built SPL searches and threshold alerts reducing MTTD across <span class="metric">30+ nodes</span>.</li>
+            <li><b>Incident Command:</b> Led war rooms during service-affecting events; coordinated satellite ops, terrestrial engineering, ground station teams, and vendor NOCs. Authored RCA reports.</li>
+          </ul>
+          <div class="exp-impact">Impact: 99.9%+ availability across maritime and aero links. P1dB bridge coordination reduced SKALA activation delays. Splunk integration improved fault correlation across 30+ nodes.</div>
+          <div class="exp-tools">
+            <span class="tag tag-amber">iDirect</span><span class="tag tag-amber">DVB-S2</span>
+            <span class="tag tag-amber">ModCod</span><span class="tag tag-amber">P1dB</span>
+            <span class="tag tag-blue">BGP</span><span class="tag tag-blue">OSPF</span>
+            <span class="tag tag-blue">MPLS</span><span class="tag tag-blue">Cisco/Juniper</span>
+            <span class="tag tag-green">Splunk</span><span class="tag tag-green">SNMP</span>
+            <span class="tag tag-green">NetFlow</span><span class="tag tag-green">ServiceNow</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ViaPath -->
+      <div class="exp-card">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">ViaPath</div>
+            <div class="exp-title">Enterprise Network Technician — NOC</div>
+          </div>
+          <div>
+            <div class="exp-meta">
+              <span class="exp-date">2021 – 2022</span>
+              <span class="exp-loc">Falls Church, VA</span>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>WAN/LAN Monitoring:</b> Monitored <span class="metric">100+ correctional facility sites</span> via SolarWinds NPM/NTA; responded to SNMP alerts within 15-min SLA, performed log analysis and root-cause diagnostics.</li>
+            <li><b>Carrier Coordination:</b> Coordinated with LECs to validate maintenance activity and carrier-side disruptions; tracked Change Requests to suppress false-positive escalations.</li>
+            <li><b>Satellite Failover:</b> Initiated ViaSat satellite failover for remote sites lacking terrestrial fiber; documented activation/restoration per site runbook.</li>
+            <li>Provisioned new facility sites and decommissioned legacy locations; dispatched field technicians with hardware replacement SOPs.</li>
+          </ul>
+          <div class="exp-impact">Impact: Improved uptime across mission-critical correctional facility infrastructure through rapid SLA response and structured redundancy.</div>
+          <div class="exp-tools">
+            <span class="tag tag-green">SolarWinds NPM/NTA</span>
+            <span class="tag tag-green">SNMP</span>
+            <span class="tag tag-amber">ViaSat Failover</span>
+            <span class="tag tag-green">ServiceNow</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carfax -->
+      <div class="exp-card">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">Carfax</div>
+            <div class="exp-title">Enterprise Account & Operations Support</div>
+          </div>
+          <div>
+            <div class="exp-meta">
+              <span class="exp-date">2017 – 2020</span>
+              <span class="exp-loc">Centreville, VA</span>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>API Integration Support:</b> Tier 2 support for CARFAX RESTful API and POS software integrations; diagnosed data transmission failures, mapping errors, and auth issues between dealer systems and CARFAX vehicle history APIs.</li>
+            <li>Managed ticket lifecycle in Salesforce CRM; authored KB articles for recurring integration failures; escalated upstream API defects with structured reproduction steps.</li>
+          </ul>
+          <div class="exp-tools">
+            <span class="tag tag-blue">RESTful APIs</span>
+            <span class="tag tag-green">Salesforce CRM</span>
+            <span class="tag tag-purple">POS Systems</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AT&T -->
+      <div class="exp-card">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">AT&T Mobility</div>
+            <div class="exp-title">Retail Operations Manager</div>
+          </div>
+          <div>
+            <div class="exp-meta">
+              <span class="exp-date">2012 – 2016</span>
+              <span class="exp-loc">Oakton, VA</span>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>OPUS NCR Tablet POS:</b> Operated AT&T's OPUS NCR tablet-based POS — one of the first tablet POS deployments in telecom retail. Led team of 10 on OPUS transaction, inventory, and error resolution workflows.</li>
+            <li><b>Backend CLI Provisioning:</b> Used AT&T's backend command-line provisioning system to activate wireless service, push SIM-level configurations, assign rate plans, and diagnose provisioning failures at carrier backend level.</li>
+            <li><b>DSAT / DIRECTV:</b> Configured DIRECTV satellite installations via DSAT backend; managed account setup, equipment provisioning, and technician dispatch for bundled service activations.</li>
+            <li><b>MDM & Device Activation:</b> Provisioned smartphones, tablets, and IoT devices; MDM enrollment for business accounts with enterprise email, VPN, and MAM policy configuration.</li>
+          </ul>
+          <div class="exp-tools">
+            <span class="tag tag-amber">OPUS NCR POS</span>
+            <span class="tag tag-amber">AT&T CLI Provisioning</span>
+            <span class="tag tag-amber">DSAT/DIRECTV</span>
+            <span class="tag tag-purple">MDM</span>
+            <span class="tag tag-green">Salesforce CRM</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <span class="project-icon">🤖</span>
+        <div class="project-title">TankPit Discord Bot</div>
+        <div class="project-sub">RAG + SQL AI System · github.com/uk0430</div>
+        <p class="project-desc">
+          Full-stack Discord bot with a hybrid RAG + SQL AI Q&A engine. Local Mistral 7B LLM
+          and nomic-embed via llama.cpp. Embedded 13,250 player profiles into a vector store
+          with cosine similarity retrieval. SQLite layer for structured queries — leaderboards,
+          award lookups, kill rankings with profile links and custom Discord emoji.
+        </p>
+        <div class="project-tags">
+          <span class="tag tag-blue">Python</span>
+          <span class="tag tag-blue">llama.cpp</span>
+          <span class="tag tag-blue">Mistral 7B</span>
+          <span class="tag tag-blue">SQLite</span>
+          <span class="tag tag-blue">RAG</span>
+          <span class="tag tag-blue">discord.py</span>
+          <span class="tag tag-green">aiohttp</span>
+          <span class="tag tag-green">PIL</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-icon">🌐</span>
+        <div class="project-title">Data Pipeline & Web Scraper</div>
+        <div class="project-sub">Async Crawler · 13,250+ Profiles · 5,000+ Days</div>
+        <p class="project-desc">
+          Designed and ran async web scrapers (Python/aiohttp/Playwright) to collect 13,250+
+          player profiles and 14 years of community bulletin board data. Built rebuild_bible.py
+          to chunk, embed, and version the knowledge base. Integrated leaderboard API crawler
+          with SQLite persistence and Jira-style inventory reporting.
+        </p>
+        <div class="project-tags">
+          <span class="tag tag-blue">Python</span>
+          <span class="tag tag-blue">Playwright</span>
+          <span class="tag tag-blue">aiohttp</span>
+          <span class="tag tag-green">SQLite</span>
+          <span class="tag tag-green">asyncio</span>
+          <span class="tag tag-amber">Data Pipeline</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-icon">🥧</span>
+        <div class="project-title">Home Network Monitoring Lab</div>
+        <div class="project-sub">Raspberry Pi · SNMP · In Progress</div>
+        <p class="project-desc">
+          Raspberry Pi-based home lab replicating enterprise NOC workflows — SNMP polling,
+          traffic capture, and alerting configured on home LAN. Built to mirror SolarWinds-style
+          monitoring in a personal environment and explore Grafana/dashboard integrations.
+        </p>
+        <div class="project-tags">
+          <span class="tag tag-amber">Raspberry Pi</span>
+          <span class="tag tag-green">SNMP</span>
+          <span class="tag tag-green">Wireshark</span>
+          <span class="tag tag-blue">Python</span>
+          <span class="tag tag-purple">Grafana</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EDUCATION + CERT -->
+  <section id="education">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education & Certifications</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="cert-card" style="margin-bottom: 32px;">
+      <div class="cert-badge">🛡</div>
+      <div>
+        <div class="cert-name">CompTIA CySA+</div>
+        <div class="cert-meta">CS0-003 · Candidate ID: COMP001022444115 · Code: PJBBZTSS5ERQQ1GJ</div>
+        <div class="cert-valid">✓ Valid through January 27, 2027 · verify.CompTIA.org</div>
+      </div>
+    </div>
+
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-school">Strayer University</div>
+        <div class="edu-degree">B.S. Information Technology — In Progress</div>
+        <div class="edu-meta">Prerequisite coursework at NVCC · Starting March 2026</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-school">Northern Virginia Community College</div>
+        <div class="edu-degree">Associate Degree in Business Administration (AA/AS)</div>
+        <div class="edu-meta">NVCC · Northern Virginia</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>uzair-khan · network operations engineer · manassas, va</span>
+    <span>linkedin.com/in/uk0430 · github.com/uk0430</span>
+  </footer>
+
+</div>
+
+<script>
+// cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+// accordion
+function toggleExp(header) {
+  const card = header.closest('.exp-card');
+  card.classList.toggle('open');
+}
+
+// scroll fade-in for sections
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.skill-card, .exp-card, .project-card, .edu-card, .cert-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
