@@ -6,10 +6,19 @@
 <title>Uzair Khan — Network Operations Engineer</title>
 <meta name="description" content="Portfolio of Uzair Khan — Network Operations Engineer specializing in satellite NOC, enterprise IT, and infrastructure automation.">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/main.js"></script>
+<meta property="og:title" content="Uzair Khan — Network Operations Engineer">
+<meta property="og:description" content="8+ years engineering enterprise networks across satellite comms, government IT, and global NOC environments.">
+<meta property="og:url" content="https://uk0430.github.io">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Uzair Khan — Network Operations Engineer">
+<meta name="twitter:description" content="8+ years engineering enterprise networks across satellite comms, government IT, and global NOC environments.">
 </head>
 <body>
+<div id="scroll-progress"></div>
 
 <div class="glow" id="glow"></div>
 
@@ -21,6 +30,7 @@
     <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#education">Education</a></li>
+    <li><a href="#activity">Activity</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-right">
@@ -31,6 +41,9 @@
     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
       <span class="toggle-icon">🌙</span>
       <span id="themeLabel">LIGHT MODE</span>
+    </button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
@@ -46,7 +59,7 @@
     <h1 class="hero-name fade-in" style="font-family:var(--display);font-size:clamp(56px,8vw,96px);font-weight:800;line-height:0.95;letter-spacing:-0.03em;margin-bottom:8px;">
       Uzair<br><span class="accent" style="color:var(--accent);">Khan</span>
     </h1>
-    <div class="fade-in" style="font-family:var(--display);font-size:clamp(18px,3vw,28px);font-weight:400;color:var(--dim);margin-bottom:32px;letter-spacing:-0.01em;">
+    <div id="hero-role" class="fade-in" style="font-family:var(--display);font-size:clamp(18px,3vw,28px);font-weight:400;color:var(--dim);margin-bottom:32px;letter-spacing:-0.01em;">
       NOC · Satellite · Infrastructure · IT Systems
     </div>
     <p class="fade-in" style="max-width:560px;font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;">
@@ -392,10 +405,22 @@
     </div>
   </section>
 
+  <!-- GITHUB ACTIVITY -->
+  <section id="activity">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Recent Activity</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="activity-list" id="github-activity">
+      <p class="activity-empty" style="font-family:var(--mono);font-size:11px;color:var(--muted);">Loading...</p>
+    </div>
+  </section>
+
   <!-- EDUCATION + CERT -->
   <section id="education">
     <div class="section-header">
-      <span class="section-num">04</span>
+      <span class="section-num">05</span>
       <h2 class="section-title">Education & Certifications</h2>
       <div class="section-line"></div>
     </div>
@@ -404,7 +429,7 @@
       <img src="assets/cysa-badge.png" alt="CompTIA CySA+" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
       <div>
         <div class="cert-name">CompTIA CySA+</div>
-        <div class="cert-meta">CS0-003 · Candidate ID: COMP001022444115 · Code: PJBBZTSS5ERQQ1GJ</div>
+        <div class="cert-meta">CS0-003 · Candidate ID: COMP001022444115 · Code: PJBBZTSS5ERQQ1GJ<button class="copy-btn" id="copy-cert-btn" onclick="copyCertCode();event.preventDefault()">copy</button></div>
         <div class="cert-valid">✓ Valid through January 27, 2027</div>
         <div class="cert-link">View Credly Badge ↗</div>
       </div>
@@ -427,7 +452,7 @@
   <!-- CONTACT -->
   <section id="contact">
     <div class="section-header">
-      <span class="section-num">05</span>
+      <span class="section-num">06</span>
       <h2 class="section-title">Contact</h2>
       <div class="section-line"></div>
     </div>
@@ -473,5 +498,26 @@
   </footer>
 
 </div>
+
+<!-- TERMINAL -->
+<div id="terminal-modal" class="terminal-modal" style="display:none;">
+  <div class="terminal-window">
+    <div class="term-titlebar">
+      <span class="term-titlebar-title">uzair@portfolio:~</span>
+      <span class="term-titlebar-hint">ESC or ` to close</span>
+      <button class="term-close" onclick="closeTerminal()">✕</button>
+    </div>
+    <div id="term-output"></div>
+    <div class="term-input-row">
+      <span class="term-input-prompt">$ </span>
+      <input type="text" id="term-input" autocomplete="off" spellcheck="false" placeholder="type a command...">
+    </div>
+  </div>
+</div>
+
+<button class="term-fab" onclick="openTerminal()">
+  <span class="term-fab-key">`</span> terminal
+</button>
+
 </body>
 </html>
