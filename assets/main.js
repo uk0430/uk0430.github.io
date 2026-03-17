@@ -161,7 +161,7 @@ const CMDS = {
     'commands:',
     '  whoami         · ls            · cat skills',
     '  cat experience · ping          · traceroute',
-    '  clear          · exit',
+    '  cd ops         · cd tracker    · clear · exit',
     '',
   ],
   whoami: () => [
@@ -194,6 +194,8 @@ const CMDS = {
     '3 packets transmitted, 3 received, 0% packet loss',
     '',
   ],
+  'cd ops': () => { setTimeout(() => { window.location.href = '/ops.html'; }, 300); return ['→ navigating to ops.html...', '']; },
+  'cd tracker': () => { setTimeout(() => { window.location.href = '/tracker.html'; }, 300); return ['→ navigating to tracker.html...', '']; },
   traceroute: () => [
     'traceroute to next-role.career',
     ' 1  your-screen.local       0.1ms',
