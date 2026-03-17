@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TankPit Bot — Uzair Khan</title>
+<meta name="description" content="Deep dive into the TankPit Discord Bot — a RAG + SQL AI system built with Python, Mistral 7B, llama.cpp, and SQLite.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/main.js"></script>
+</head>
+<body>
+
+<div class="glow" id="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#skills">Skills</a></li>
+    <li><a href="../index.html#experience">Experience</a></li>
+    <li><a href="../index.html#projects">Projects</a></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span>Open to opportunities</span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <a href="../index.html#projects" class="back-link">← Back to Projects</a>
+    <div class="page-tags">
+      <span class="tag tag-blue">Python</span>
+      <span class="tag tag-blue">llama.cpp</span>
+      <span class="tag tag-blue">Mistral 7B</span>
+      <span class="tag tag-blue">SQLite</span>
+      <span class="tag tag-blue">RAG</span>
+      <span class="tag tag-green">discord.py</span>
+      <span class="tag tag-green">PIL</span>
+      <span class="tag tag-green">aiohttp</span>
+      <span class="tag tag-amber">nomic-embed</span>
+      <span class="tag tag-purple">WSL2 / Ubuntu</span>
+    </div>
+    <h1 class="page-title">TankPit<br><span>Discord Bot</span></h1>
+    <div class="page-sub">RAG + SQL Hybrid AI System · Personal Project · github.com/uk0430</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="https://github.com/uk0430" class="btn btn-primary" target="_blank">⌥ View on GitHub</a>
+      <a href="../index.html" class="btn btn-ghost">← Portfolio</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="content-block">
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-big">13,250</div>
+        <div class="stat-caption">Player Profiles Embedded</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">5,160</div>
+        <div class="stat-caption">Bulletin Board Days Scraped</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">1,467</div>
+        <div class="stat-caption">Lines of bot.py</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">5</div>
+        <div class="stat-caption">Discord Commands</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">7B</div>
+        <div class="stat-caption">LLM Parameters (Local)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IT DOES -->
+  <div class="content-block">
+    <h3>What It Does</h3>
+    <p>
+      TankPit is a Discord bot for a gaming community built around a classic online tank game.
+      The bot gives the community AI-powered tools to look up players, browse leaderboards,
+      generate custom award banners, and ask natural language questions about the game — all
+      powered by a local LLM running on my own machine.
+    </p>
+    <p>
+      The most interesting part is <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">/ask</code> —
+      a hybrid RAG + SQL Q&A system. Users type questions in plain English and the bot routes
+      them to either a SQLite database (for structured queries like leaderboards and stats)
+      or a vector search over 13,250 embedded player profiles (for open-ended questions).
+    </p>
+
+    <div class="arch-grid" style="margin-top:24px;">
+      <div class="arch-card">
+        <div class="arch-card-title">/ask</div>
+        <div class="arch-card-desc">Hybrid RAG + SQL AI Q&A. Routes structured questions to SQLite, open-ended to vector search over 13,250 embedded profiles.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">/tank</div>
+        <div class="arch-card-desc">Live player profile lookup via TankPit API. Renders a player card image with stats, rank, cups, awards, and faction color using PIL.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">/leaderboard</div>
+        <div class="arch-card-desc">Live leaderboard image with year, color, rank, and top-N filters. Renders sprite-based award icons from a spritesheet.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">/award</div>
+        <div class="arch-card-desc">Custom award banner generator. Multi-select awards, color, and size options. PIL renders and returns a PNG banner image.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">/help</div>
+        <div class="arch-card-desc">Embed listing all commands with usage examples. Ephemeral response so only the user sees it.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAG PIPELINE -->
+  <div class="content-block">
+    <h3>The RAG Pipeline</h3>
+    <p>
+      When a user asks <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">/ask what awards does Grimlock have?</code>,
+      the bot first tries the SQL layer. If the question doesn't match a structured query pattern,
+      it falls through to the RAG pipeline:
+    </p>
+
+    <div class="pipeline-row">
+      <div class="pipeline-step"><span>User</span><b>Question</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>SQL Layer</span><b>_db_query()</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>No match</span><b>Fall through</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>nomic-embed</span><b>Embed question</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Cosine sim</span><b>Top-3 chunks</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Mistral 7B</span><b>Generate answer</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Post-process</span><b>Inject emoji</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Discord</span><b>Embed response</b></div>
+    </div>
+
+    <p style="margin-top:16px;">
+      Both the embedding server (nomic-embed-text-v1.5) and the LLM (Mistral 7B Instruct) run
+      locally via <strong>llama.cpp</strong> on two separate ports. This keeps everything private,
+      free, and fast — no API calls to OpenAI or Anthropic.
+    </p>
+  </div>
+
+  <!-- SQL LAYER -->
+  <div class="content-block">
+    <h3>The SQL Query Layer</h3>
+    <p>
+      Before hitting the LLM, every <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">/ask</code>
+      question is routed through <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">_db_query()</code> —
+      a keyword-based intent router that maps natural language patterns to SQLite queries against
+      13,250 player profiles.
+    </p>
+
+    <div class="code-block">
+      <pre><span class="cm"># Examples of SQL-routed questions:</span>
+<span class="str">"who has the most gold cups"</span>  → SELECT name, gold_cups FROM tanks ORDER BY gold_cups DESC
+<span class="str">"how many generals are there"</span> → SELECT COUNT(*) FROM tanks WHERE rank=<span class="str">'general'</span>
+<span class="str">"top ten blue overall"</span>        → SELECT ... WHERE color=<span class="str">'blue'</span> ORDER BY leaderboard_rank
+<span class="str">"list lightbulb award players"</span> → SELECT name FROM tanks WHERE awards_json LIKE <span class="str">'%Lightbulb%'</span>
+
+<span class="cm"># Each result includes:</span>
+<span class="cm"># - Clickable profile links → tankpit.com/tanks/profile?tank_id=X</span>
+<span class="cm"># - Faction color dots (🔵🔴🟠🟣) from player color field</span>
+<span class="cm"># - Inline award emoji decoded from awards_json</span>
+<span class="cm"># - Alt-tank deduplication via bf_tank_name field</span></pre>
+    </div>
+  </div>
+
+  <!-- DATA PIPELINE -->
+  <div class="content-block">
+    <h3>The Data Pipeline</h3>
+    <p>
+      The knowledge base was built from scratch using three custom scrapers, all running async
+      in Python against the TankPit API and website.
+    </p>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-title">crawl_profiles.py</div>
+        <div class="arch-card-desc">Scraped 13,250 player profiles from the TankPit API. Structured data: name, rank, color, country, stats, awards, cups, tank ID. Stored as .txt files in scraped/profiles/.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">leaderboard_crawler.py</div>
+        <div class="arch-card-desc">Crawled 1,326 pages of overall leaderboard + 4 years (2017–2023). Stores year-by-year rankings in SQLite leaderboard_history table.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">bulletin_crawler.py</div>
+        <div class="arch-card-desc">Scraped 14 years of daily bulletin board posts (2012–2026). 5,160 days of community discussions, tournament results, and player interactions.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">rebuild_bible.py</div>
+        <div class="arch-card-desc">Chunks all .txt files, embeds each chunk via nomic-embed (port 8081), and writes bible_chunks.json with text + embedding vectors. 13,250 chunks, 0 failures.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="content-block">
+    <h3>Full Tech Stack</h3>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-title">Bot Framework</div>
+        <div class="arch-card-desc">discord.py 2.6.4 — slash commands, ephemeral responses, views, select menus, modals, deferred interactions.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">LLM Inference</div>
+        <div class="arch-card-desc">llama.cpp running Mistral 7B Instruct Q4_K_M on port 8080. GPU offloading with -ngl 999, KV cache quantization for speed.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Embeddings</div>
+        <div class="arch-card-desc">llama.cpp running nomic-embed-text-v1.5 Q4_K_M on port 8081. Cosine similarity via numpy for top-k chunk retrieval.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Database</div>
+        <div class="arch-card-desc">SQLite (tankpit.db) — tanks table (13,250 rows), leaderboard_history table (year-by-year rankings), leaderboard_snapshots.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Image Generation</div>
+        <div class="arch-card-desc">PIL (Pillow 12.1.1) — player cards, leaderboard images, award banners. MD5-keyed PNG cache. Runs in asyncio.to_thread to avoid blocking.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Environment</div>
+        <div class="arch-card-desc">WSL2 / Ubuntu 24. Single-command launch via ~/start-tankpit.sh alias. Deployed on Railway.app (production, without local LLM).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT I LEARNED -->
+  <div class="content-block">
+    <h3>What I Learned</h3>
+    <p>
+      Building this from scratch taught me more about production AI systems than any tutorial.
+      The hardest parts were getting the RAG pipeline reliable — managing embedding cache TTLs,
+      handling the async/sync boundary between discord.py and llama.cpp, and making the SQL
+      intent router robust enough that users don't notice when it falls through to RAG.
+    </p>
+    <p>
+      The data pipeline was a real engineering problem. The scrapers needed rate limiting, resume
+      capability (--resume flag), structured error handling, and proper async concurrency to
+      collect 13,250 profiles + 5,160 bulletin board pages without getting rate-limited or
+      losing progress on interruption.
+    </p>
+    <p>
+      The project shows that a NOC/IT background translates directly into building
+      data pipelines and production systems — systematic thinking, fault tolerance,
+      monitoring, and documentation are the same skills whether you're watching a
+      satellite link or building a vector database.
+    </p>
+  </div>
+
+  <footer>
+    <span>Uzair Khan · <a href="../index.html">Portfolio</a></span>
+    <span><a href="https://linkedin.com/in/uk0430" target="_blank">LinkedIn</a> · <a href="https://github.com/uk0430" target="_blank">GitHub</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
