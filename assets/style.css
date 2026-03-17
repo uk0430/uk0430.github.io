@@ -494,6 +494,26 @@ html.light .exp-impact { background: rgba(2,132,199,0.06); }
 .contact-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
 .contact-value { font-family: var(--mono); font-size: 12px; color: var(--accent); }
 
+/* ── CONTACT FORM ───────────────────────────────────── */
+.contact-form { display:flex; flex-direction:column; gap:12px; max-width:600px; margin-top:24px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.contact-form input, .contact-form textarea {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  width: 100%;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.contact-form input::placeholder, .contact-form textarea::placeholder { color: var(--muted); }
+.contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent); }
+.contact-form textarea { resize: vertical; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
 /* ── FOOTER ─────────────────────────────────────────── */
 footer {
   border-top: 1px solid var(--border);

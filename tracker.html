@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Tracker — Uzair Khan</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f; --bg2: #0d1117; --bg3: #111827;
+  --border: #1e2a3a; --border2: #243040;
+  --accent: #38bdf8; --accent2: #0ea5e9;
+  --green: #34d399; --amber: #fbbf24; --red: #f87171; --purple: #a78bfa;
+  --text: #e2e8f0; --dim: #94a3b8; --muted: #4b5563;
+  --nav-bg: rgba(7,9,15,0.9);
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+}
+html.light {
+  --bg: #f0f4f8; --bg2: #ffffff; --bg3: #e8eef5;
+  --border: #d0dae6; --border2: #b8c8d8;
+  --accent: #0284c7; --accent2: #0369a1;
+  --green: #059669; --amber: #d97706; --red: #dc2626; --purple: #7c3aed;
+  --text: #0f172a; --dim: #334155; --muted: #94a3b8;
+  --nav-bg: rgba(240,244,248,0.95);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--sans); font-size: 14px; line-height: 1.6;
+  overflow-x: hidden; min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 40px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+.nav-logo { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-decoration: none; }
+.nav-logo span { color: var(--muted); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid var(--border2); border-radius: 20px;
+  padding: 5px 12px; cursor: pointer; font-family: var(--mono); font-size: 10px;
+  color: var(--dim); letter-spacing: 0.06em; transition: all 0.2s; white-space: nowrap;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.export-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid var(--border2); border-radius: 4px;
+  padding: 6px 14px; cursor: pointer; font-family: var(--mono); font-size: 10px;
+  color: var(--dim); letter-spacing: 0.06em; transition: all 0.2s; text-transform: uppercase;
+}
+.export-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* WRAPPER */
+.wrapper { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 40px 40px 80px; }
+
+/* STATS BAR */
+.stats-bar {
+  display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap;
+}
+.stat-pill {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 20px; min-width: 140px;
+}
+.stat-pill-num {
+  font-family: var(--display); font-size: 28px; font-weight: 700;
+  color: var(--text); line-height: 1;
+}
+.stat-pill-num.c-blue   { color: var(--accent); }
+.stat-pill-num.c-amber  { color: var(--amber); }
+.stat-pill-num.c-green  { color: var(--green); }
+.stat-pill-num.c-red    { color: var(--red); }
+.stat-pill-num.c-purple { color: var(--purple); }
+.stat-pill-label {
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.12em; line-height: 1.3;
+}
+
+/* ADD FORM */
+.add-form-wrap {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 40px; overflow: hidden;
+}
+.add-form-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: var(--bg3);
+  border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
+}
+.add-form-title { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+.add-form-toggle { font-family: var(--mono); font-size: 18px; color: var(--muted); transition: transform 0.3s, color 0.2s; line-height: 1; }
+.add-form-wrap.open .add-form-toggle { transform: rotate(45deg); color: var(--accent); }
+.add-form-body { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
+.add-form-wrap.open .add-form-body { max-height: 600px; padding: 20px; }
+
+.track-form { display: flex; flex-direction: column; gap: 12px; }
+.track-form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.track-form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.track-form input, .track-form textarea, .track-form select {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 9px 12px; font-family: var(--sans);
+  font-size: 13px; color: var(--text); width: 100%;
+  transition: border-color 0.2s; outline: none;
+}
+.track-form input::placeholder, .track-form textarea::placeholder { color: var(--muted); }
+.track-form input:focus, .track-form textarea:focus, .track-form select:focus { border-color: var(--accent); }
+.track-form select option { background: var(--bg2); color: var(--text); }
+.track-form textarea { resize: vertical; min-height: 64px; }
+.form-actions { display: flex; gap: 10px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 9px 18px; border-radius: 4px;
+  transition: all 0.2s; cursor: pointer; border: none;
+}
+.btn-primary { background: var(--accent); color: #07090f; font-weight: 500; }
+.btn-primary:hover { background: #7dd3fc; }
+html.light .btn-primary { color: #fff; }
+html.light .btn-primary:hover { background: var(--accent2); }
+.btn-ghost { background: transparent; color: var(--dim); border: 1px solid var(--border2); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* KANBAN */
+.kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
+.kanban-col {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; min-height: 200px;
+}
+.kanban-col-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.kanban-col-title { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500; }
+.col-applied    .kanban-col-title { color: var(--accent); }
+.col-phone      .kanban-col-title { color: var(--amber); }
+.col-interview  .kanban-col-title { color: var(--purple); }
+.col-offer      .kanban-col-title { color: var(--green); }
+.col-rejected   .kanban-col-title { color: var(--red); }
+
+.kanban-col-header { border-top: 3px solid transparent; }
+.col-applied   { border-top: 3px solid var(--accent); }
+.col-phone     { border-top: 3px solid var(--amber); }
+.col-interview { border-top: 3px solid var(--purple); }
+.col-offer     { border-top: 3px solid var(--green); }
+.col-rejected  { border-top: 3px solid var(--red); }
+
+.col-count {
+  font-family: var(--mono); font-size: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1px 7px; color: var(--muted);
+}
+.kanban-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+.kanban-cards.drag-over { background: rgba(56,189,248,0.04); outline: 2px dashed var(--accent); outline-offset: -4px; border-radius: 4px; }
+
+/* JOB CARD */
+.job-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 14px;
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: grab; position: relative;
+}
+.job-card:hover { border-color: rgba(56,189,248,0.25); transform: translateY(-1px); }
+.job-card.dragging { opacity: 0.4; cursor: grabbing; }
+.job-card-company {
+  font-family: var(--mono); font-size: 9px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px;
+}
+.job-card-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+.job-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.job-card-salary { font-family: var(--mono); font-size: 10px; color: var(--green); }
+.job-card-link { font-family: var(--mono); font-size: 10px; color: var(--accent); text-decoration: none; opacity: 0.7; transition: opacity 0.15s; }
+.job-card-link:hover { opacity: 1; }
+.job-card-contact { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.job-card-notes { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 4px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.job-card-actions { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.card-btn {
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 3px; padding: 2px 8px;
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+}
+.card-btn:hover { border-color: var(--accent); color: var(--accent); }
+.card-btn.del:hover { border-color: var(--red); color: var(--red); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-box {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 8px; width: 100%; max-width: 600px;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; background: var(--bg3);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0;
+}
+.modal-title { font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--text); }
+.modal-close { background: transparent; border: none; color: var(--muted); font-size: 18px; cursor: pointer; line-height: 1; transition: color 0.15s; }
+.modal-close:hover { color: var(--red); }
+.modal-body { padding: 20px; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) { .kanban { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+  .kanban { grid-template-columns: 1fr; }
+  .track-form-row, .track-form-row-2 { grid-template-columns: 1fr; }
+  .wrapper { padding: 24px 20px 60px; }
+  nav { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span>~/</span>uzair-khan</a>
+  <div class="nav-right">
+    <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- PAGE TITLE -->
+  <div style="margin-bottom:32px;">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px;">Private · localhost only</div>
+    <h1 style="font-family:var(--display);font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--text);letter-spacing:-0.02em;line-height:1;">Job Application<br>Tracker</h1>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar" id="stats-bar"></div>
+
+  <!-- ADD FORM -->
+  <div class="add-form-wrap open" id="add-form-wrap">
+    <div class="add-form-header" onclick="toggleAddForm()">
+      <span class="add-form-title">+ Add Application</span>
+      <span class="add-form-toggle">+</span>
+    </div>
+    <div class="add-form-body">
+      <form class="track-form" id="add-form" onsubmit="submitJob(event)">
+        <div class="track-form-row">
+          <input type="text"  id="f-company" placeholder="Company *" required>
+          <input type="text"  id="f-title"   placeholder="Job Title *" required>
+          <input type="text"  id="f-salary"  placeholder="Salary / Range">
+        </div>
+        <div class="track-form-row-2">
+          <input type="url"   id="f-url"     placeholder="Job URL">
+          <input type="text"  id="f-contact" placeholder="Contact name / recruiter">
+        </div>
+        <div class="track-form-row-2">
+          <select id="f-status">
+            <option value="Applied">Applied</option>
+            <option value="Phone Screen">Phone Screen</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <input type="date" id="f-date">
+        </div>
+        <textarea id="f-notes" placeholder="Notes (interview details, next steps, etc.)"></textarea>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add Application</button>
+          <button type="button" class="btn btn-ghost" onclick="clearForm()">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- KANBAN BOARD -->
+  <div class="kanban" id="kanban">
+    <div class="kanban-col col-applied"   id="col-Applied">
+      <div class="kanban-col-header"><span class="kanban-col-title">Applied</span><span class="col-count" id="cnt-Applied">0</span></div>
+      <div class="kanban-cards" id="cards-Applied" ondragover="onDragOver(event)" ondrop="onDrop(event,'Applied')" ondragleave="onDragLeave(event)"></div>
+    </div>
+    <div class="kanban-col col-phone" id="col-Phone Screen">
+      <div class="kanban-col-header"><span class="kanban-col-title">Phone Screen</span><span class="col-count" id="cnt-Phone Screen">0</span></div>
+      <div class="kanban-cards" id="cards-Phone Screen" ondragover="onDragOver(event)" ondrop="onDrop(event,'Phone Screen')" ondragleave="onDragLeave(event)"></div>
+    </div>
+    <div class="kanban-col col-interview" id="col-Interview">
+      <div class="kanban-col-header"><span class="kanban-col-title">Interview</span><span class="col-count" id="cnt-Interview">0</span></div>
+      <div class="kanban-cards" id="cards-Interview" ondragover="onDragOver(event)" ondrop="onDrop(event,'Interview')" ondragleave="onDragLeave(event)"></div>
+    </div>
+    <div class="kanban-col col-offer" id="col-Offer">
+      <div class="kanban-col-header"><span class="kanban-col-title">Offer</span><span class="col-count" id="cnt-Offer">0</span></div>
+      <div class="kanban-cards" id="cards-Offer" ondragover="onDragOver(event)" ondrop="onDrop(event,'Offer')" ondragleave="onDragLeave(event)"></div>
+    </div>
+  </div>
+
+  <!-- REJECTED (collapsed below board) -->
+  <div style="margin-top:16px;">
+    <div class="kanban-col col-rejected" id="col-Rejected" style="border-top:3px solid var(--red);">
+      <div class="kanban-col-header"><span class="kanban-col-title">Rejected</span><span class="col-count" id="cnt-Rejected">0</span></div>
+      <div class="kanban-cards" id="cards-Rejected" ondragover="onDragOver(event)" ondrop="onDrop(event,'Rejected')" ondragleave="onDragLeave(event)"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal" style="display:none;" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Edit Application</span>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="track-form" id="edit-form" onsubmit="saveEdit(event)">
+        <input type="hidden" id="e-id">
+        <div class="track-form-row">
+          <input type="text"  id="e-company" placeholder="Company *" required>
+          <input type="text"  id="e-title"   placeholder="Job Title *" required>
+          <input type="text"  id="e-salary"  placeholder="Salary / Range">
+        </div>
+        <div class="track-form-row-2">
+          <input type="url"   id="e-url"     placeholder="Job URL">
+          <input type="text"  id="e-contact" placeholder="Contact name / recruiter">
+        </div>
+        <div class="track-form-row-2">
+          <select id="e-status">
+            <option value="Applied">Applied</option>
+            <option value="Phone Screen">Phone Screen</option>
+            <option value="Interview">Interview</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <input type="date" id="e-date">
+        </div>
+        <textarea id="e-notes" placeholder="Notes"></textarea>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME ─────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('themeLabel').textContent = isLight ? 'DARK MODE' : 'LIGHT MODE';
+  document.querySelector('.toggle-icon').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+(function() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.add('light');
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('themeLabel').textContent = 'DARK MODE';
+      document.querySelector('.toggle-icon').textContent = '☀️';
+    });
+  }
+})();
+
+// ── DATA ──────────────────────────────────────────────
+const STORE_KEY = 'jt_jobs_v1';
+function load() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch { return []; } }
+function save(jobs) { localStorage.setItem(STORE_KEY, JSON.stringify(jobs)); }
+
+// ── RENDER ────────────────────────────────────────────
+const STATUSES = ['Applied', 'Phone Screen', 'Interview', 'Offer', 'Rejected'];
+
+function render() {
+  const jobs = load();
+  STATUSES.forEach(s => {
+    const col = document.getElementById('cards-' + s);
+    const cnt = document.getElementById('cnt-' + s);
+    const items = jobs.filter(j => j.status === s);
+    cnt.textContent = items.length;
+    col.innerHTML = items.length === 0
+      ? '<div style="padding:12px 4px;font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;">empty</div>'
+      : items.map(j => cardHTML(j)).join('');
+  });
+  renderStats(jobs);
+}
+
+function cardHTML(j) {
+  const salaryHTML = j.salary ? `<span class="job-card-salary">${esc(j.salary)}</span>` : '';
+  const linkHTML   = j.url    ? `<a class="job-card-link" href="${esc(j.url)}" target="_blank" onclick="event.stopPropagation()">↗ link</a>` : '';
+  const contactHTML = j.contact ? `<span class="job-card-contact">👤 ${esc(j.contact)}</span>` : '';
+  const dateHTML   = j.date   ? `<span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${j.date}</span>` : '';
+  const notesHTML  = j.notes  ? `<div class="job-card-notes">${esc(j.notes)}</div>` : '';
+  return `<div class="job-card" draggable="true" id="card-${j.id}"
+    ondragstart="onDragStart(event,'${j.id}')" ondragend="onDragEnd(event)">
+    <div class="job-card-company">${esc(j.company)}</div>
+    <div class="job-card-title">${esc(j.title)}</div>
+    <div class="job-card-meta">${salaryHTML}${linkHTML}${dateHTML}</div>
+    ${contactHTML ? `<div style="margin-bottom:4px;">${contactHTML}</div>` : ''}
+    ${notesHTML}
+    <div class="job-card-actions">
+      <button class="card-btn" onclick="openEdit('${j.id}')">edit</button>
+      <button class="card-btn del" onclick="deleteJob('${j.id}')">delete</button>
+    </div>
+  </div>`;
+}
+
+function renderStats(jobs) {
+  const total      = jobs.length;
+  const interviews = jobs.filter(j => j.status === 'Interview').length;
+  const offers     = jobs.filter(j => j.status === 'Offer').length;
+  const rejected   = jobs.filter(j => j.status === 'Rejected').length;
+  const active     = jobs.filter(j => !['Rejected'].includes(j.status)).length;
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-pill"><div class="stat-pill-num c-blue">${total}</div><div class="stat-pill-label">Total<br>Applications</div></div>
+    <div class="stat-pill"><div class="stat-pill-num c-purple">${interviews}</div><div class="stat-pill-label">In<br>Interview</div></div>
+    <div class="stat-pill"><div class="stat-pill-num c-green">${offers}</div><div class="stat-pill-label">Offers<br>Received</div></div>
+    <div class="stat-pill"><div class="stat-pill-num c-amber">${active}</div><div class="stat-pill-label">Active<br>Pipeline</div></div>
+    <div class="stat-pill"><div class="stat-pill-num c-red">${rejected}</div><div class="stat-pill-label">Rejected /</br>Closed</div></div>
+  `;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ADD ───────────────────────────────────────────────
+function submitJob(e) {
+  e.preventDefault();
+  const jobs = load();
+  jobs.push({
+    id:      crypto.randomUUID(),
+    company: document.getElementById('f-company').value.trim(),
+    title:   document.getElementById('f-title').value.trim(),
+    salary:  document.getElementById('f-salary').value.trim(),
+    url:     document.getElementById('f-url').value.trim(),
+    contact: document.getElementById('f-contact').value.trim(),
+    status:  document.getElementById('f-status').value,
+    date:    document.getElementById('f-date').value,
+    notes:   document.getElementById('f-notes').value.trim(),
+  });
+  save(jobs);
+  clearForm();
+  render();
+}
+
+function clearForm() {
+  ['f-company','f-title','f-salary','f-url','f-contact','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-status').value = 'Applied';
+  document.getElementById('f-date').value = '';
+}
+
+// ── DELETE ────────────────────────────────────────────
+function deleteJob(id) {
+  if (!confirm('Delete this application?')) return;
+  save(load().filter(j => j.id !== id));
+  render();
+}
+
+// ── EDIT ──────────────────────────────────────────────
+function openEdit(id) {
+  const j = load().find(j => j.id === id);
+  if (!j) return;
+  document.getElementById('e-id').value      = j.id;
+  document.getElementById('e-company').value = j.company;
+  document.getElementById('e-title').value   = j.title;
+  document.getElementById('e-salary').value  = j.salary || '';
+  document.getElementById('e-url').value     = j.url || '';
+  document.getElementById('e-contact').value = j.contact || '';
+  document.getElementById('e-status').value  = j.status;
+  document.getElementById('e-date').value    = j.date || '';
+  document.getElementById('e-notes').value   = j.notes || '';
+  document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function saveEdit(e) {
+  e.preventDefault();
+  const id   = document.getElementById('e-id').value;
+  const jobs = load().map(j => j.id !== id ? j : {
+    ...j,
+    company: document.getElementById('e-company').value.trim(),
+    title:   document.getElementById('e-title').value.trim(),
+    salary:  document.getElementById('e-salary').value.trim(),
+    url:     document.getElementById('e-url').value.trim(),
+    contact: document.getElementById('e-contact').value.trim(),
+    status:  document.getElementById('e-status').value,
+    date:    document.getElementById('e-date').value,
+    notes:   document.getElementById('e-notes').value.trim(),
+  });
+  save(jobs);
+  closeEditModal();
+  render();
+}
+
+function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+function closeModal(e) { if (e.target.id === 'edit-modal') closeEditModal(); }
+
+// ── DRAG & DROP ───────────────────────────────────────
+let dragId = null;
+
+function onDragStart(e, id) {
+  dragId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => document.getElementById('card-' + id)?.classList.add('dragging'), 0);
+}
+
+function onDragEnd(e) {
+  document.querySelectorAll('.job-card').forEach(c => c.classList.remove('dragging'));
+  document.querySelectorAll('.kanban-cards').forEach(c => c.classList.remove('drag-over'));
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function onDrop(e, newStatus) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!dragId) return;
+  const jobs = load().map(j => j.id === dragId ? { ...j, status: newStatus } : j);
+  save(jobs);
+  dragId = null;
+  render();
+}
+
+// ── TOGGLE ADD FORM ───────────────────────────────────
+function toggleAddForm() {
+  document.getElementById('add-form-wrap').classList.toggle('open');
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+function exportCSV() {
+  const jobs = load();
+  if (!jobs.length) { alert('No applications to export.'); return; }
+  const headers = ['Company','Title','Status','Salary','Date','URL','Contact','Notes'];
+  const rows = jobs.map(j => [j.company, j.title, j.status, j.salary, j.date, j.url, j.contact, j.notes]
+    .map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'job-applications-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>
