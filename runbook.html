@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WSL Home Lab Runbook — Uzair Khan</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/auth.js"></script>
+<script src="assets/main.js"></script>
+<style>
+  /* ── RUNBOOK LAYOUT ─────────────────────────────── */
+  .rb-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px 80px;
+    min-height: 100vh;
+    align-items: start;
+  }
+
+  /* ── SIDEBAR ────────────────────────────────────── */
+  .rb-sidebar {
+    position: sticky;
+    top: 88px;
+    padding-right: 32px;
+    padding-top: 12px;
+  }
+  .rb-sidebar-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rb-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .rb-nav li { margin-bottom: 2px; }
+  .rb-nav a {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    line-height: 1.4;
+  }
+  .rb-nav a:hover,
+  .rb-nav a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(56,189,248,0.06);
+  }
+  .rb-nav .rb-nav-sub a {
+    font-size: 10px;
+    padding-left: 20px;
+    color: var(--muted);
+  }
+  .rb-nav .rb-nav-sub a:hover,
+  .rb-nav .rb-nav-sub a.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(56,189,248,0.04);
+  }
+
+  /* ── MAIN CONTENT ────────────────────────────────── */
+  .rb-main {
+    min-width: 0;
+    padding-left: 32px;
+    border-left: 1px solid var(--border);
+  }
+
+  /* ── PAGE HEADER ─────────────────────────────────── */
+  .rb-page-header {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rb-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rb-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .rb-page-title {
+    font-family: var(--display);
+    font-size: clamp(28px,4vw,40px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .rb-page-title span { color: var(--accent); }
+  .rb-page-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .rb-page-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── SECTIONS ────────────────────────────────────── */
+  .rb-section {
+    margin-bottom: 56px;
+    scroll-margin-top: 88px;
+  }
+  .rb-section-heading {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rb-section-heading .rb-section-icon {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(56,189,248,0.08);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+
+  /* ── SUBSECTIONS ─────────────────────────────────── */
+  .rb-subsection {
+    margin-bottom: 36px;
+    scroll-margin-top: 88px;
+  }
+  .rb-subsection-heading {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rb-subsection-heading .rb-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .rb-badge-active { background: rgba(52,211,153,0.15); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+  .rb-badge-inactive { background: rgba(75,85,99,0.3); color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── TABLES ──────────────────────────────────────── */
+  .rb-table-wrap { overflow-x: auto; margin-bottom: 16px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  thead tr {
+    border-bottom: 1px solid var(--border2);
+  }
+  thead th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: rgba(56,189,248,0.03); }
+  tbody td {
+    padding: 9px 12px;
+    color: var(--dim);
+    vertical-align: top;
+  }
+  tbody td:first-child { color: var(--text); }
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(56,189,248,0.07);
+    border: 1px solid rgba(56,189,248,0.12);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent);
+  }
+
+  /* ── CODE BLOCKS ─────────────────────────────────── */
+  .rb-code-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .rb-code-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .rb-copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .rb-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .rb-code-block pre {
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .rb-code-block pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12.5px;
+    color: var(--dim);
+    line-height: 1.7;
+  }
+
+  /* ── PROSE ───────────────────────────────────────── */
+  .rb-prose {
+    font-size: 14px;
+    color: var(--dim);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .rb-prose strong { color: var(--text); font-weight: 500; }
+
+  /* ── INFO CARD ───────────────────────────────────── */
+  .rb-info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .rb-info-chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--dim);
+  }
+  .rb-info-chip span { color: var(--accent); }
+
+  /* ── ISSUE LIST ──────────────────────────────────── */
+  .rb-issue-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .rb-issue-list li {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--dim);
+    line-height: 1.6;
+  }
+  .rb-issue-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 4px;
+    padding: 2px 7px;
+    height: fit-content;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  .rb-issue-list li strong { color: var(--text); }
+
+  /* ── QUICK-START CARDS ────────────────────────────── */
+  .rb-quickstart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .rb-qs-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color 0.15s;
+  }
+  .rb-qs-card:hover { border-color: var(--border2); }
+  .rb-qs-service {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .rb-qs-cmd {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(56,189,248,0.07);
+    border: 1px solid rgba(56,189,248,0.12);
+    border-radius: 5px;
+    padding: 5px 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .rb-qs-port {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── LOG/STATUS ROW ──────────────────────────────── */
+  .rb-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    margin-right: 7px;
+    animation: pulse 2s infinite;
+    vertical-align: middle;
+  }
+
+  /* ── BACK LINK ───────────────────────────────────── */
+  .rb-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+    transition: color 0.15s;
+  }
+  .rb-back:hover { color: var(--accent); }
+
+  /* ── DIVIDER ─────────────────────────────────────── */
+  .rb-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────── */
+  @media (max-width: 768px) {
+    .rb-layout {
+      grid-template-columns: 1fr;
+      padding: 72px 16px 60px;
+    }
+    .rb-sidebar {
+      position: static;
+      padding-right: 0;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .rb-main {
+      padding-left: 0;
+      border-left: none;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div class="glow" id="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="index.html#skills">Skills</a></li>
+    <li><a href="index.html#experience">Experience</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="rb-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="rb-sidebar">
+    <div class="rb-sidebar-label">Contents</div>
+    <ul class="rb-nav" id="rb-toc">
+      <li><a href="#quickstart">Quick Start</a></li>
+      <li><a href="#services">Services &amp; Ports</a></li>
+      <li><a href="#projects">Projects</a>
+        <ul class="rb-nav rb-nav-sub">
+          <li><a href="#email-manager">Email Manager</a></li>
+          <li><a href="#tankpit-bot">TankPit Bot</a></li>
+          <li><a href="#tankpit-ai">TankPit AI / RAG</a></li>
+          <li><a href="#ai-lab">AI Lab</a></li>
+        </ul>
+      </li>
+      <li><a href="#llamacpp">llama.cpp</a></li>
+      <li><a href="#scripts">Startup Scripts</a></li>
+      <li><a href="#cron">Cron Jobs</a></li>
+      <li><a href="#docker">Docker</a></li>
+      <li><a href="#venvs">Virtual Envs</a></li>
+      <li><a href="#logs">Logs</a></li>
+      <li><a href="#issues">Known Issues</a></li>
+      <li><a href="#env-vars">Env Variables</a></li>
+    </ul>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+      <button onclick="authLogout()" style="background:none;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-family:var(--mono);font-size:10px;padding:5px 10px;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase;transition:color 0.15s,border-color 0.15s;width:100%;" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)';" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)';">logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="rb-main">
+    <a href="index.html" class="rb-back">← back to portfolio</a>
+
+    <!-- PAGE HEADER -->
+    <div class="rb-page-header">
+      <div class="rb-eyebrow">WSL Home Lab</div>
+      <h1 class="rb-page-title">Home Lab <span>Runbook</span></h1>
+      <div class="rb-page-meta">
+        <span>📅 Last updated: 2026-03-17</span>
+        <span>🖥️ Host: WSL2 Ubuntu on Windows</span>
+        <span>👤 ukhan</span>
+      </div>
+    </div>
+
+    <!-- QUICK START -->
+    <section class="rb-section" id="quickstart">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">01</span>
+        Quick-Start Reference
+      </h2>
+      <div class="rb-quickstart-grid">
+        <div class="rb-qs-card">
+          <div class="rb-qs-service">Full TankPit stack</div>
+          <code class="rb-qs-cmd">bash ~/start-tankpit.sh</code>
+          <div class="rb-qs-port">Ports: 8080, 8081</div>
+        </div>
+        <div class="rb-qs-card">
+          <div class="rb-qs-service">Email Manager</div>
+          <code class="rb-qs-cmd">ICLOUD_PASS="..." python3 ~/email_manager.py</code>
+          <div class="rb-qs-port">Port: 5000</div>
+        </div>
+        <div class="rb-qs-card">
+          <div class="rb-qs-service">Mistral LLM only</div>
+          <code class="rb-qs-cmd">bash ~/start-llm.sh</code>
+          <div class="rb-qs-port">Port: 8080</div>
+        </div>
+        <div class="rb-qs-card">
+          <div class="rb-qs-service">Stop all LLM servers</div>
+          <code class="rb-qs-cmd">bash ~/stop-servers.sh</code>
+          <div class="rb-qs-port">—</div>
+        </div>
+        <div class="rb-qs-card">
+          <div class="rb-qs-service">Restart bot only</div>
+          <code class="rb-qs-cmd">bash ~/restart-bot.sh</code>
+          <div class="rb-qs-port">—</div>
+        </div>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>health checks</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>curl http://127.0.0.1:8080/health   # Mistral-7B
+curl http://127.0.0.1:8081/health   # nomic-embed</code></pre>
+      </div>
+
+      <p class="rb-prose"><strong>Current running services (as of last check):</strong></p>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Process</th><th>Service</th><th>Port</th><th>PID</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rb-status-dot"></span>llama-server</td><td>Mistral-7B</td><td><code>8080</code></td><td>23280</td></tr>
+            <tr><td><span class="rb-status-dot"></span>llama-server</td><td>nomic-embed</td><td><code>8081</code></td><td>23250</td></tr>
+            <tr><td><span class="rb-status-dot"></span>email_manager.py</td><td>Flask</td><td><code>5000</code></td><td>42985</td></tr>
+            <tr><td>Docker</td><td>installed, no containers running</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SERVICES & PORTS -->
+    <section class="rb-section" id="services">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">02</span>
+        Services &amp; Ports
+      </h2>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Port</th><th>Process</th><th>Bound To</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>5000</code></td><td>python3 email_manager.py</td><td>127.0.0.1</td><td>Email Manager web UI</td></tr>
+            <tr><td><code>8080</code></td><td>llama-server (Mistral)</td><td>127.0.0.1</td><td>LLM inference (chat completions)</td></tr>
+            <tr><td><code>8081</code></td><td>llama-server (nomic-embed)</td><td>127.0.0.1</td><td>Text embeddings (RAG)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="rb-section" id="projects">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">03</span>
+        Projects
+      </h2>
+
+      <!-- EMAIL MANAGER -->
+      <div class="rb-subsection" id="email-manager">
+        <h3 class="rb-subsection-heading">
+          1. Email Manager
+          <span class="rb-badge rb-badge-active">active</span>
+        </h3>
+        <div class="rb-info-row">
+          <div class="rb-info-chip"><span>File</span> ~/email_manager.py (1,745 lines)</div>
+          <div class="rb-info-chip"><span>Port</span> 5000</div>
+          <div class="rb-info-chip"><span>Stack</span> Python 3 · Flask · IMAP · Mistral-7B</div>
+        </div>
+        <p class="rb-prose">
+          Scans iCloud inbox (46k+ emails), categorizes into 9 buckets (security, job, finance, shopping, travel, social, news, subscription, other), surfaces unsubscribe candidates and spam via AI analysis, and generates weekly digests. Full-text search, batch delete, CSV export.
+        </p>
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>start</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>ICLOUD_PASS="your-app-specific-password" python3 ~/email_manager.py
+# Opens at http://localhost:5000</code></pre>
+        </div>
+
+        <p class="rb-prose"><strong>Environment variables:</strong></p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>Variable</th><th>Value</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>ICLOUD_PASS</code></td><td>(app-specific password)</td><td>Required at runtime — generate at appleid.apple.com</td></tr>
+              <tr><td><code>ICLOUD_USER</code></td><td>uk0430@icloud.com</td><td>Hardcoded in script</td></tr>
+              <tr><td><code>MISTRAL_URL</code></td><td>http://127.0.0.1:8080/v1/chat/completions</td><td>Mistral must be running</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rb-prose"><strong>Dependencies:</strong> No venv — uses system Python 3. Requires <code>flask</code>, <code>imaplib</code> (stdlib).</p>
+
+        <p class="rb-prose"><strong>Caches:</strong></p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>~/.email_manager_cache.json</code></td><td>Persistent email list (incremental scan)</td></tr>
+              <tr><td><code>~/.email_manager_ai.json</code></td><td>AI recommendations + digest cache</td></tr>
+              <tr><td><code>~/.email_manager_errors.log</code></td><td>IMAP error log</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="rb-prose"><strong>Known issue:</strong> IMAP connection drops at 600–1000 emails during full scans. Needs exponential backoff on reconnect.</p>
+      </div>
+
+      <hr class="rb-divider">
+
+      <!-- TANKPIT BOT -->
+      <div class="rb-subsection" id="tankpit-bot">
+        <h3 class="rb-subsection-heading">
+          2. TankPit Bot
+          <span class="rb-badge rb-badge-active">active · production</span>
+        </h3>
+        <div class="rb-info-row">
+          <div class="rb-info-chip"><span>Dir</span> ~/tankpit-bot-legacy/</div>
+          <div class="rb-info-chip"><span>Stack</span> Python 3.12 · discord.py 2.6.4 · Pillow · numpy · RAG</div>
+        </div>
+        <p class="rb-prose">
+          Production Discord bot for TankPit.com. Serves <code>/tank</code>, <code>/award</code>, <code>/leaderboard</code>, <code>/ask</code>, <code>/help</code> slash commands across two guilds. Player cards rendered with PIL. <code>/ask</code> uses hybrid SQL + RAG to answer natural-language questions about 13,250 players.
+        </p>
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>start (recommended)</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>bash ~/start-tankpit.sh
+# Starts nomic-embed (:8081), waits 2s, starts Mistral (:8080), waits 30s, then runs bot</code></pre>
+        </div>
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>or manually</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>cd ~/tankpit-bot-legacy
+source venv/bin/activate
+python bot.py</code></pre>
+        </div>
+
+        <p class="rb-prose"><strong>Environment variables</strong> (in <code>~/tankpit-bot-legacy/.env</code>):</p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>Variable</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>DISCORD_TOKEN</code></td><td>Bot token — rotate if exposed</td></tr>
+              <tr><td><code>GUILD_ID</code></td><td>Test guild (615551999701811221)</td></tr>
+              <tr><td><code>GUILD_ID_2</code></td><td>Production guild (311890399767822359)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rb-prose"><strong>Dependencies</strong> (<code>~/tankpit-bot-legacy/requirements.txt</code>):</p>
+        <div class="rb-code-block">
+          <div class="rb-code-label"><span>requirements.txt</span></div>
+          <pre><code>discord.py==2.6.4
+Pillow==12.1.1
+aiohttp==3.13.3
+numpy==2.4.2
+requests==2.32.5
+python-dotenv==1.2.1</code></pre>
+        </div>
+
+        <p class="rb-prose"><strong>Logs:</strong> <code>~/tankpit-bot-legacy/bot.log</code> (rotating, 5 MB max, 3 backups)</p>
+        <p class="rb-prose"><strong>Assets:</strong> <code>fonts/Gamer-Bold.otf</code> — player card font &nbsp;·&nbsp; <code>assets/awards.gif</code> — award sprite sheet &nbsp;·&nbsp; <code>cache/</code> — MD5-keyed PNG image cache</p>
+
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>clear image cache</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>rm -rf ~/tankpit-bot-legacy/cache/*</code></pre>
+        </div>
+
+        <p class="rb-prose"><strong>Architecture:</strong> <code>bot.py</code> — command router, image generation, cache layer. Guilds: test (<code>GUILD_ID</code>) + production (<code>GUILD_ID_2</code>). Railway deployment config in <code>railway.toml</code> (separate from local).</p>
+      </div>
+
+      <hr class="rb-divider">
+
+      <!-- TANKPIT AI -->
+      <div class="rb-subsection" id="tankpit-ai">
+        <h3 class="rb-subsection-heading">
+          3. TankPit AI / RAG Brain
+          <span class="rb-badge rb-badge-active">active</span>
+        </h3>
+        <div class="rb-info-row">
+          <div class="rb-info-chip"><span>Dir</span> ~/tankpit-ai/</div>
+          <div class="rb-info-chip"><span>Stack</span> Python 3.12 · SQLite · numpy · Playwright · Mistral + nomic-embed</div>
+        </div>
+        <p class="rb-prose">
+          The data + intelligence layer behind the Discord bot. Stores player profiles, embeddings, leaderboard snapshots, and provides the <code>route_question()</code> function used by the bot.
+        </p>
+        <p class="rb-prose"><strong>Activate venv:</strong> <code>source ~/tankpit-ai/venv/bin/activate</code></p>
+
+        <p class="rb-prose"><strong>Key files:</strong></p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>brain.py</code></td><td><code>route_question()</code> — SQL or RAG path</td></tr>
+              <tr><td><code>bot.py</code></td><td>Lightweight command router (imports brain.py)</td></tr>
+              <tr><td><code>crawler.py</code></td><td>Async Playwright scraper (rate-limited 4–7s)</td></tr>
+              <tr><td><code>crawl_profiles.py</code></td><td>Profile-specific scraper</td></tr>
+              <tr><td><code>leaderboard_crawler.py</code></td><td>Leaderboard snapshot scraper</td></tr>
+              <tr><td><code>bulletin_crawler.py</code></td><td>Bulletin board scraper</td></tr>
+              <tr><td><code>rebuild_bible.py</code></td><td>Rebuilds bible_chunks.json from scraped profiles (20–30 min)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rb-prose"><strong>Data files:</strong></p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Size</th><th>Contents</th></tr></thead>
+            <tbody>
+              <tr><td><code>tankpit.db</code></td><td>7.5 MB</td><td>SQLite: 13,250 players + leaderboard_snapshots</td></tr>
+              <tr><td><code>bible_chunks.json</code></td><td>292 MB</td><td>13,250 player profiles + 3,664 bulletin chunks with 384-dim embeddings</td></tr>
+              <tr><td><code>bible_bulletin.json</code></td><td>83 MB</td><td>Raw bulletin board data</td></tr>
+              <tr><td><code>leaderboards.json</code></td><td>10.9 MB</td><td>Leaderboard snapshot data</td></tr>
+              <tr><td><code>scraped/</code></td><td>~143 MB</td><td>13,250 player profiles + 1,006 site pages (raw text)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="rb-prose"><strong>Environment variables</strong> (in <code>~/tankpit-ai/.env</code>):</p>
+        <div class="rb-table-wrap">
+          <table>
+            <thead><tr><th>Variable</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>TANKPIT_USERNAME</code></td><td>uzairkhan1</td></tr>
+              <tr><td><code>TANKPIT_PASSWORD</code></td><td>TankPit login for scraping</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>rebuild bible (after scraping new profiles)</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>cd ~/tankpit-ai
+source venv/bin/activate
+python rebuild_bible.py --scraped-dir scraped/profiles --output bible_chunks.json
+# Requires nomic-embed running on :8081
+# Takes 20–30 minutes</code></pre>
+        </div>
+
+        <p class="rb-prose"><strong>SQLite schema:</strong></p>
+        <div class="rb-code-block">
+          <div class="rb-code-label"><span>sql</span></div>
+          <pre><code>tanks (tank_id, name, rank, color, country, time_played, destroyed_enemies,
+       deactivated, cups_gold, cups_silver, cups_bronze, cups_total,
+       awards_json, bf_tank_name, leaderboard_rank_overall)
+
+leaderboard_snapshots (tank_id, year, rank_overall, snapshot_date)</code></pre>
+        </div>
+      </div>
+
+      <hr class="rb-divider">
+
+      <!-- AI LAB -->
+      <div class="rb-subsection" id="ai-lab">
+        <h3 class="rb-subsection-heading">
+          4. AI Lab
+          <span class="rb-badge rb-badge-inactive">dev / inactive</span>
+        </h3>
+        <div class="rb-info-row">
+          <div class="rb-info-chip"><span>Dir</span> ~/ai-lab/</div>
+          <div class="rb-info-chip"><span>Stack</span> Python 3.12 · FastAPI · Qdrant (Docker, not running)</div>
+        </div>
+        <p class="rb-prose">
+          FastAPI gateway at <code>api/app.py</code> that wraps the local Mistral server. The <code>rag/docker-compose.yml</code> defines a Qdrant vector DB service but it's not deployed locally — RAG is handled directly in tankpit-ai instead.
+        </p>
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>start api gateway (dev only)</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>cd ~/ai-lab/api
+source .venv/bin/activate
+uvicorn app:app --port 8000</code></pre>
+        </div>
+        <div class="rb-code-block">
+          <div class="rb-code-label">
+            <span>start qdrant (if needed)</span>
+            <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+          </div>
+          <pre><code>cd ~/ai-lab/rag
+docker compose up -d
+# Qdrant available at http://localhost:6333</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- LLAMA.CPP -->
+    <section class="rb-section" id="llamacpp">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">04</span>
+        llama.cpp Setup
+      </h2>
+      <div class="rb-info-row">
+        <div class="rb-info-chip"><span>Dir</span> ~/llama.cpp/</div>
+        <div class="rb-info-chip"><span>Binary</span> ~/llama.cpp/build/bin/llama-server (CUDA-enabled)</div>
+      </div>
+      <p class="rb-prose">Compiled GGML inference server. Serves OpenAI-compatible API endpoints.</p>
+
+      <p class="rb-prose"><strong>Models in <code>~/models/</code>:</strong></p>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Size</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>mistral-7b-instruct-v0.2.Q4_K_M.gguf</code></td><td>4.3 GB</td><td>Chat/completions (port 8080)</td></tr>
+            <tr><td><code>nomic-embed-text-v1.5.Q4_K_M.gguf</code></td><td>84 MB</td><td>Text embeddings for RAG (port 8081)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>nomic-embed — embeddings, port 8081</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>cd ~/llama.cpp
+./build/bin/llama-server \
+  -m ~/models/nomic-embed-text-v1.5.Q4_K_M.gguf \
+  --port 8081 --host 127.0.0.1 --embedding -ngl 999</code></pre>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>mistral-7b — chat, port 8080</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>cd ~/llama.cpp
+./build/bin/llama-server \
+  -m ~/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf \
+  -ngl 999 -c 4096 -b 256 -t 10 \
+  -ctk q8_0 -ctv q8_0 -fa 1 \
+  --host 127.0.0.1 --port 8080</code></pre>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>load any other gguf model</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>cd ~/llama.cpp
+./build/bin/llama-server \
+  -m ~/models/&lt;model-name&gt;.gguf \
+  -ngl 999 -c 4096 \
+  --host 127.0.0.1 --port 8082</code></pre>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>api usage</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code># Chat
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"mistral","messages":[{"role":"user","content":"hello"}]}'
+
+# Embed
+curl http://127.0.0.1:8081/v1/embeddings \
+  -H "Content-Type: application/json" \
+  -d '{"model":"nomic-embed","input":"some text"}'</code></pre>
+      </div>
+
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>stop all llama servers</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>bash ~/stop-servers.sh
+# or: pkill -f "llama-server"</code></pre>
+      </div>
+    </section>
+
+    <!-- STARTUP SCRIPTS -->
+    <section class="rb-section" id="scripts">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">05</span>
+        Startup Scripts
+      </h2>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Script</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>~/start-tankpit.sh</code></td><td>Start nomic-embed + Mistral + bot (recommended)</td></tr>
+            <tr><td><code>~/start-llm.sh</code></td><td>Start Mistral only (dev)</td></tr>
+            <tr><td><code>~/restart-bot.sh</code></td><td>Restart bot without touching LLM servers</td></tr>
+            <tr><td><code>~/stop-servers.sh</code></td><td>Kill all llama-server processes</td></tr>
+            <tr><td><code>~/backup.sh</code></td><td>Manual backup to OneDrive (also runs via cron)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CRON -->
+    <section class="rb-section" id="cron">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">06</span>
+        Cron Jobs
+      </h2>
+      <div class="rb-code-block">
+        <div class="rb-code-label"><span>crontab</span></div>
+        <pre><code>0 10 * * 1   /home/ukhan/backup.sh</code></pre>
+      </div>
+      <p class="rb-prose">
+        <strong>backup.sh</strong> runs every Monday at 10:00 AM. Tars <code>tankpit-bot-legacy/</code>, <code>tankpit-ai/</code>, <code>PROJECT_TRACKER.html</code> and saves to <code>/mnt/c/Users/home/OneDrive/WSL-backup/</code>. Excludes <code>venv/</code>, <code>llama.cpp/build/</code>, <code>__pycache__</code>. Keeps last 7 backups.
+      </p>
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>manual backup</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>bash ~/backup.sh</code></pre>
+      </div>
+    </section>
+
+    <!-- DOCKER -->
+    <section class="rb-section" id="docker">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">07</span>
+        Docker
+      </h2>
+      <p class="rb-prose">Docker is installed but no containers are currently running. The only Docker config is <code>~/ai-lab/rag/docker-compose.yml</code> for Qdrant (vector DB, port 6333) — unused.</p>
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>docker commands</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>docker ps                    # check running containers
+cd ~/ai-lab/rag && docker compose up -d   # start Qdrant if needed</code></pre>
+      </div>
+    </section>
+
+    <!-- VENVS -->
+    <section class="rb-section" id="venvs">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">08</span>
+        Virtual Environments
+      </h2>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Path</th><th>Python</th><th>Used by</th></tr></thead>
+          <tbody>
+            <tr><td><code>~/tankpit-bot-legacy/venv/</code></td><td>3.12</td><td>TankPit Discord bot</td></tr>
+            <tr><td><code>~/tankpit-ai/venv/</code></td><td>3.12</td><td>RAG brain, scrapers, rebuild_bible</td></tr>
+            <tr><td><code>~/ai-lab/venv/</code></td><td>3.12</td><td>AI Lab (dev)</td></tr>
+            <tr><td><code>~/ai-lab/api/.venv/</code></td><td>3.12</td><td>FastAPI gateway (dev)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LOGS -->
+    <section class="rb-section" id="logs">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">09</span>
+        Logs
+      </h2>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Log</th><th>Location</th></tr></thead>
+          <tbody>
+            <tr><td>Mistral server</td><td><code>~/logs/mistral.log</code></td></tr>
+            <tr><td>nomic-embed server</td><td><code>~/logs/nomic-embed.log</code></td></tr>
+            <tr><td>Discord bot</td><td><code>~/tankpit-bot-legacy/bot.log</code> (+ <code>bot.log.1.gz</code>)</td></tr>
+            <tr><td>Email Manager errors</td><td><code>~/.email_manager_errors.log</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rb-code-block">
+        <div class="rb-code-label">
+          <span>tail all logs</span>
+          <button class="rb-copy-btn" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code>tail -f ~/logs/mistral.log ~/logs/nomic-embed.log ~/tankpit-bot-legacy/bot.log</code></pre>
+      </div>
+    </section>
+
+    <!-- KNOWN ISSUES -->
+    <section class="rb-section" id="issues">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">10</span>
+        Known Issues
+      </h2>
+      <ul class="rb-issue-list">
+        <li>
+          <span class="rb-issue-num">BUG-1</span>
+          <div><strong>Email manager scan drops</strong> at 600–1000 emails — IMAP connection timeout. Needs exponential backoff + per-email retry.</div>
+        </li>
+        <li>
+          <span class="rb-issue-num">BUG-2</span>
+          <div><strong>Player card cache is stale</strong> after stat updates — cache key is <code>tank_id</code> only. Clear with <code>rm -rf ~/tankpit-bot-legacy/cache/*</code>.</div>
+        </li>
+        <li>
+          <span class="rb-issue-num">BUG-3</span>
+          <div><strong>No cron for bible refresh</strong> — must run <code>rebuild_bible.py</code> manually after scraping new profiles.</div>
+        </li>
+        <li>
+          <span class="rb-issue-num">BUG-4</span>
+          <div><strong>Leaderboard data not in RAG</strong> — <code>leaderboards.json</code> not merged into <code>bible_chunks.json</code>, so <code>/ask</code> can't answer tournament history questions accurately.</div>
+        </li>
+        <li>
+          <span class="rb-issue-num">SEC-1</span>
+          <div><strong>Credentials in .env files</strong> — Discord token and TankPit password are in version-tracked <code>.env</code> files. Rotate if repo is ever made public.</div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ENV VARS -->
+    <section class="rb-section" id="env-vars">
+      <h2 class="rb-section-heading">
+        <span class="rb-section-icon">11</span>
+        Environment Variable Reference
+      </h2>
+      <div class="rb-table-wrap">
+        <table>
+          <thead><tr><th>Variable</th><th>Used by</th><th>How to set</th></tr></thead>
+          <tbody>
+            <tr><td><code>ICLOUD_PASS</code></td><td>email_manager.py</td><td>Set at runtime: <code>ICLOUD_PASS="..." python3 ~/email_manager.py</code></td></tr>
+            <tr><td><code>DISCORD_TOKEN</code></td><td>tankpit-bot-legacy</td><td><code>~/tankpit-bot-legacy/.env</code></td></tr>
+            <tr><td><code>GUILD_ID</code></td><td>tankpit-bot-legacy</td><td><code>~/tankpit-bot-legacy/.env</code></td></tr>
+            <tr><td><code>GUILD_ID_2</code></td><td>tankpit-bot-legacy</td><td><code>~/tankpit-bot-legacy/.env</code></td></tr>
+            <tr><td><code>TANKPIT_USERNAME</code></td><td>tankpit-ai scrapers</td><td><code>~/tankpit-ai/.env</code></td></tr>
+            <tr><td><code>TANKPIT_PASSWORD</code></td><td>tankpit-ai scrapers</td><td><code>~/tankpit-ai/.env</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer style="padding-top:32px;border-top:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span>WSL Home Lab Runbook · ukhan · 2026-03-17</span>
+      <span>
+        <a href="/ops.html" style="color:inherit;text-decoration:none;">[ops]</a>
+        <a href="/noc.html" style="color:inherit;text-decoration:none;margin-left:8px;">[noc]</a>
+        <a href="/tracker.html" style="color:inherit;text-decoration:none;margin-left:8px;">[tracker]</a>
+      </span>
+    </footer>
+  </main>
+
+</div>
+
+<script>
+// Copy code block
+function copyCode(btn) {
+  const pre = btn.closest('.rb-code-block').querySelector('pre code');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'copied!';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1500);
+  });
+}
+
+// Active sidebar nav on scroll
+(function () {
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.rb-nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.rb-nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+})();
+</script>
+</body>
+</html>
