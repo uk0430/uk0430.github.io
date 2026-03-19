@@ -1,32 +1,36 @@
 # Portfolio Site — uk0430.github.io
 
-Personal portfolio for Uzair Khan, Network Operations Engineer.
+> Full master context: `~/.claude/CLAUDE.md`
 
-## Structure
-- index.html — main portfolio page
-- assets/style.css — all shared styles (dark/light mode vars, components)
-- assets/main.js — theme toggle, accordion, scroll animations
-- projects/tankpit.html — TankPit Discord Bot deep dive page
-- tracker.html — job application tracker (private, localStorage)
-- ops.html — private ops dashboard (kanban, scraper log, bot status, quick links)
-- noc.html — NOC/Jira project tracker (reads noc-data.json)
-- noc-data.json — SOURCE OF TRUTH for all projects and tickets (Claude edits this)
+**Repo:** `~/uk0430.github.io/` | **Live:** uk0430.github.io
+**Deploy:** `git add . && git commit -m "..." && git push` → GitHub Pages auto-deploys
 
-## Deploy
-git add . && git commit -m "message" && git push
-GitHub Pages auto-deploys from main branch.
+## Key Files
+| File | Purpose |
+|------|---------|
+| `index.html` | Main portfolio page |
+| `assets/style.css` | All shared styles (dark/light mode vars, components) |
+| `assets/main.js` | Theme toggle, accordion, scroll animations |
+| `noc-data.json` | **SOURCE OF TRUTH** for NOC board — Claude edits this |
+| `projects/tankpit.html` | TankPit Bot deep-dive page |
+| `tracker.html` | Job tracker (private, localStorage) |
+| `ops.html` | Ops dashboard (kanban, scraper log, bot status) |
+| `noc.html` | NOC/Jira project tracker (reads noc-data.json) |
 
 ## Design
 - Dark default, light mode toggle (saved to localStorage)
 - Fonts: Syne (display), IBM Plex Mono, IBM Plex Sans
-- Colors: --accent #38bdf8, --green #34d399, --amber #fbbf24, --purple #a78bfa
+- Colors: `--accent #38bdf8`, `--green #34d399`, `--amber #fbbf24`, `--purple #a78bfa`
 - No phone/email on public site — LinkedIn and GitHub only
 
-## NOC / Project Tracker
-noc.html reads noc-data.json on every load. To update the board:
-1. Edit noc-data.json (tickets array)
-2. Update "lastUpdated" field at top
-3. git add noc-data.json && git commit -m "noc: ..." && git push
+## Private Pages (not in public nav)
+- `/ops.html` — linked from footer `[ops]` and terminal `cd ops`
+- `/noc.html` — linked from footer `[noc]` and terminal `cd noc`
+- `/tracker.html` — linked from footer `[tracker]` and terminal `cd tracker`
+
+## NOC Board Updates
+1. Edit `noc-data.json` (tickets array), update `"lastUpdated"` at top
+2. `git add noc-data.json && git commit -m "noc: ..." && git push`
 
 ### Ticket schema
 ```json
@@ -43,21 +47,7 @@ noc.html reads noc-data.json on every load. To update the board:
 }
 ```
 
-### Projects
-- TANKPIT — TankPit Discord Bot (Python, SQLite, Railway)
-- BIBLE — Bible RAG system (16,914 chunks, SQLite embeddings)
-- PORTFOLIO — uk0430.github.io website
-- MAIL — Mail/job email scraper scripts
-- HOMELAB — Raspberry Pi, SNMP, Grafana, home network
-- SCRIPTS — General automation and utility scripts
-
-## Private pages (not in public nav)
-- /ops.html — linked from footer [ops] and terminal `cd ops`
-- /noc.html — linked from footer [noc] and terminal `cd noc`
-- /tracker.html — linked from footer [tracker] and terminal `cd tracker`
-
-## Next features to build
-- Resume auto-update via GitHub Action + Claude API
-- More project pages
-- Blog/notes section
-- GoatCounter analytics (needs signup at goatcounter.com)
+## Next Steps
+- [ ] GoatCounter analytics (needs signup at goatcounter.com)
+- [ ] Resume auto-update via GitHub Action (auto-regenerate from work history)
+- [ ] More project pages + blog/notes section
