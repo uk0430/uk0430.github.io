@@ -1,21 +1,43 @@
 {
   "lastUpdated": "2026-03-18",
   "projects": [
-    { "id": "TANKPIT",   "name": "TankPit Bot",       "color": "#34d399" },
-    { "id": "BIBLE",     "name": "TankPit Bible (RAG)","color": "#a78bfa" },
-    { "id": "PORTFOLIO", "name": "Portfolio Site",     "color": "#38bdf8" },
-    { "id": "MAIL",      "name": "Mail Scraper",       "color": "#fbbf24" },
-    { "id": "HOMELAB",   "name": "Home Lab / RPi",     "color": "#f87171" },
-    { "id": "SCRIPTS",   "name": "Scripts / Misc",     "color": "#94a3b8" }
+    {
+      "id": "TANKPIT",
+      "name": "TankPit Bot",
+      "color": "#34d399"
+    },
+    {
+      "id": "BIBLE",
+      "name": "TankPit Bible (RAG)",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "PORTFOLIO",
+      "name": "Portfolio Site",
+      "color": "#38bdf8"
+    },
+    {
+      "id": "MAIL",
+      "name": "Mail Scraper",
+      "color": "#fbbf24"
+    },
+    {
+      "id": "HOMELAB",
+      "name": "Home Lab / RPi",
+      "color": "#f87171"
+    },
+    {
+      "id": "SCRIPTS",
+      "name": "Scripts / Misc",
+      "color": "#94a3b8"
+    }
   ],
   "tickets": [
-
-    // ── TANKPIT ──────────────────────────────────────────────────────────────
     {
       "id": "TANKPIT-001",
       "project": "TANKPIT",
-      "title": "/award command — banner image generation",
-      "description": "Multi-step UI: name input → dropdowns (award, color, size) → PIL renders PNG. Uses send_message directly (not defer) to avoid 3-second Discord timeout. MD5-cached.",
+      "title": "/award command \u2014 banner image generation",
+      "description": "Multi-step UI: name input \u2192 dropdowns (award, color, size) \u2192 PIL renders PNG. Uses send_message directly (not defer) to avoid 3-second Discord timeout. MD5-cached.",
       "status": "done",
       "priority": "P1",
       "notes": "Working in production. 19-award system with Discord custom emoji.",
@@ -25,18 +47,18 @@
     {
       "id": "TANKPIT-002",
       "project": "TANKPIT",
-      "title": "/tank command — live player card",
+      "title": "/tank command \u2014 live player card",
       "description": "Fetches live TankPit API profile, renders PIL player card PNG with name, faction, awards, stats, cups. TankSelectView dropdown for multiple results. Handles private profiles.",
       "status": "done",
       "priority": "P1",
-      "notes": "Working. Known issue: cache keyed on tank_id only — see TANKPIT-007.",
+      "notes": "Working. Known issue: cache keyed on tank_id only \u2014 see TANKPIT-007.",
       "created": "2025-10-01",
       "updated": "2026-03-17"
     },
     {
       "id": "TANKPIT-003",
       "project": "TANKPIT",
-      "title": "/leaderboard command — live leaderboard image",
+      "title": "/leaderboard command \u2014 live leaderboard image",
       "description": "Fetches live TankPit leaderboard, renders PIL image. Options: year, top (1-100), color (red/purple/blue/orange), rank filter. Sends embed with clickable top-3 profile links.",
       "status": "done",
       "priority": "P1",
@@ -47,7 +69,7 @@
     {
       "id": "TANKPIT-004",
       "project": "TANKPIT",
-      "title": "/ask command — RAG + SQL hybrid Q&A",
+      "title": "/ask command \u2014 RAG + SQL hybrid Q&A",
       "description": "Two-layer pipeline: SQL layer handles structured queries (cups, kills, rank counts, award lists), RAG layer handles everything else via nomic-embed + Mistral. In-memory cache with TTL. Award emoji injection. Disabled on Railway (llama.cpp is local only).",
       "status": "done",
       "priority": "P1",
@@ -62,7 +84,7 @@
       "description": "All 19 awards extracted from awards.gif sprite sheet. Custom emoji uploaded to Discord servers. AWARD_EMOJI and _EMOJI_BY_KEY dicts. inject_award_emoji() post-processes RAG answers. _awards_to_emoji() handles both clean and raw API award formats.",
       "status": "done",
       "priority": "P2",
-      "notes": "Note: Discord's :purple_heart: conflicts — custom one uploaded as :purple_heart1:",
+      "notes": "Note: Discord's :purple_heart: conflicts \u2014 custom one uploaded as :purple_heart1:",
       "created": "2025-11-01",
       "updated": "2026-03-17"
     },
@@ -73,14 +95,14 @@
       "description": "Bot live on Railway US East Virginia. Two guilds: production (311890399767822359) and test (615551999701811221). railway.toml with nixpacks builder. Env vars: DISCORD_TOKEN, GUILD_ID, GUILD_ID_2.",
       "status": "done",
       "priority": "P1",
-      "notes": "Running in production. /ask disabled on Railway — llama.cpp is local only.",
+      "notes": "Running in production. /ask disabled on Railway \u2014 llama.cpp is local only.",
       "created": "2026-01-01",
       "updated": "2026-03-17"
     },
     {
       "id": "TANKPIT-007",
       "project": "TANKPIT",
-      "title": "Fix player card cache — stale cards on stat change",
+      "title": "Fix player card cache \u2014 stale cards on stat change",
       "description": "generate_player_card cache keyed on tank_id only. If a player's stats change, stale card is served until cache/ is manually cleared. Fix: key on hash of stats fields instead.",
       "status": "backlog",
       "priority": "P2",
@@ -103,7 +125,7 @@
       "id": "TANKPIT-009",
       "project": "TANKPIT",
       "title": "Prune unused dependencies",
-      "description": "requirements.txt has beautifulsoup4 and lxml — both unused. Remove to keep install lean.",
+      "description": "requirements.txt has beautifulsoup4 and lxml \u2014 both unused. Remove to keep install lean.",
       "status": "backlog",
       "priority": "P3",
       "notes": "",
@@ -136,7 +158,7 @@
       "id": "TANKPIT-012",
       "project": "TANKPIT",
       "title": "Split bot.py into modules",
-      "description": "bot.py is 1,467 lines — single file. Natural split: bot.py (setup + commands), banner.py (image generators), tankpit_api.py (API helpers), ask.py (RAG + SQL layer), utils/db.py.",
+      "description": "bot.py is 1,467 lines \u2014 single file. Natural split: bot.py (setup + commands), banner.py (image generators), tankpit_api.py (API helpers), ask.py (RAG + SQL layer), utils/db.py.",
       "status": "backlog",
       "priority": "P2",
       "notes": "",
@@ -165,12 +187,10 @@
       "created": "2026-03-17",
       "updated": "2026-03-17"
     },
-
-    // ── BIBLE (TankPit game knowledge base) ──────────────────────────────────
     {
       "id": "BIBLE-001",
       "project": "BIBLE",
-      "title": "TankPit bible — 13,250 game profile chunks in SQLite",
+      "title": "TankPit bible \u2014 13,250 game profile chunks in SQLite",
       "description": "The 'bible' is TankPit's game knowledge base, NOT religious text. Built from crawling 13,250 TankPit player profiles + site pages (about, leaderboards, ~1,006 pages total). Chunks embedded with nomic-embed-text-v1.5 via llama.cpp. Stored in bible_chunks.json. Rebuilt 2026-03-17.",
       "status": "done",
       "priority": "P1",
@@ -222,8 +242,6 @@
       "created": "2025-11-01",
       "updated": "2026-03-17"
     },
-
-    // ── PORTFOLIO ─────────────────────────────────────────────────────────────
     {
       "id": "PORTFOLIO-001",
       "project": "PORTFOLIO",
@@ -261,7 +279,7 @@
       "id": "PORTFOLIO-004",
       "project": "PORTFOLIO",
       "title": "Contact form via Formspree + job tracker",
-      "description": "Working contact form (Formspree). tracker.html — job application tracker with kanban columns, localStorage.",
+      "description": "Working contact form (Formspree). tracker.html \u2014 job application tracker with kanban columns, localStorage.",
       "status": "done",
       "priority": "P2",
       "notes": "",
@@ -275,7 +293,7 @@
       "description": "ops.html: private ops dashboard. noc.html: this board reading noc-data.json. Both behind client-side login. Linked from footer [ops][noc][tracker] at 18% opacity.",
       "status": "done",
       "priority": "P2",
-      "notes": "Private pages: ops.html, noc.html, tracker.html — noindex, auth-gated.",
+      "notes": "Private pages: ops.html, noc.html, tracker.html \u2014 noindex, auth-gated.",
       "created": "2026-03-17",
       "updated": "2026-03-17"
     },
@@ -286,14 +304,14 @@
       "description": "assets/auth.js: login overlay on ops.html, noc.html, tracker.html. Token stored in localStorage with 7-day expiry. Single login persists across all three pages.",
       "status": "done",
       "priority": "P1",
-      "notes": "Credentials in JS source — security by obscurity only, fine for personal use on a static site.",
+      "notes": "Credentials in JS source \u2014 security by obscurity only, fine for personal use on a static site.",
       "created": "2026-03-17",
       "updated": "2026-03-17"
     },
     {
       "id": "PORTFOLIO-007",
       "project": "PORTFOLIO",
-      "title": "GitHub Action — resume auto-update",
+      "title": "GitHub Action \u2014 resume auto-update",
       "description": "GitHub Action that auto-regenerates resume text/PDF from latest work history and commits it to repo on a schedule or on trigger.",
       "status": "backlog",
       "priority": "P2",
@@ -316,7 +334,7 @@
       "id": "PORTFOLIO-009",
       "project": "PORTFOLIO",
       "title": "GoatCounter analytics",
-      "description": "Placeholder script already in index.html and tankpit.html. Needs: sign up at goatcounter.com → get site code → uncomment script and replace YOURCODE.",
+      "description": "Placeholder script already in index.html and tankpit.html. Needs: sign up at goatcounter.com \u2192 get site code \u2192 uncomment script and replace YOURCODE.",
       "status": "backlog",
       "priority": "P3",
       "notes": "Commented script already in both pages.",
@@ -338,15 +356,13 @@
       "id": "PORTFOLIO-011",
       "project": "PORTFOLIO",
       "title": "TankPit Bot project page",
-      "description": "projects/tankpit.html — detailed writeup of bot architecture, TankPit bible, leaderboard system, award generation.",
+      "description": "projects/tankpit.html \u2014 detailed writeup of bot architecture, TankPit bible, leaderboard system, award generation.",
       "status": "done",
       "priority": "P2",
       "notes": "Live at /projects/tankpit.html",
       "created": "2026-02-01",
       "updated": "2026-03-10"
     },
-
-    // ── MAIL SCRAPER ──────────────────────────────────────────────────────────
     {
       "id": "MAIL-001",
       "project": "MAIL",
@@ -402,8 +418,6 @@
       "created": "2026-03-17",
       "updated": "2026-03-17"
     },
-
-    // ── HOME LAB ──────────────────────────────────────────────────────────────
     {
       "id": "HOMELAB-001",
       "project": "HOMELAB",
@@ -418,18 +432,18 @@
     {
       "id": "HOMELAB-002",
       "project": "HOMELAB",
-      "title": "Pi-hole — network-wide DNS ad blocking",
+      "title": "Pi-hole \u2014 network-wide DNS ad blocking",
       "description": "Pi-hole v6 running in Docker on :8053/admin. 1,614,089 unique domains blocked across 11 blocklists (StevenBlack, AdAway, AdGuard, EasyPrivacy, Prigent, OSINT, oisd big, Hagezi Pro/TIF/DoH). Desktop + iPhone using Pi as DNS. Unbound recursive resolver on :5335 as upstream (no third-party DNS).",
       "status": "done",
       "priority": "P1",
-      "notes": "Pi-hole → Unbound → root servers. Verizon router DHCP DNS locked — manual DNS set per device.",
+      "notes": "Pi-hole \u2192 Unbound \u2192 root servers. Verizon router DHCP DNS locked \u2014 manual DNS set per device.",
       "created": "2026-03-17",
       "updated": "2026-03-18"
     },
     {
       "id": "HOMELAB-003",
       "project": "HOMELAB",
-      "title": "Netdata monitoring — Pi + Desktop",
+      "title": "Netdata monitoring \u2014 Pi + Desktop",
       "description": "Netdata running on Pi (:19999) as parent node. Desktop (DESKTOP-5NSN95M) streaming metrics to Pi via streaming API. Live CPU, memory, disk, network, temperature, Docker container stats.",
       "status": "done",
       "priority": "P2",
@@ -440,7 +454,7 @@
     {
       "id": "HOMELAB-004",
       "project": "HOMELAB",
-      "title": "Gitea — self-hosted Git server",
+      "title": "Gitea \u2014 self-hosted Git server",
       "description": "Gitea running in Docker on :3000. SQLite backend. SSH git on :2222. Ready for local repo mirrors.",
       "status": "done",
       "priority": "P2",
@@ -451,18 +465,18 @@
     {
       "id": "HOMELAB-005",
       "project": "HOMELAB",
-      "title": "Nginx Proxy Manager — reverse proxy",
+      "title": "Nginx Proxy Manager \u2014 reverse proxy",
       "description": "NPM running in Docker on :81 (admin), :80/:443 (proxy). Ready to proxy internal services with SSL.",
       "status": "done",
       "priority": "P2",
-      "notes": "http://192.168.1.254:81. Default creds: admin@example.com / changeme — change these.",
+      "notes": "http://192.168.1.254:81. Default creds: admin@example.com / changeme \u2014 change these.",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
     {
       "id": "HOMELAB-006",
       "project": "HOMELAB",
-      "title": "Watchtower — auto container updates",
+      "title": "Watchtower \u2014 auto container updates",
       "description": "Watchtower running in Docker. Checks for image updates daily at 4am, pulls and restarts containers automatically. DOCKER_API_VERSION=1.41 set for compatibility.",
       "status": "done",
       "priority": "P2",
@@ -484,22 +498,22 @@
     {
       "id": "HOMELAB-008",
       "project": "HOMELAB",
-      "title": "Network inventory — 17 devices mapped",
-      "description": "Full nmap scan of 192.168.1.0/24. Identified 17 active devices: desktop, iPhone, iPad, MacBook (Khanstimemachine), Roku TV, Smart TV, Echo x2, Ring cam, Pura diffuser, Epson printer, Chromecast (.244 — ADB port 5555), unknown Chinese IoT (.243, Sichuan AI-Link), E3200 AP, Pi. Verizon CR1000B router.",
+      "title": "Network inventory \u2014 17 devices mapped",
+      "description": "Full nmap scan of 192.168.1.0/24. Identified 17 active devices: desktop, iPhone, iPad, MacBook (Khanstimemachine), Roku TV, Smart TV, Echo x2, Ring cam, Pura diffuser, Epson printer, Chromecast (.244 \u2014 ADB port 5555), unknown Chinese IoT (.243, Sichuan AI-Link), E3200 AP, Pi. Verizon CR1000B router.",
       "status": "done",
       "priority": "P2",
-      "notes": ".243 (Sichuan AI-Link) flagged as suspicious — unknown Chinese IoT device. .244 = Chromecast/Android TV (ADB open).",
+      "notes": ".243 (Sichuan AI-Link) flagged as suspicious \u2014 unknown Chinese IoT device. .244 = Chromecast/Android TV (ADB open).",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
     {
       "id": "HOMELAB-009",
       "project": "HOMELAB",
-      "title": "IoT network segmentation — move devices to Verizon IoT WiFi",
+      "title": "IoT network segmentation \u2014 move devices to Verizon IoT WiFi",
       "description": "Verizon router has built-in IoT WiFi network (separate SSID). Move: Ring cam, Echo x2, Pura, Roku TV, Smart TV, Epson printer, Chromecast (.244). Trusted: desktop, iPhone, iPad, MacBook. Quarantine: .243 (Chinese IoT).",
       "status": "in-progress",
       "priority": "P1",
-      "notes": "Manual process — switch each device's WiFi to IoT SSID. User doing gradually.",
+      "notes": "Manual process \u2014 switch each device's WiFi to IoT SSID. User doing gradually.",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
@@ -543,12 +557,10 @@
       "description": "NPM default login is admin@example.com / changeme. Change immediately.",
       "status": "backlog",
       "priority": "P1",
-      "notes": "http://192.168.1.254:81 → Users → change email and password.",
+      "notes": "http://192.168.1.254:81 \u2192 Users \u2192 change email and password.",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
-
-    // ── SCRIPTS ───────────────────────────────────────────────────────────────
     {
       "id": "SCRIPTS-001",
       "project": "SCRIPTS",
@@ -564,7 +576,7 @@
       "id": "SCRIPTS-002",
       "project": "SCRIPTS",
       "title": "tankpit alias + start-tankpit.sh startup script",
-      "description": "Shell alias 'tankpit' runs ~/start-tankpit.sh — starts nomic-embed (8081) + Mistral (8080) in background, waits 30s for load, then starts bot. Aliases: restart-bot, stop-servers, startbot.",
+      "description": "Shell alias 'tankpit' runs ~/start-tankpit.sh \u2014 starts nomic-embed (8081) + Mistral (8080) in background, waits 30s for load, then starts bot. Aliases: restart-bot, stop-servers, startbot.",
       "status": "done",
       "priority": "P2",
       "notes": "",
