@@ -522,9 +522,9 @@
       "project": "HOMELAB",
       "title": "Mirror repos to Gitea",
       "description": "Set up local mirrors of tankpit-bot-legacy, tankpit-ai, uk0430.github.io in self-hosted Gitea. Backup + offline dev capability.",
-      "status": "backlog",
+      "status": "done",
       "priority": "P2",
-      "notes": "Gitea running at http://192.168.1.254:3000. Create admin account first.",
+      "notes": "Repos mirrored: tankpit-bot-legacy, tankpit-ai, uk0430.github.io. Gitea at http://192.168.1.254:3000/uk0430",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
@@ -555,9 +555,9 @@
       "project": "HOMELAB",
       "title": "Change Nginx Proxy Manager default credentials",
       "description": "NPM default login is admin@example.com / changeme. Change immediately.",
-      "status": "backlog",
+      "status": "done",
       "priority": "P1",
-      "notes": "http://192.168.1.254:81 \u2192 Users \u2192 change email and password.",
+      "notes": "NPM credentials changed by user.",
       "created": "2026-03-18",
       "updated": "2026-03-18"
     },
