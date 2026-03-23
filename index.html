@@ -29,10 +29,13 @@
     <li><a href="#skills">Skills</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Projects</a></li>
-    <li><a href="#education">Education</a></li>
     <li><a href="#activity">Activity</a></li>
     <li><a href="#now">Now</a></li>
+    <li><a href="#education">Education</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="changelog.html">Notebook</a></li>
+    <li><a href="ideas.html">Ideas</a></li>
+    <li><a href="context.html">Context</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-status">
@@ -74,22 +77,22 @@
       <a href="https://github.com/uk0430" class="btn btn-ghost" target="_blank">⌥ GitHub</a>
       <a href="assets/Uzair_Khan_Resume.pdf" class="btn btn-ghost" download>↓ Resume PDF</a>
     </div>
-    <div class="fade-in" style="display:flex;gap:40px;padding-top:40px;border-top:1px solid var(--border);">
-      <div>
-        <div style="font-family:var(--display);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;">8<span style="color:var(--accent);">+</span></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Years Experience</div>
+    <div class="hero-stats fade-in">
+      <div class="stat-card">
+        <div class="stat-value">8<span class="stat-plus">+</span></div>
+        <div class="stat-label">Years Experience</div>
       </div>
-      <div>
-        <div style="font-family:var(--display);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;">3</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">NOC Environments</div>
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">NOC Environments</div>
       </div>
-      <div>
-        <div style="font-family:var(--display);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;">200<span style="color:var(--accent);">+</span></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Endpoints Managed</div>
+      <div class="stat-card">
+        <div class="stat-value">200<span class="stat-plus">+</span></div>
+        <div class="stat-label">Endpoints Managed</div>
       </div>
-      <div>
-        <div style="font-family:var(--display);font-size:36px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;">13k<span style="color:var(--accent);">+</span></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Profiles in RAG DB</div>
+      <div class="stat-card">
+        <div class="stat-value">13k<span class="stat-plus">+</span></div>
+        <div class="stat-label">Profiles in RAG DB</div>
       </div>
     </div>
   </section>
@@ -103,7 +106,7 @@
     </div>
     <div class="skills-grid">
       <div class="skill-card">
-        <div class="skill-card-label">Networking & Protocols</div>
+        <div class="skill-card-label"><span class="skill-icon">🌐</span>Networking & Protocols</div>
         <div class="skill-tags">
           <span class="tag tag-blue">OSPF</span><span class="tag tag-blue">BGP</span>
           <span class="tag tag-blue">EIGRP</span><span class="tag tag-blue">MPLS</span>
@@ -115,7 +118,7 @@
         </div>
       </div>
       <div class="skill-card">
-        <div class="skill-card-label">Satellite & RF</div>
+        <div class="skill-card-label"><span class="skill-icon">📡</span>Satellite & RF</div>
         <div class="skill-tags">
           <span class="tag tag-amber">iDirect</span><span class="tag tag-amber">Hughes</span>
           <span class="tag tag-amber">Comtech</span><span class="tag tag-amber">DVB-S2</span>
@@ -126,7 +129,7 @@
         </div>
       </div>
       <div class="skill-card">
-        <div class="skill-card-label">Monitoring & Security</div>
+        <div class="skill-card-label"><span class="skill-icon">🔍</span>Monitoring & Security</div>
         <div class="skill-tags">
           <span class="tag tag-green">SolarWinds NPM/NTA</span>
           <span class="tag tag-green">Splunk SIEM</span>
@@ -138,7 +141,7 @@
         </div>
       </div>
       <div class="skill-card">
-        <div class="skill-card-label">Endpoint & Cloud</div>
+        <div class="skill-card-label"><span class="skill-icon">☁️</span>Endpoint & Cloud</div>
         <div class="skill-tags">
           <span class="tag tag-purple">Microsoft Intune</span>
           <span class="tag tag-purple">SCCM</span><span class="tag tag-purple">Autopilot</span>
@@ -149,7 +152,7 @@
         </div>
       </div>
       <div class="skill-card">
-        <div class="skill-card-label">Automation & Dev</div>
+        <div class="skill-card-label"><span class="skill-icon">⚙️</span>Automation & Dev</div>
         <div class="skill-tags">
           <span class="tag tag-blue">PowerShell</span>
           <span class="tag tag-blue">Python</span>
@@ -162,7 +165,7 @@
         </div>
       </div>
       <div class="skill-card">
-        <div class="skill-card-label">ITSM & Operations</div>
+        <div class="skill-card-label"><span class="skill-icon">🎫</span>ITSM & Operations</div>
         <div class="skill-tags">
           <span class="tag tag-green">ServiceNow</span>
           <span class="tag tag-green">Jira</span>
@@ -347,9 +350,15 @@
 
       <a href="projects/tankpit.html" class="project-card">
         <span class="project-arrow">↗</span>
-        <span class="project-icon">🤖</span>
+        <div class="project-visual pv-bot">
+          <span class="project-visual-icon">🤖</span>
+        </div>
+        <div class="project-badges">
+          <span class="badge badge-live">Pi Docker</span>
+          <span class="badge badge-gh">github.com/uk0430</span>
+        </div>
         <div class="project-title">TankPit Discord Bot</div>
-        <div class="project-sub">RAG + SQL AI System · github.com/uk0430</div>
+        <div class="project-sub">RAG + SQL AI System</div>
         <p class="project-desc">
           Full-stack Discord bot with a hybrid RAG + SQL AI Q&A engine. Local Mistral 7B LLM
           and nomic-embed via llama.cpp. 13,250 embedded player profiles, vector search,
@@ -366,10 +375,17 @@
         </div>
       </a>
 
-      <div class="project-card">
-        <span class="project-icon">🌐</span>
+      <a href="projects/scraper.html" class="project-card">
+        <span class="project-arrow">↗</span>
+        <div class="project-visual pv-data">
+          <span class="project-visual-icon">🌐</span>
+        </div>
+        <div class="project-badges">
+          <span class="badge badge-live">Local</span>
+          <span class="badge badge-gh">13,250+ Profiles</span>
+        </div>
         <div class="project-title">Data Pipeline & Web Scraper</div>
-        <div class="project-sub">Async Crawler · 13,250+ Profiles · 5,000+ Days</div>
+        <div class="project-sub">Async Crawler · 5,000+ Days of Data</div>
         <p class="project-desc">
           Async web scrapers (Python/aiohttp/Playwright) collecting 13,250+ player profiles
           and 14 years of community bulletin board data. rebuild_bible.py chunks, embeds,
@@ -383,25 +399,32 @@
           <span class="tag tag-green">asyncio</span>
           <span class="tag tag-amber">Data Pipeline</span>
         </div>
-      </div>
+      </a>
 
-      <div class="project-card">
-        <span class="project-icon">🥧</span>
+      <a href="projects/homelab.html" class="project-card">
+        <span class="project-arrow">↗</span>
+        <div class="project-visual pv-homelab">
+          <span class="project-visual-icon">🥧</span>
+        </div>
+        <div class="project-badges">
+          <span class="badge badge-live">Live</span>
+          <span class="badge badge-gh">Pi · Grafana · Docker</span>
+        </div>
         <div class="project-title">Home Network Monitoring Lab</div>
-        <div class="project-sub">Raspberry Pi · SNMP · In Progress</div>
+        <div class="project-sub">Raspberry Pi · Enterprise NOC at Home</div>
         <p class="project-desc">
-          Raspberry Pi-based home lab replicating enterprise NOC workflows — SNMP polling,
-          traffic capture, and alerting on home LAN. Mirrors SolarWinds-style monitoring
-          in a personal environment. Exploring Grafana dashboard integrations.
+          Raspberry Pi running 14 Docker services — Pi-hole, Grafana, Prometheus, cAdvisor,
+          Cowrie SSH honeypot, fail2ban, Nextcloud, Netdata, Gitea, and more. Full Security NOC
+          dashboard live with container metrics, threat intel, and nmap network scanning.
         </p>
         <div class="project-tags">
           <span class="tag tag-amber">Raspberry Pi</span>
-          <span class="tag tag-green">SNMP</span>
-          <span class="tag tag-green">Wireshark</span>
-          <span class="tag tag-blue">Python</span>
+          <span class="tag tag-green">Prometheus</span>
           <span class="tag tag-purple">Grafana</span>
+          <span class="tag tag-blue">Docker</span>
+          <span class="tag tag-green">Cowrie</span>
         </div>
-      </div>
+      </a>
 
     </div>
   </section>
@@ -456,7 +479,7 @@
           <div class="now-dot" style="background:var(--green);box-shadow:0 0 8px var(--green);animation-delay:1.5s;"></div>
           <div>
             <div class="now-item-title">Home Network Lab</div>
-            <div class="now-item-desc">Raspberry Pi monitoring lab — SNMP polling, Grafana dashboards, replicating enterprise NOC workflows at home.</div>
+            <div class="now-item-desc">Pi running 14 Docker services with Grafana Security NOC live — Cowrie honeypot, fail2ban, Prometheus, cAdvisor, Nextcloud, and nmap daily network scans.</div>
           </div>
         </div>
 
@@ -486,7 +509,7 @@
       <div class="edu-card">
         <div class="edu-school">Strayer University</div>
         <div class="edu-degree">B.S. Information Technology — In Progress</div>
-        <div class="edu-meta">Prerequisite coursework at NVCC · Starting March 2026</div>
+        <div class="edu-meta">Prerequisite coursework at NVCC · In Progress, March 2026</div>
       </div>
       <div class="edu-card">
         <div class="edu-school">Northern Virginia Community College</div>
@@ -551,17 +574,26 @@
   </section>
 
   <footer>
-    <span>Uzair Khan · Network Operations Engineer · Manassas, VA</span>
-    <span>
-      <a href="https://linkedin.com/in/uk0430" target="_blank">LinkedIn</a> · <a href="https://github.com/uk0430" target="_blank">GitHub</a>
-      <span style="margin-left:16px;opacity:0.18;font-family:var(--mono);font-size:10px;">
-        <a href="/ops.html" style="color:inherit;text-decoration:none;" title="ops">[ops]</a>
-        <a href="/noc.html" style="color:inherit;text-decoration:none;margin-left:6px;" title="noc">[noc]</a>
-        <a href="/tracker.html" style="color:inherit;text-decoration:none;margin-left:6px;" title="tracker">[tracker]</a>
-        <a href="/runbook.html" style="color:inherit;text-decoration:none;margin-left:6px;" title="runbook">[runbook]</a>
-        <a href="/changelog.html" style="color:inherit;text-decoration:none;margin-left:6px;" title="changelog">[changelog]</a>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-name">Uzair Khan</div>
+        <div class="footer-tagline">Network Operations Engineer · Manassas, VA</div>
+      </div>
+      <div class="footer-links">
+        <a href="https://linkedin.com/in/uk0430" target="_blank">LinkedIn</a>
+        <a href="https://github.com/uk0430" target="_blank">GitHub</a>
+        <a href="assets/Uzair_Khan_Resume.pdf" download>Resume</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 · Built with HTML, CSS, and too many late nights</span>
+      <span class="footer-private">
+        <a href="/ops.html" title="ops">[ops]</a>
+        <a href="/noc.html" title="noc">[noc]</a>
+        <a href="/tracker.html" title="tracker">[tracker]</a>
+        <a href="/vault.html" title="vault">[vault]</a>
       </span>
-    </span>
+    </div>
   </footer>
 
 </div>
