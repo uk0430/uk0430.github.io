@@ -1,3 +1,15 @@
+// ── THEME FOUC GUARD (must run before first paint) ────────────────────────
+(function () {
+  const html  = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-no-transition', '');
+  html.setAttribute('data-theme', saved);
+  if (saved === 'warm') html.classList.add('light');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { html.removeAttribute('data-no-transition'); });
+  });
+})();
+
 // ── PRIVATE PAGE AUTH ─────────────────────────────────────────────────────
 // NOTE: Client-side auth on a static site = security by obscurity.
 // Credentials are visible in source. This keeps casual visitors out, not
@@ -7,7 +19,7 @@
   const TOKEN_KEY = 'uk-auth';
   const EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
   // stored as base64 just to avoid plaintext in a quick view
-  const CREDS = { u: btoa('uk0430'), p: btoa('pakistan1@1') };
+  const CREDS = { u: btoa('uk0430'), p: btoa('1') };
 
   function isAuthed() {
     try {

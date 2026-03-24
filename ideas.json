@@ -1,0 +1,886 @@
+[
+  {
+    "id": "cybersec-port-scanner",
+    "title": "Port Scanner from Scratch",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build a SYN scanner in Python using raw sockets or Scapy. Takes target IP + port range, returns open/closed/filtered. Compare output to Nmap on your own LAN.",
+    "why": "Forces you to understand the TCP 3-way handshake at the code level. Everything else (Nmap, Masscan, vuln scanners) makes more sense after building a dumb version yourself.",
+    "steps": [
+      "Build basic TCP connect scanner with socket module",
+      "Upgrade to SYN scan (half-open) using Scapy — requires raw socket privileges",
+      "Add banner grabbing (read first 1024 bytes on open port)",
+      "Add OS fingerprinting heuristic (TTL value detection)",
+      "Compare against Nmap output on 192.168.1.0/24"
+    ],
+    "resources": [
+      "https://github.com/infoslack/awesome-web-hacking",
+      "Scapy docs — scapy.readthedocs.io"
+    ],
+    "tags": ["python", "networking", "sockets", "scapy"]
+  },
+  {
+    "id": "cybersec-packet-sniffer",
+    "title": "Packet Sniffer (Scapy)",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Live packet capture on your LAN. Dissect ARP, DNS, HTTP layers. Log interesting traffic to SQLite.",
+    "why": "ARP poisoning, DNS spoofing, and MITM all make sense once you can see the raw packets. Your NOC background makes this click fast.",
+    "steps": [
+      "Capture all packets on local interface with Scapy sniff()",
+      "Filter and parse ARP requests/replies — build ARP table",
+      "Parse DNS queries — log what devices are resolving",
+      "Parse HTTP (port 80) — extract Host headers and GET paths",
+      "Log to SQLite: timestamp, src_mac, src_ip, protocol, summary",
+      "Add alert for new unknown MAC on network"
+    ],
+    "resources": [],
+    "tags": ["python", "scapy", "networking", "arp", "dns"]
+  },
+  {
+    "id": "cybersec-password-cracker",
+    "title": "Password Cracker + Wordlist Builder",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build a wordlist generator with rule-based mutation (leet speak, appended numbers, common patterns). Then crack hashes with hashcat using your generated list.",
+    "why": "Understanding hash types (MD5, bcrypt, SHA-256, NTLM) and why salting matters is foundational. Shows why 'P@ssw0rd1' is still a bad password.",
+    "steps": [
+      "Write Python wordlist generator: base words + year suffixes + leet replacements + symbol appends",
+      "Generate MD5/SHA256/bcrypt hashes of known passwords for testing",
+      "Use hashcat to crack with your generated wordlist",
+      "Test against rockyou.txt to see overlap",
+      "Document which mutation rules crack the most hashes"
+    ],
+    "resources": [],
+    "tags": ["python", "hashcat", "crypto", "wordlist"]
+  },
+  {
+    "id": "cybersec-jwt-forger",
+    "title": "JWT Algorithm Confusion Attack",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build a Flask app with JWT auth, then exploit the 'none' algorithm bypass and RS256→HS256 algorithm confusion vulnerability.",
+    "why": "JWT vulns are everywhere in real apps. Understanding the attack requires building the target first — most tutorials skip that and jump straight to the exploit.",
+    "steps": [
+      "Build Flask app with /login (returns JWT) and /admin (requires valid JWT)",
+      "Implement RS256 signing with a public/private keypair",
+      "Exploit 1: Change algorithm to 'none', strip signature — see if server accepts",
+      "Exploit 2: Change alg to HS256, sign with public key as secret — server verifies using public key as HMAC secret",
+      "Fix both vulns in code — understand the mitigations"
+    ],
+    "resources": [],
+    "tags": ["python", "flask", "jwt", "web", "auth"]
+  },
+  {
+    "id": "cybersec-sqli-lab",
+    "title": "SQL Injection Lab",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build an intentionally vulnerable Flask app with a login form and search endpoint. Practice UNION-based, blind boolean, and time-based SQLi. Then harden it.",
+    "why": "DVWA is fine but building the vulnerable app yourself means you understand exactly why each injection works. Fixes are obvious once you wrote the bad code.",
+    "steps": [
+      "Build Flask + SQLite app with vulnerable login (string concatenation in query)",
+      "Exploit: bypass login with ' OR '1'='1",
+      "Add search endpoint — exploit UNION-based injection to dump all tables",
+      "Implement blind boolean SQLi (binary search on data without output)",
+      "Time-based SQLi using SLEEP() equivalent (SQLite: randomblob trick)",
+      "Rewrite with parameterized queries — confirm attacks no longer work"
+    ],
+    "resources": [],
+    "tags": ["python", "flask", "sqlite", "sqli", "web"]
+  },
+  {
+    "id": "cybersec-subdomain-enum",
+    "title": "Subdomain Enumerator",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "DNS brute-force tool. Takes a domain, tries subdomains from a wordlist, logs valid responses. Attempt zone transfer as first step.",
+    "why": "Recon is the first phase of any pentest. Understanding what's exposed before you touch anything is the difference between a professional and a script kiddie.",
+    "steps": [
+      "Build DNS query tool using Python dnspython — resolve A/CNAME records",
+      "Attempt AXFR zone transfer first (usually fails on modern DNS, but worth logging)",
+      "Brute-force from wordlist (SecLists subdomains-top1million)",
+      "Async with asyncio + aiodns for speed",
+      "Output: subdomain, IP, record type, response time",
+      "Test on your own domain or a HackTheBox target"
+    ],
+    "resources": [],
+    "tags": ["python", "dns", "recon", "asyncio"]
+  },
+  {
+    "id": "cybersec-evil-twin",
+    "title": "Evil Twin Access Point",
+    "cat": "cybersec",
+    "tier": 2,
+    "status": "idea",
+    "hardware": "TP-Link TL-WN722N v1 USB WiFi adapter (~$15 used, must be v1 for Atheros chipset + monitor mode)",
+    "summary": "Rogue AP that mimics a real network SSID. Clients deauth'd from real AP, connect to yours instead. Capture credentials via captive portal.",
+    "why": "Evil twin is the canonical WiFi attack. Building it teaches AP behavior, DHCP, DNS, captive portal mechanics, and why WPA2-Enterprise matters.",
+    "steps": [
+      "Put TL-WN722N into monitor mode: airmon-ng start wlan1",
+      "Scan for nearby APs: airodump-ng wlan1mon",
+      "Create rogue AP on same SSID/channel: hostapd config",
+      "Run dnsmasq for DHCP + DNS on rogue AP interface",
+      "Deauth clients from real AP: aireplay-ng --deauth",
+      "Serve captive portal (Flask) on port 80 — intercept DNS to redirect all HTTP",
+      "Log captured credentials to file",
+      "Test ONLY on your own devices on your own network"
+    ],
+    "resources": [],
+    "tags": ["pi", "wifi", "hostapd", "dnsmasq", "aircrack-ng", "hardware"]
+  },
+  {
+    "id": "cybersec-mitm-proxy",
+    "title": "MITM Proxy on Pi",
+    "cat": "cybersec",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Run mitmproxy on the Pi to intercept and inspect all LAN traffic. Modify responses in flight. Understand why HTTPS is non-negotiable.",
+    "why": "Seeing your own apps' traffic intercepted — including credentials in cleartext on HTTP — is the fastest way to understand why secure-by-default matters.",
+    "steps": [
+      "Install mitmproxy on Pi",
+      "Enable IP forwarding + iptables rules to route traffic through proxy",
+      "ARP spoof a test device on LAN to route its traffic through Pi",
+      "Inspect HTTP traffic in mitmproxy web UI",
+      "Attempt HTTPS interception — install mitmproxy CA cert on test device",
+      "Write mitmproxy addon script to auto-log credentials from forms",
+      "Add Pi-hole integration: block ads at DNS, inspect traffic at proxy layer"
+    ],
+    "resources": [],
+    "tags": ["pi", "mitmproxy", "arp", "https", "proxy", "hardware"]
+  },
+  {
+    "id": "cybersec-honeypot",
+    "title": "Cowrie SSH Honeypot",
+    "cat": "cybersec",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Run Cowrie on Pi — fake SSH server that logs every brute-force attempt, command run, and file upload from attackers. Expose port 22 to internet and watch.",
+    "why": "Within hours of exposing an SSH port you'll see real attack patterns. Better than any textbook for understanding how automated scanners and bots operate.",
+    "steps": [
+      "Install Cowrie in Docker on Pi",
+      "Move real SSH to port 2222, expose 22 to Cowrie",
+      "Port-forward Pi:22 through your router to internet",
+      "Let it run for 48 hours — watch logs",
+      "Parse logs: top attacker IPs, most common usernames/passwords tried, commands run",
+      "Feed IPs to Pi-hole blocklist",
+      "Visualize attack data in Netdata or a simple HTML dashboard"
+    ],
+    "resources": [],
+    "tags": ["pi", "docker", "cowrie", "honeypot", "ssh", "hardware"]
+  },
+  {
+    "id": "cybersec-wardriving",
+    "title": "Wardriving Setup",
+    "cat": "cybersec",
+    "tier": 2,
+    "status": "idea",
+    "hardware": "TL-WN722N v1 + USB GPS dongle (u-blox 7, ~$15) + Pi with battery pack",
+    "summary": "Map all WiFi networks in your area with GPS coordinates using Kismet. Identify open networks, WEP (legacy), and enterprise vs personal WPA2.",
+    "why": "Passive recon. No connection attempts — purely listening. Shows the RF landscape of your neighborhood and what attackers can see from the street.",
+    "steps": [
+      "Install Kismet on Pi",
+      "Configure GPS dongle with gpsd",
+      "Put WiFi adapter in monitor mode",
+      "Run Kismet with GPS enabled — drive/walk around block",
+      "Export to KML — visualize in Google Earth",
+      "Identify open networks, WEP networks (both rare but interesting)",
+      "Document findings — do not connect to anything"
+    ],
+    "resources": [],
+    "tags": ["pi", "kismet", "gps", "wifi", "recon", "hardware"]
+  },
+  {
+    "id": "cybersec-kali-box",
+    "title": "Dedicated Kali Attack Box",
+    "cat": "cybersec",
+    "tier": 3,
+    "status": "idea",
+    "hardware": "Second Raspberry Pi 4 (4GB, ~$55) or cheap x86 SBC. Keep separate from main homelab Pi.",
+    "summary": "Isolated Kali Linux machine for offensive tooling. Never mix attack tools with your production Docker stack (Pi-hole, Gitea, etc).",
+    "why": "Offensive tools are noisy, break things, and have their own dependencies. Keeping them isolated protects your homelab and mirrors real-world red team / blue team separation.",
+    "steps": [
+      "Flash Kali Linux ARM to SD card",
+      "Configure on isolated VLAN or separate switch port",
+      "Install: metasploit, burpsuite, nmap, aircrack-ng, sqlmap, gobuster",
+      "Set up VPN killswitch for any external testing",
+      "Document inventory of tools and what each is for"
+    ],
+    "resources": [],
+    "tags": ["kali", "hardware", "pi", "lab-setup"]
+  },
+  {
+    "id": "cybersec-ctf-htb",
+    "title": "HackTheBox Starting Point",
+    "cat": "cybersec",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Work through HackTheBox Starting Point track — guided, realistic boxes covering enumeration, exploitation, and privilege escalation.",
+    "why": "Structured learning with real targets. Better than tutorials because you have to actually find and exploit the vuln yourself. Starting Point has write-ups so you're never stuck forever.",
+    "steps": [
+      "Create HTB account at hackthebox.com",
+      "Connect via HTB VPN (OpenVPN config download)",
+      "Complete all Tier 0 Starting Point boxes (guided)",
+      "Complete Tier 1 and Tier 2 with minimal hints",
+      "Document each box: what you tried, what worked, what you'd do differently",
+      "Graduate to active Easy boxes"
+    ],
+    "resources": [],
+    "tags": ["ctf", "htb", "learning", "pentest"]
+  },
+  {
+    "id": "portfolio-goatcounter",
+    "title": "GoatCounter Analytics",
+    "cat": "portfolio",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Add privacy-respecting page view analytics to the portfolio site via GoatCounter. No cookies, GDPR-compliant, free tier available.",
+    "why": "Once the site goes public, want to know which pages get traffic without invasive tracking.",
+    "steps": [
+      "Sign up at goatcounter.com",
+      "Add tracking script to index.html, changelog.html, project pages",
+      "Verify data in GoatCounter dashboard"
+    ],
+    "resources": [],
+    "tags": ["portfolio", "analytics"]
+  },
+  {
+    "id": "homelab-unbound-dns",
+    "title": "Unbound Local DNS Resolver",
+    "cat": "homelab",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Replace Pi-hole's upstream DNS (currently Cloudflare 1.1.1.1) with Unbound — a local recursive resolver that queries root servers directly. No upstream DNS provider.",
+    "why": "True DNS privacy — no third party sees your queries. Also a good learning project for understanding how DNS recursion actually works.",
+    "steps": [
+      "Install Unbound in Docker on Pi alongside Pi-hole",
+      "Configure Unbound as recursive resolver (root hints file)",
+      "Point Pi-hole upstream to 127.0.0.1#5335 (Unbound)",
+      "Test: dig @192.168.1.254 google.com — verify resolution works",
+      "Verify Pi-hole still blocks ads",
+      "Check Unbound logs for query patterns"
+    ],
+    "resources": [],
+    "tags": ["pi", "docker", "dns", "pihole", "unbound", "privacy"]
+  },
+
+  {
+    "id": "tankpit-cache-hash",
+    "title": "Player Card Cache — Key on Stats Hash",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Cache keys are currently MD5 of tank_id only. If a player's stats change, the old card is served until cache is manually cleared. Re-key on MD5(tank_id + stats snapshot) so cards auto-invalidate when stats update.",
+    "why": "Users see stale rank/cups data on player cards after stat changes. Manual cache clear (rm -rf cache/*) is the only fix right now.",
+    "steps": [
+      "In bot.py, identify where cache filename is computed (currently MD5 of tank_id)",
+      "Pull relevant stat fields: rank, cups_total, destroyed_enemies, time_played",
+      "Compute new key: MD5(f\"{tank_id}:{rank}:{cups_total}:{destroyed_enemies}\")",
+      "Update cache read/write paths to use new key",
+      "Old cache files become orphaned — add a cache prune function that deletes files older than 7 days",
+      "Test: update a player stat in tankpit.db, verify new card is generated"
+    ],
+    "resources": [],
+    "tags": ["python", "bot", "cache", "pillow", "discord"]
+  },
+  {
+    "id": "tankpit-ask-leaderboard-history",
+    "title": "/ask — Wire Leaderboard History into SQL Layer",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "leaderboard_snapshots table exists in tankpit.db but _db_query() in bot.py doesn't use it. /ask can't answer 'who was #1 in 2024' or 'show rank history for X' accurately.",
+    "why": "leaderboards.json has 14 years of snapshot data. It's scraped and sitting there. It's just not wired into the query router.",
+    "steps": [
+      "Review leaderboard_snapshots schema: tank_id, year, rank_overall, snapshot_date",
+      "Add leaderboard_history intent to route_question() in brain.py (tankpit-ai)",
+      "Write SQL template: SELECT name, rank_overall, year FROM leaderboard_snapshots JOIN tanks ... ORDER BY year",
+      "Add keyword triggers: 'history', 'was ranked', 'in 2023', 'over the years'",
+      "Test: /ask 'what rank was tankname in 2023'",
+      "Also expose in /leaderboard command as optional --year filter if not already"
+    ],
+    "resources": [],
+    "tags": ["python", "sqlite", "rag", "sql", "discord", "bot"]
+  },
+  {
+    "id": "tankpit-ask-color-rank-filters",
+    "title": "/ask — SQL Color & Rank Filters",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Add compound filter support to /ask SQL layer: 'most gold cups among blue players', 'top 10 kills by red rank tanks', etc. Currently these fall through to RAG which can't do math.",
+    "why": "The data is all in tankpit.db. SQL can answer these precisely. Routing logic just needs to detect color + rank + stat combos and build the WHERE clause.",
+    "steps": [
+      "Define color values in DB: blue, red, green, yellow, white (verify against actual data)",
+      "Define rank values: private, corporal, sergeant, etc.",
+      "Add multi-filter SQL builder to brain.py: parse color/rank from question, inject into WHERE",
+      "Handle edge cases: unknown color/rank string, no results",
+      "Test set: 'most gold cups blue players', 'top kills red sergeant', 'least played white tanks'",
+      "Return formatted table in /ask response"
+    ],
+    "resources": [],
+    "tags": ["python", "sqlite", "sql", "discord", "bot", "rag"]
+  },
+  {
+    "id": "tankpit-split-botpy",
+    "title": "Split bot.py into Modules",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "bot.py is 1,467 lines — one file handles image gen, Discord commands, cache, API calls, SQL, and RAG. Split into banner.py, tankpit_api.py, ask.py for maintainability.",
+    "why": "Any change to image rendering means reading 1,467 lines. Modules make it possible to test and iterate on individual pieces without touching the whole bot.",
+    "steps": [
+      "Identify natural seams: image generation, TankPit API client, /ask logic, Discord command registration",
+      "Extract tankpit_api.py: find_tank(), get_tank(), get_leaderboard() API calls",
+      "Extract banner.py: all PIL image generation functions, cache read/write",
+      "Extract ask.py: _db_query(), _rag_query(), route_question() bridge",
+      "bot.py becomes thin command router importing from the above",
+      "Verify all commands still work after refactor",
+      "Prune unused deps: beautifulsoup4, lxml (not used in current bot)"
+    ],
+    "resources": [],
+    "tags": ["python", "refactor", "discord", "bot", "architecture"]
+  },
+  {
+    "id": "tankpit-bible-refresh-cron",
+    "title": "Bible Auto-Refresh Cron",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "rebuild_bible.py is run manually after scraping. Set up a cron job (or startup script trigger) that re-runs the rebuild on a schedule so /ask stays current without manual intervention.",
+    "why": "There's no auto-rebuild schedule. Scraped profiles pile up and the bible drifts stale. A weekly rebuild during off-hours keeps /ask accurate.",
+    "steps": [
+      "Confirm rebuild_bible.py is idempotent (safe to re-run)",
+      "Add a rebuild trigger script: cd ~/tankpit-ai && source venv/bin/activate && python rebuild_bible.py ...",
+      "Add cron entry: 0 3 * * 0 (Sundays 3am) — requires nomic-embed on :8081",
+      "Pre-check in cron script: verify :8081 is up before starting rebuild",
+      "Log rebuild output to ~/logs/bible-rebuild.log",
+      "Alert on failure: send Discord DM or write to error log"
+    ],
+    "resources": [],
+    "tags": ["python", "cron", "rag", "automation", "tankpit-ai"]
+  },
+  {
+    "id": "tankpit-ask-on-railway",
+    "title": "Enable /ask on Railway Deployment",
+    "cat": "tankpit",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "/ask is disabled on Railway because it requires llama.cpp running locally. Options: (1) expose local llama-server through Nginx/ngrok, (2) swap to a hosted LLM API (Mistral API, Groq), (3) migrate bot to Pi where llama.cpp can run.",
+    "why": "Production Discord users can't use /ask. It only works when the bot runs locally. This is the biggest feature gap between local and deployed.",
+    "steps": [
+      "Option A — Hosted API: replace llama.cpp calls in brain.py with Mistral API (api.mistral.ai) or Groq (much faster, free tier)",
+      "Add MISTRAL_API_KEY or GROQ_API_KEY to Railway environment variables",
+      "Test /ask response quality with hosted model vs local Mistral-7B",
+      "Option B — Pi migration: migrate bot to Pi Docker, run llama.cpp on Pi (needs benchmarking — Pi 4 is slow for 7B)",
+      "Option C — Expose local: use Cloudflare Tunnel or ngrok to expose :8080 (security risk, not recommended)"
+    ],
+    "resources": [],
+    "tags": ["python", "railway", "llm", "discord", "deployment", "mistral"]
+  },
+  {
+    "id": "tankpit-leaderboards-in-rag",
+    "title": "Merge leaderboards.json into bible_chunks.json",
+    "cat": "tankpit",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "leaderboards.json (10.9 MB, 14 years of snapshots) is not embedded into bible_chunks.json. /ask can't answer tournament history questions via RAG — only via SQL. Merge and embed leaderboard data so both paths work.",
+    "why": "Leaderboard data is the most historically rich data in the system. It's sitting in a file that's never queried by RAG.",
+    "steps": [
+      "Review leaderboards.json structure — understand chunk granularity (per-year? per-player?)",
+      "Design chunk format: one chunk per player-year snapshot, include rank, year, color, cups",
+      "Add leaderboard chunking logic to rebuild_bible.py",
+      "Embed with nomic-embed on :8081 (adds to the 20-30 min rebuild time)",
+      "Test: /ask 'who topped leaderboard in 2022' — verify RAG path finds it",
+      "Monitor bible_chunks.json size increase (currently 292 MB)"
+    ],
+    "resources": [],
+    "tags": ["python", "rag", "embeddings", "sqlite", "tankpit-ai"]
+  },
+
+  {
+    "id": "email-imap-reconnect",
+    "title": "Email Manager — IMAP Auto-Reconnect",
+    "cat": "email",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "IMAP connection drops at 600-1000 emails during full scans with no recovery. Add exponential backoff reconnect so long scans complete without manual restart.",
+    "why": "Currently you have to restart the scan manually if it drops. With 46k emails, hitting the drop limit mid-scan is the norm, not the exception.",
+    "steps": [
+      "Locate the IMAP fetch loop in email_manager.py (~line 1200-1400 area)",
+      "Wrap fetch calls in try/except imaplib.IMAP4.error + socket.error",
+      "On error: wait 5s, reconnect, re-authenticate, re-SELECT mailbox, resume from last successful UID",
+      "Implement exponential backoff: 5s → 10s → 20s → 40s (cap at 60s), reset on success",
+      "Track last successfully processed UID in ~/.email_manager_cache.json",
+      "Log reconnect events to ~/.email_manager_errors.log",
+      "Test: manually kill network mid-scan, verify it reconnects and continues"
+    ],
+    "resources": [],
+    "tags": ["python", "flask", "imap", "email", "reliability"]
+  },
+  {
+    "id": "email-bulk-unsubscribe",
+    "title": "Email Manager — Bulk Subscription Cleanup",
+    "cat": "email",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Scan 30-90 day window for subscription/newsletter emails, identify unsubscribe links, batch-present them for one-click deletion. Goal: reduce 46k inbox toward zero.",
+    "why": "The AI categorization already tags emails as 'subscription'. Need a workflow to act on those at scale — not one at a time.",
+    "steps": [
+      "Filter cached emails by cat='subscription' from ~/.email_manager_cache.json",
+      "Group by sender domain — show count per sender (e.g. 'Amazon: 847 emails')",
+      "Add bulk-select UI: check sender → delete all from that sender",
+      "Extract List-Unsubscribe header from emails where present — add one-click unsubscribe button",
+      "Add 'nuke and unsubscribe' button: delete all + hit unsubscribe link",
+      "Track completed unsubscribes in a local log so you don't double-hit"
+    ],
+    "resources": [],
+    "tags": ["python", "flask", "imap", "email", "cleanup", "ui"]
+  },
+
+  {
+    "id": "homelab-nginx-ssl-local",
+    "title": "Nginx — SSL Certs for Local Services",
+    "cat": "homelab",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Nginx Proxy Manager (NPM) is running on Pi:81. Use it to front local services (Pi-hole :8053, Netdata :19999, Gitea :3000) with proper domain names and SSL — no more raw IP:port access.",
+    "why": "Right now everything is accessed by IP:port. NPM + a local domain (e.g. pihole.lan, netdata.lan) + self-signed or Let's Encrypt (with DNS challenge) makes the homelab feel like a real network.",
+    "steps": [
+      "Access NPM at http://192.168.1.254:81",
+      "Add Proxy Host for Pi-hole: pihole.lan → 127.0.0.1:8053",
+      "Add Proxy Host for Netdata: netdata.lan → 127.0.0.1:19999",
+      "Add Proxy Host for Gitea: gitea.lan → 127.0.0.1:3000",
+      "On Pi-hole: add local DNS records for *.lan → 192.168.1.254",
+      "Generate SSL: use NPM's built-in Let's Encrypt (requires domain) OR generate self-signed CA, trust on all devices",
+      "Test: https://pihole.lan resolves and shows Pi-hole dashboard"
+    ],
+    "resources": [],
+    "tags": ["pi", "nginx", "ssl", "docker", "dns", "networking"]
+  },
+  {
+    "id": "homelab-gitea-mirror",
+    "title": "Mirror Repos to Gitea",
+    "cat": "homelab",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Gitea is running on Pi:3000 but empty. Set up local mirrors of tankpit-bot-legacy and uk0430.github.io so you have a private backup Git server independent of GitHub.",
+    "why": "GitHub goes down, you lose internet, or you accidentally push credentials — Gitea is the offline fallback. Also enables private repos that never touch GitHub.",
+    "steps": [
+      "Access Gitea at http://192.168.1.254:3000",
+      "Create admin account and org",
+      "Add Pi as git remote on tankpit-bot-legacy: git remote add gitea http://192.168.1.254:3000/ukhan/tankpit-bot-legacy.git",
+      "Push all branches: git push gitea --all",
+      "Add post-commit hook addition: push to both origin (GitHub) and gitea on commit",
+      "Set up Gitea mirror mode for uk0430.github.io (auto-pull from GitHub hourly)",
+      "Store Gitea SSH key in vault.html"
+    ],
+    "resources": [],
+    "tags": ["pi", "gitea", "git", "backup", "docker"]
+  },
+  {
+    "id": "homelab-iot-segmentation",
+    "title": "IoT Device Network Segmentation",
+    "cat": "homelab",
+    "tier": 2,
+    "status": "idea",
+    "hardware": "Router with VLAN support (check if current Verizon router supports VLANs) or a managed switch (~$30)",
+    "summary": "Move IoT devices (smart bulbs, Alexa, printers, cameras) off main LAN onto an isolated SSID/VLAN. They can reach internet but not your workstations or Pi.",
+    "why": "The flagged .243 device (Sichuan AI-Link) is on your main LAN. IoT devices are notoriously insecure — if one is compromised it shouldn't be able to reach your homelab.",
+    "steps": [
+      "Inventory all IoT devices on 192.168.1.0/24 (use nmap or check Pi-hole)",
+      "Check if Verizon router supports guest network / VLAN tagging",
+      "Create isolated WiFi SSID (e.g. 'Home-IoT') with client isolation enabled",
+      "Move devices: Alexa, smart plugs, printers, cameras to new SSID",
+      "Add firewall rule: IoT VLAN cannot initiate connections to main LAN",
+      "Investigate .243 (Sichuan AI-Link Technology Co.) — identify device, decide if it stays"
+    ],
+    "resources": [],
+    "tags": ["networking", "vlan", "iot", "security", "pi", "pihole"]
+  },
+  {
+    "id": "homelab-snmp-grafana",
+    "title": "SNMP + Grafana Dashboards",
+    "cat": "homelab",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Add SNMP polling of network devices (router, switch if managed) and build Grafana dashboards on the Pi — bandwidth per device, interface errors, uptime. Extends existing Netdata monitoring.",
+    "why": "Netdata covers host metrics. SNMP covers the network layer — what Netdata can't see: per-device bandwidth, switch port stats, router CPU/memory.",
+    "steps": [
+      "Install Prometheus + Grafana in Docker on Pi (add to docker-compose.yml)",
+      "Install SNMP exporter for Prometheus",
+      "Enable SNMP on router (if Verizon allows it — may need community string)",
+      "Configure SNMP exporter to poll router at 192.168.1.1",
+      "Build Grafana dashboard: interface traffic in/out, error counts, device uptime",
+      "Add node_exporter to Pi Docker stack — feed Pi host metrics into Grafana",
+      "Set alert: notify if interface error rate spikes"
+    ],
+    "resources": [],
+    "tags": ["pi", "docker", "snmp", "grafana", "prometheus", "networking", "monitoring"]
+  },
+  {
+    "id": "homelab-identify-243",
+    "title": "Identify .243 — Sichuan AI-Link Device",
+    "cat": "homelab",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "192.168.1.243 shows Sichuan AI-Link Technology Co. OUI in Pi-hole. Unknown device on main LAN. Identify it, determine if it's a known device (smart TV chip? Xiaomi product?), then decide: keep, isolate, or block.",
+    "why": "Unknown device on main LAN is a security concern. It may be benign (embedded WiFi chip in a smart device) but needs to be identified and documented.",
+    "steps": [
+      "nmap -A 192.168.1.243 — OS detect, open ports, service banners",
+      "Check Pi-hole query log for .243 — what domains is it resolving?",
+      "Check DHCP leases on router — hostname if any",
+      "Look up MAC OUI: first 3 octets → IEEE OUI database",
+      "Cross-reference with known devices in the home (TVs, speakers, appliances)",
+      "Decision: if identified as known device → document in network inventory. If unknown → block at Pi-hole or isolate to IoT VLAN"
+    ],
+    "resources": [],
+    "tags": ["networking", "security", "nmap", "pihole", "recon"]
+  },
+  {
+    "id": "homelab-bot-migrate-pi",
+    "title": "Migrate TankPit Bot to Pi Docker",
+    "cat": "homelab",
+    "tier": 3,
+    "status": "idea",
+    "hardware": "Possibly needs Pi 5 for llama.cpp inference (Pi 4 is slow on 7B models)",
+    "summary": "Move TankPit bot from Railway (cloud) to Pi Docker stack. Removes Railway dependency, keeps everything local, enables /ask on production since llama.cpp would run on same machine.",
+    "why": "Railway costs money at scale and /ask is disabled on Railway. Pi Docker = free hosting, full /ask support, local control. Trade-off: requires Pi to be always-on and internet-exposed.",
+    "steps": [
+      "Benchmark llama.cpp Mistral-7B on Pi 4 — is inference speed acceptable? (target <30s/response)",
+      "If Pi 4 too slow: evaluate Pi 5 (2x speed) or keep Railway + hosted LLM API for /ask",
+      "Dockerize bot: write Dockerfile for tankpit-bot-legacy",
+      "Add to docker-compose.yml on Pi alongside existing services",
+      "Configure port-forward for Discord webhook (bot uses websocket, no inbound ports needed)",
+      "Set up Cloudflare Tunnel for any HTTP endpoints",
+      "Migrate env vars to Pi .env or Docker secrets",
+      "Test both guilds work from Pi deployment before removing Railway"
+    ],
+    "resources": [],
+    "tags": ["pi", "docker", "railway", "discord", "bot", "deployment"]
+  },
+
+  {
+    "id": "ai-qdrant-vector-db",
+    "title": "Replace numpy Cosine Sim with Qdrant",
+    "cat": "ai",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "RAG currently loads all 292 MB of bible_chunks.json into memory and does numpy cosine similarity in Python. Replace with Qdrant vector DB (already in ai-lab/rag/docker-compose.yml) for faster search and lower memory.",
+    "why": "Loading 292 MB on every /ask query is slow and RAM-heavy. Qdrant indexes vectors once and queries in milliseconds. Also enables filtering by metadata (color, rank) at the vector layer.",
+    "steps": [
+      "Start Qdrant: cd ~/ai-lab/rag && docker compose up -d",
+      "Write ingest script: load bible_chunks.json, POST vectors to Qdrant collection",
+      "Collection schema: vector (384-dim), payload: {title, body, tank_id, cat}",
+      "Rewrite _rag_query() in brain.py to query Qdrant instead of numpy cosine",
+      "Add metadata filters: filter by color/rank at vector query time",
+      "Benchmark: query time before vs after",
+      "Keep bible_chunks.json as backup — Qdrant data lives in Docker volume"
+    ],
+    "resources": [],
+    "tags": ["python", "qdrant", "rag", "embeddings", "docker", "vector-db"]
+  },
+  {
+    "id": "ai-fastapi-gateway",
+    "title": "FastAPI Gateway for Local LLM",
+    "cat": "ai",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "ai-lab/api/app.py is a FastAPI wrapper around the local Mistral server. Finish and expose it as a proper internal API — rate limiting, auth token, structured endpoints for chat, embed, and ask-tankpit.",
+    "why": "Multiple projects (email manager, bot, future tools) all call llama.cpp directly with their own HTTP logic. A single gateway standardizes the interface and adds observability.",
+    "steps": [
+      "Review current api/app.py state",
+      "Add /chat endpoint (proxy to :8080 with structured request/response)",
+      "Add /embed endpoint (proxy to :8081)",
+      "Add /ask endpoint (full route_question pipeline from brain.py)",
+      "Add simple API key auth (static token in .env)",
+      "Add request logging — log model, tokens, latency per request",
+      "Run on :8000, add to startup scripts",
+      "Update email_manager.py and bot.py to use gateway instead of direct llama.cpp calls"
+    ],
+    "resources": [],
+    "tags": ["python", "fastapi", "llm", "api", "architecture", "mistral"]
+  },
+
+  {
+    "id": "portfolio-resume-action",
+    "title": "Resume Auto-Update via GitHub Action",
+    "cat": "portfolio",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "GitHub Action that automatically updates the resume PDF on the portfolio site whenever a specific trigger file or commit tag is pushed.",
+    "why": "Manual resume updates on the site require a git commit + push. An Action can watch for a resume source file change and auto-publish.",
+    "steps": [
+      "Decide format: LaTeX → PDF via action, or just sync a PDF from a specific path",
+      "Create .github/workflows/resume.yml",
+      "Trigger: on push to main when resume.* changes",
+      "Action: copy resume PDF to assets/, commit back",
+      "Test with a dummy change",
+      "Note: requires GitHub Pages to be re-enabled first"
+    ],
+    "resources": [],
+    "tags": ["portfolio", "github-actions", "ci", "automation"]
+  },
+
+  {
+    "id": "biz-tax-forfeiture-fix",
+    "title": "Fix Texas Forfeiture + File Overdue Taxes",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Yaran Traders LLC received a Texas forfeiture notice — likely for missing the Public Information Report and/or franchise tax filing. Fix this before it becomes permanent. Also file Schedule C on personal return for $2k revenue + expenses.",
+    "why": "A forfeited LLC loses its liability protection. The business name can be taken. The longer you wait the more back-fees stack up. Fix is usually $50-100 and a form filing. Do this before tax season closes.",
+    "steps": [
+      "Go to Texas Comptroller: comptroller.texas.gov — look up Yaran Traders LLC status",
+      "Go to Texas SOS: sos.state.tx.us — check forfeiture status and what's owed",
+      "File missing Public Information Report (free, due May 15 each year)",
+      "File franchise tax — entities under $2.47M revenue owe $0 tax but still must file the 'No Tax Due' report",
+      "Pay any late fees to reinstate (typically $50-75 reinstatement fee)",
+      "Consult a CPA for Schedule C: report $2k revenue, deduct all legitimate business expenses (home office, internet, equipment, subscriptions)",
+      "1099 IT consulting income — confirm if this goes on same Schedule C as Yaran Traders or separate",
+      "Note: living in VA while LLC is TX-registered is fine if you're not 'doing business' in VA (no VA office, no VA employees) — confirm with CPA"
+    ],
+    "resources": [],
+    "tags": ["business", "taxes", "llc", "legal", "urgent"]
+  },
+  {
+    "id": "biz-credit-card-strategy",
+    "title": "Yaran Traders Credit Card — Protect & Strategy",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Business credit card is under LLC name but tied to your SSN — it's a personal liability card. Even if the LLC is dissolved or forfeited, the card stays active. Keep it open. Use it strategically to build business credit history.",
+    "why": "Closing the card hurts your personal credit score (credit utilization + account age). The card is already under your SSN so there's no legal risk from the LLC situation.",
+    "steps": [
+      "Do NOT close the card — keep it open and active",
+      "Make at least one small purchase per month + pay in full to keep it active",
+      "Once LLC is reinstated, apply for an EIN (free at irs.gov) if not already done",
+      "Ask card issuer to link the card to your EIN in addition to SSN — builds business credit profile",
+      "Over time: apply for a card that reports to business bureaus (Dun & Bradstreet, Experian Business) — builds Yaran Traders credit separate from personal",
+      "Track all business expenses on this card for tax deductions"
+    ],
+    "resources": [],
+    "tags": ["business", "credit", "finance", "llc"]
+  },
+  {
+    "id": "biz-ein-structure",
+    "title": "Get EIN + Separate Business Banking",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Apply for an EIN (Employer Identification Number) for Yaran Traders if not already done. Open a dedicated business checking account. Keep all business money completely separate from personal.",
+    "why": "Mixing personal and business funds ('piercing the corporate veil') kills the LLC's liability protection. Separate accounts also make taxes 100x easier.",
+    "steps": [
+      "Apply for EIN at irs.gov/businesses/small — free, instant, online",
+      "Open business checking account: Mercury (free, online-first, great for LLCs) or Chase Business",
+      "Route all Yaran Traders income into business account only",
+      "Pay yourself via transfer from business to personal (owner's draw)",
+      "Update any existing vendor/platform accounts to use EIN instead of SSN where possible"
+    ],
+    "resources": [],
+    "tags": ["business", "banking", "llc", "finance", "ein"]
+  },
+  {
+    "id": "biz-brand-identity",
+    "title": "Brand Identity — Yaran Traders Visual System",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Design the brand: logo, color palette, typography, packaging aesthetic. Supreme-inspired minimal bold streetwear feel, layered with Pashtun cultural identity. Think pakol + box logo energy.",
+    "why": "The brand is the product as much as the clothes are. Supreme sells $40 t-shirts for $150 because of brand identity. Pashtun streetwear is a completely unclaimed niche.",
+    "steps": [
+      "Define brand pillars: 3 words that describe Yaran Traders (e.g. raw, cultural, limited)",
+      "Mood board: reference Supreme, Palace, Corteiz for layout — then layer Pashtun imagery",
+      "Logo design: wordmark-first like Supreme, or icon (pakol silhouette? geometric Pashtun pattern?)",
+      "Color palette: earthy (khaki, olive, rust) + one bold accent (burgundy? deep blue?) — think terrain of NWFP",
+      "Typography: bold condensed sans (Supreme uses Futura) + a display font with character",
+      "Create in Figma or hire a designer on Fiverr for initial pass ($50-150 for logo)",
+      "Apply to: hang tags, tissue paper, poly bags, stamp or sticker for boxes"
+    ],
+    "resources": [],
+    "tags": ["business", "brand", "design", "streetwear"]
+  },
+  {
+    "id": "biz-ecommerce-site",
+    "title": "Build the E-Commerce Site",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build the Yaran Traders storefront. Options: Shopify (easiest, most features, $39/mo) vs custom-built (full control, your stack). Supreme-esque: minimal, product-first, drop model.",
+    "why": "The site is the brand's home. For a streetwear brand doing limited drops, the site experience is part of the product. A Shopify store gets you selling in a day; custom gives you full control for when you scale.",
+    "steps": [
+      "Decision point: Shopify ($39/mo, built-in cart/checkout/payments) vs custom Next.js + Stripe",
+      "Recommendation: start Shopify — validate sales first, rebuild custom when revenue justifies",
+      "Buy domain: yarantraders.com (check availability) — use Namecheap or Cloudflare Registrar",
+      "Shopify theme: Dawn (free, minimal) or buy a theme that matches Supreme aesthetic ($150-300)",
+      "Set up: product pages, collections, about page, contact",
+      "Integrate Stripe or Shopify Payments for checkout",
+      "Add Instagram feed to homepage (social proof)",
+      "Set up abandoned cart email flow (Klaviyo free tier)",
+      "Launch with 1-3 hero products — don't stock 50 SKUs before validating"
+    ],
+    "resources": [],
+    "tags": ["business", "ecommerce", "shopify", "web", "stripe"]
+  },
+  {
+    "id": "biz-pos-system",
+    "title": "Point of Sale System for In-Person Sales",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": "Square Reader ($49 one-time) or Square Terminal ($299) — both connect to phone/tablet",
+    "summary": "Set up a POS for selling at pop-ups, markets, or events. Square is the standard — syncs inventory with online store, handles cash + card, prints receipts. Connects to Shopify if you go that route.",
+    "why": "Pop-up markets and cultural events (Pakistani/Afghan festivals, college markets) are the first proving ground for a brand like this. You need to take card payments.",
+    "steps": [
+      "Create Square account at squareup.com — free, 2.6% per swipe",
+      "Order Square Reader (free first reader) or Square Terminal for bigger setups",
+      "If using Shopify: use Shopify POS app instead — keeps inventory unified online + in-person",
+      "Set up product catalog in Square/Shopify with SKUs, prices, variants (size, color)",
+      "Test end-to-end: swipe a card, verify funds hit business bank account",
+      "Prep for first pop-up: receipt printer, cash drawer (optional), tablet stand"
+    ],
+    "resources": [],
+    "tags": ["business", "pos", "square", "shopify", "hardware", "retail"]
+  },
+  {
+    "id": "biz-pakistan-sourcing",
+    "title": "Pakistan Supplier & Sourcing Network",
+    "cat": "business",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build supplier relationships in Pakistan for authentic Pashtun goods: pakols, Chitrali caps, Peshawari chappals, traditional jackets, leather goods. Source direct from artisans or wholesale markets in Peshawar/Lahore.",
+    "why": "Direct sourcing from Pakistan at wholesale prices gives you 5-10x margins when selling in the US. No middlemen. Cultural authenticity is the brand's core differentiator.",
+    "steps": [
+      "Identify product categories: pakols (Chitrali wool caps), Peshawari chappals, embroidered jackets (chapan-style), leather belts/bags, Swati wool shawls",
+      "Find suppliers: Peshawar Qissa Khwani bazaar, Karachi Saddar wholesale, or use family contacts in Pakistan",
+      "Alibaba/Global Sources: search for Pakistani textile exporters as backup",
+      "Get samples before bulk order — pay for 5-10 units of each product",
+      "Understand MOQ (minimum order quantities) and pricing tiers",
+      "Customs & import duties: textile imports typically 12-27% duty — factor into COGS",
+      "Shipping options: DHL Express (fast, expensive), sea freight (slow, cheap for bulk)",
+      "Set up a Pakistan contact (family member?) to coordinate pickups/QC"
+    ],
+    "resources": [],
+    "tags": ["business", "sourcing", "pakistan", "supply-chain", "import"]
+  },
+  {
+    "id": "biz-private-label",
+    "title": "Private Label & Product Design",
+    "cat": "business",
+    "tier": 2,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Design original Yaran Traders products — woven labels, hang tags, custom embroidery, branded packaging. Turn sourced Pakistani goods into branded Yaran Traders products. Also: design original streetwear pieces (hoodies, tees) with Pashtun graphic elements.",
+    "why": "Private label turns commodity goods into brand products. A plain pakol is $8. A Yaran Traders branded pakol with custom label, branded box, and story card is $65. That's brand value.",
+    "steps": [
+      "Woven labels: design a 1\" woven label with Yaran Traders logo — order from wovenlabels.com or Alibaba ($50-100 for 200 labels)",
+      "Hang tags: design card-stock hang tags with brand story + care instructions — Canva → print at Moo.com",
+      "Custom embroidery on blanks: source plain hoodies/tees from Bella+Canvas or Gildan, add Pashtun embroidery via local embroidery shops",
+      "Graphic tees: design Pashtun-inspired graphics (Khyber Pass maps, calligraphy, geometric patterns) — find a designer on Fiverr or do in Figma",
+      "Packaging: custom tissue paper ($40/100 sheets at noissue.co), branded stickers, thank you cards",
+      "Story card: one-page insert explaining the piece's origin — huge for brand perception"
+    ],
+    "resources": [],
+    "tags": ["business", "private-label", "design", "branding", "packaging"]
+  },
+  {
+    "id": "biz-thrift-flip",
+    "title": "Thrift Flip Operation Under Brand",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Source thrift store finds (vintage military jackets, denim, flannels), rework or style them, add Yaran Traders branding, resell at premium. Fast cash flow while Pakistan sourcing ramps up.",
+    "why": "Thrift flipping requires zero import logistics and minimal capital ($5-20 cost → $60-150 sale). It validates your eye for product and builds the brand's aesthetic in public while you build the bigger supply chain.",
+    "steps": [
+      "Hit Goodwill, Salvation Army, and local estate sales — focus on: military surplus, vintage denim, leather jackets, wool coats",
+      "Criteria: good bones, no major damage, can be styled/reworked",
+      "Rework: patch, embroider, distress, or simply style and photograph well",
+      "Add hang tag + Yaran Traders branding — even a sticker and tissue paper wrap elevates it",
+      "Sell on: Depop, Grailed, or your own Shopify as 'one-of-one' pieces",
+      "Price 5-10x cost — limited one-of-one framing justifies premium",
+      "Document the sourcing story on Instagram — process content is free marketing"
+    ],
+    "resources": [],
+    "tags": ["business", "thrift", "resell", "streetwear", "low-cost"]
+  },
+  {
+    "id": "biz-social-marketing",
+    "title": "Social Media & Drop Model Strategy",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Build brand presence on Instagram and TikTok before the site launches. Supreme's model: limited drops, no restocks, community hype. Apply this to Pashtun streetwear with authentic storytelling.",
+    "why": "You don't need inventory to build an audience. Content about the sourcing trip to Pakistan, the culture, the craft — that builds demand before a single product ships.",
+    "steps": [
+      "Create @yarantraders on Instagram and TikTok — lock the handle now",
+      "Content pillars: product showcases, sourcing process (Pakistan market footage), culture/history, behind-the-scenes",
+      "Drop model: announce limited run 1 week ahead, drop at a specific time, sell out, no restock",
+      "Collect email signups before drops — Klaviyo free tier up to 500 contacts",
+      "Collab targets: Pakistani/Afghan creators, diaspora lifestyle pages, streetwear pages",
+      "Hashtag strategy: #PashtunStreetWear #yarantraders + existing streetwear tags",
+      "Document first sourcing trip to Pakistan heavily — that's 3 months of content"
+    ],
+    "resources": [],
+    "tags": ["business", "marketing", "instagram", "tiktok", "streetwear", "drops"]
+  },
+  {
+    "id": "biz-virginia-foreign-llc",
+    "title": "Evaluate VA Foreign LLC Registration",
+    "cat": "business",
+    "tier": 1,
+    "status": "idea",
+    "hardware": null,
+    "summary": "Yaran Traders is registered in Texas but you live and work in Virginia. If you're actively conducting business in VA (selling, meeting clients, operating), VA may require you to register as a foreign LLC in Virginia.",
+    "why": "Operating in a state without registering can result in fines and inability to enforce contracts in that state. This is a quick thing to clarify with a CPA or business attorney.",
+    "steps": [
+      "Determine if you're 'doing business' in VA: selling in VA, having a VA office, VA employees, or regular in-state transactions",
+      "If yes: file Foreign LLC registration with VA SCC (scc.virginia.gov) — one-time $100 fee",
+      "If only selling online with no VA physical nexus: may not be required — confirm with CPA",
+      "Note: VA also has a sales tax requirement if selling to VA customers ($100/year threshold)",
+      "Consult a business attorney or CPA for definitive answer — $150-200 for a one-hour consultation is worth it"
+    ],
+    "resources": [],
+    "tags": ["business", "legal", "llc", "virginia", "texas", "compliance"]
+  }
+]

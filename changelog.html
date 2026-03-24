@@ -2,848 +2,253 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>/changelog — ukhan homelab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notebook — Uzair Khan</title>
+<meta name="description" content="A running devlog of everything built, learned, and shipped.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/main.js"></script>
 <style>
-:root{
-  --bg:#0d0d0d; --bg-card:#141414; --bg-row:#181818; --bg-hover:#1e1e1e;
-  --border:#262626; --text:#e0e0e0; --text-muted:#6b6b6b; --text-dim:#444;
-  --accent:#5b8dee; --success:#34d399; --warning:#e0a030; --danger:#e05252;
-  --radius:5px; --font:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
-a{color:var(--accent);text-decoration:none;}
-a:hover{text-decoration:underline;}
+  .nb-hero {
+    padding-top: 140px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+  .nb-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nb-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .nb-title {
+    font-family: var(--display);
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .nb-title span { color: var(--accent); }
+  .nb-desc { font-size: 14px; color: var(--dim); max-width: 520px; line-height: 1.7; }
 
-/* Header */
-header{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);
-        padding:10px 24px;display:flex;align-items:center;gap:12px;}
-header h1{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.04em;flex:1;}
-header h1 .accent{color:var(--accent);}
-.last-updated{font-family:var(--mono);font-size:11px;color:var(--text-muted);}
-.stat-pills{display:flex;gap:6px;}
-.pill{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:12px;
-       background:var(--bg-row);border:1px solid var(--border);color:var(--text-muted);}
+  /* ── FILTERS ─────────────────────────────────────── */
+  .nb-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .nb-filter {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nb-filter:hover { border-color: var(--accent); color: var(--accent); }
+  .nb-filter.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .nb-count { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 32px; }
 
-/* Tabs */
-.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg-card);
-           padding:0 20px;overflow-x:auto;}
-.tab-bar::-webkit-scrollbar{height:0;}
-.tab{font-family:var(--font);font-size:12px;font-weight:500;padding:9px 14px;
-      color:var(--text-muted);cursor:pointer;border:none;background:none;
-      border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;}
-.tab.active{color:var(--accent);border-bottom-color:var(--tc,var(--accent));}
-.tab:hover:not(.active){color:var(--text);}
-.tab-panel{display:none;padding:16px 24px;}
-.tab-panel.active{display:block;}
+  /* ── ENTRIES ─────────────────────────────────────── */
+  .nb-entry {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nb-entry.hidden { display: none; }
+  .nb-entry-meta { padding-top: 3px; }
+  .nb-date { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px; white-space: nowrap; }
+  .nb-cat {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid;
+    display: inline-block;
+  }
+  .nb-cat-portfolio { color: var(--accent);  border-color: rgba(56,189,248,0.3);  background: rgba(56,189,248,0.06); }
+  .nb-cat-tankpit   { color: var(--purple);  border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.06); }
+  .nb-cat-homelab   { color: var(--amber);   border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.06); }
+  .nb-cat-learning  { color: var(--green);   border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.06); }
+  .nb-cat-ops       { color: var(--red);     border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
 
-/* Commit rows */
-.commit-row{display:grid;grid-template-columns:90px auto 70px 1fr;gap:10px;align-items:start;
-             padding:8px 10px;border-bottom:1px solid var(--border);border-radius:var(--radius);}
-.commit-row:hover{background:var(--bg-hover);}
-.commit-row:last-child{border-bottom:none;}
-.commit-date{font-size:11px;color:var(--text-muted);white-space:nowrap;padding-top:2px;}
-.commit-hash{font-size:11px;padding-top:2px;}
-.commit-hash a{color:var(--text-dim);}
-.commit-hash a:hover{color:var(--accent);}
-.commit-subject{font-size:13px;color:var(--text);align-self:center;}
-.commit-files{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;}
-.file{font-family:var(--mono);font-size:10px;padding:1px 6px;background:var(--bg-row);
-       border:1px solid var(--border);border-radius:3px;color:var(--text-muted);}
-.file-more{font-family:var(--mono);font-size:10px;color:var(--text-dim);align-self:center;}
-.badge{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:3px;
-        border:1px solid;white-space:nowrap;align-self:center;}
-.empty-msg{padding:40px 10px;color:var(--text-muted);font-family:var(--mono);font-size:12px;text-align:center;}
+  .nb-entry-title {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .nb-entry-body { font-size: 13px; color: var(--dim); line-height: 1.7; }
 
-/* Section headers */
-.section{padding:20px 24px;border-top:1px solid var(--border);}
-.section-header{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;
-                  letter-spacing:.08em;color:var(--text-muted);margin-bottom:14px;}
+  .nb-empty { font-family: var(--mono); font-size: 12px; color: var(--muted); padding: 48px 0; display: none; }
 
-/* Pending */
-.pending-repo{margin-bottom:14px;}
-.pending-name{font-family:var(--mono);font-size:12px;font-weight:500;}
-.pending-files{margin-top:6px;display:flex;flex-direction:column;gap:3px;padding-left:12px;
-                border-left:2px solid var(--border);}
-.pending-file{font-size:12px;display:flex;align-items:center;gap:8px;}
-.status-tag{font-family:var(--mono);font-size:10px;font-weight:500;min-width:16px;}
-.clean{font-family:var(--mono);font-size:11px;color:var(--success);margin-left:10px;}
+  .nb-add-hint {
+    margin-top: 64px;
+    padding: 20px 24px;
+    border: 1px dashed var(--border2);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .nb-add-hint strong { color: var(--dim); }
+  .nb-add-hint code { color: var(--accent); }
 
-/* Issues */
-.issue-row{padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);
-             border-radius:var(--radius);margin-bottom:6px;}
-.issue-title{display:block;font-family:var(--mono);font-size:12px;font-weight:500;
-               color:var(--warning);margin-bottom:3px;}
-.issue-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
-
-.mono{font-family:var(--mono);}
+  @media (max-width: 600px) {
+    .nb-entry { grid-template-columns: 1fr; gap: 8px; }
+    .nb-entry-meta { display: flex; align-items: center; gap: 10px; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>/<span class="accent">changelog</span></h1>
-  <div class="stat-pills">
-    <span class="pill">51 commits</span>
-    <span class="pill">3 repos</span>
-    <span class="pill">9 pending</span>
+<div id="scroll-progress"></div>
+<div class="glow" id="glow"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="index.html#skills">Skills</a></li>
+    <li><a href="index.html#experience">Experience</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="changelog.html">Notebook</a></li>
+    <li><a href="ideas.html">Ideas</a></li>
+    <li><a href="context.html">Context</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <span class="last-updated">updated 2026-03-19 02:29:36</span>
-</header>
+</nav>
 
-<div class="tab-bar">
-<button class="tab active" onclick="setTab('all',this)">All</button>
-<button class="tab" onclick="setTab('tankpit-bot-legacy',this)" style="--tc:#5b8dee">tankpit-bot-legacy</button>
-<button class="tab" onclick="setTab('uk0430.github.io',this)" style="--tc:#34d399">uk0430.github.io</button>
-<button class="tab" onclick="setTab('dotfiles',this)" style="--tc:#e0a030">dotfiles</button>
+<div class="wrapper">
 
-</div>
+  <div class="nb-hero">
+    <div class="nb-eyebrow">Personal Devlog</div>
+    <h1 class="nb-title">Note<span>book</span></h1>
+    <p class="nb-desc">
+      A running log of everything built, shipped, learned, and figured out.
+      No audience required — this is for me.
+    </p>
+  </div>
 
-<div class="tab-panel active" id="tab-all"><div class="commit-row">
-  <span class="commit-date mono">2026-03-19</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/5253a50" target="_blank" rel="noopener">5253a50</a></span>
-  <span class="commit-subject">Remove private pages from public repo, add gitignore</span>
-  <div class="commit-files"><span class="file">.gitignore</span> <span class="file">noc.html</span> <span class="file">ops.html</span> <span class="file">runbook.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/6075377" target="_blank" rel="noopener">6075377</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:45</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b99762a" target="_blank" rel="noopener">b99762a</a></span>
-  <span class="commit-subject">noc: mark Gitea mirrors and NPM creds as done</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c3d251b" target="_blank" rel="noopener">c3d251b</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:35</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/1f9db68" target="_blank" rel="noopener">1f9db68</a></span>
-  <span class="commit-subject">chore: update CLAUDE.md structure, clean up index.html wording</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c9954ac" target="_blank" rel="noopener">c9954ac</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:32</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/100f0a1" target="_blank" rel="noopener">100f0a1</a></span>
-  <span class="commit-subject">fix: remove JS comments from noc-data.json — invalid JSON was breaking NOC board</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c89071e" target="_blank" rel="noopener">c89071e</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:28</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/09aa7aa" target="_blank" rel="noopener">09aa7aa</a></span>
-  <span class="commit-subject">HOMELAB: document Pi hub setup, update NOC board with 2026-03-18 work</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/ab62993" target="_blank" rel="noopener">ab62993</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-17 23:37</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/d65d025" target="_blank" rel="noopener">d65d025</a></span>
-  <span class="commit-subject">footer: add [changelog] link</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b5f306b" target="_blank" rel="noopener">b5f306b</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-17 23:36</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/2c6a57b" target="_blank" rel="noopener">2c6a57b</a></span>
-  <span class="commit-subject">footer: add [runbook] link alongside other private pages</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/59f8ea5" target="_blank" rel="noopener">59f8ea5</a></span>
-  <span class="commit-subject">add runbook.html — styled private WSL home lab runbook</span>
-  <div class="commit-files"><span class="file">runbook.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/eabe955" target="_blank" rel="noopener">eabe955</a></span>
-  <span class="commit-subject">add auth gate + fix noc-data from CLAUDE.md audit</span>
-  <div class="commit-files"><span class="file">assets/auth.js</span> <span class="file">noc-data.json</span> <span class="file">noc.html</span> <span class="file">ops.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/db59ad4" target="_blank" rel="noopener">db59ad4</a></span>
-  <span class="commit-subject">add NOC project tracker with noc-data.json source of truth</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">assets/main.js</span> <span class="file">index.html</span> <span class="file">noc-data.json</span> <span class="file-more">+2 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b76e870" target="_blank" rel="noopener">b76e870</a></span>
-  <span class="commit-subject">add private nav to ops and tracker pages</span>
-  <div class="commit-files"><span class="file">assets/main.js</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/198c4a1" target="_blank" rel="noopener">198c4a1</a></span>
-  <span class="commit-subject">add ops dashboard and GoatCounter placeholders</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">index.html</span> <span class="file">ops.html</span> <span class="file">projects/tankpit.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/e2ec87d" target="_blank" rel="noopener">e2ec87d</a></span>
-  <span class="commit-subject">add contact form and job tracker</span>
-  <div class="commit-files"><span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file">tracker.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/87be2d4" target="_blank" rel="noopener">87be2d4</a></span>
-  <span class="commit-subject">add Now section</span>
-  <div class="commit-files"><span class="file">assets/style.css</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/fd68598" target="_blank" rel="noopener">fd68598</a></span>
-  <span class="commit-subject">add resume PDF</span>
-  <div class="commit-files"><span class="file">assets/Uzair_Khan_Resume.pdf</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/513dddd" target="_blank" rel="noopener">513dddd</a></span>
-  <span class="commit-subject">add favicon, OG tags, scroll bar, typing animation, mobile nav, copy cert, GitHub activity, terminal easter egg</span>
-  <div class="commit-files"><span class="file">assets/favicon.svg</span> <span class="file">assets/main.js</span> <span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b6be3e4" target="_blank" rel="noopener">b6be3e4</a></span>
-  <span class="commit-subject">add CySA+ badge image and Credly link</span>
-  <div class="commit-files"><span class="file">assets/cysa-badge.png</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/4eeca25" target="_blank" rel="noopener">4eeca25</a></span>
-  <span class="commit-subject">add Credly badge link to cert</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#34d39922;color:#34d399;border-color:#34d39944">uk0430.github.io</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/7098756" target="_blank" rel="noopener">7098756</a></span>
-  <span class="commit-subject">restructure site</span>
-  <div class="commit-files"><span class="file">assets/main.js</span> <span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file">projects/tankpit.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  <span class="badge" style="background:#e0a03022;color:#e0a030;border-color:#e0a03044">dotfiles</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/dotfiles/commit/d6d4800" target="_blank" rel="noopener">d6d4800</a></span>
-  <span class="commit-subject">initial runbook</span>
-  <div class="commit-files"><span class="file">RUNBOOK.md</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/a616784" target="_blank" rel="noopener">a616784</a></span>
-  <span class="commit-subject">tank card fully working with stats, cups, private fallback</span>
-  <div class="commit-files"><span class="file">bot.log</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/164e490" target="_blank" rel="noopener">164e490</a></span>
-  <span class="commit-subject">tank card private stats, cups fallback fix</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/8195b21" target="_blank" rel="noopener">8195b21</a></span>
-  <span class="commit-subject">tank player card with stats, cups fix, map_data extraction</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/1cd82df" target="_blank" rel="noopener">1cd82df</a></span>
-  <span class="commit-subject">RAG working with 1320 chunks, leaderboard filters</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/aefbda5" target="_blank" rel="noopener">aefbda5</a></span>
-  <span class="commit-subject">bug fixes, leaderboard filters, log rotation prep</span>
-  <div class="commit-files"><span class="file">.gitignore</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/32b9f6f" target="_blank" rel="noopener">32b9f6f</a></span>
-  <span class="commit-subject">leaderboard image generator, help command, ask embed+cache</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/0f80592" target="_blank" rel="noopener">0f80592</a></span>
-  <span class="commit-subject">all 4 commands working — award, tank, leaderboard, ask RAG</span>
-  <div class="commit-files"><span class="file">bot.log</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/e62469c" target="_blank" rel="noopener">e62469c</a></span>
-  <span class="commit-subject">add /leaderboard command with year and top options</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/f0d01e9" target="_blank" rel="noopener">f0d01e9</a></span>
-  <span class="commit-subject">add /ask RAG command with llama.cpp backend</span>
-  <div class="commit-files"><span class="file">PROJECT_TRACKER.html</span> <span class="file">bot.log</span> <span class="file">bot.log.1.gz</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/2d3442e" target="_blank" rel="noopener">2d3442e</a></span>
-  <span class="commit-subject">fix: remove defer from /tank command, use send_message directly</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/ff43fe3" target="_blank" rel="noopener">ff43fe3</a></span>
-  <span class="commit-subject">feat: add /tank command with full profile embed and multi-result dropdown</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/258313e" target="_blank" rel="noopener">258313e</a></span>
-  <span class="commit-subject">docs: add CLAUDE.md project context and TankPit API plans</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/fc2256a" target="_blank" rel="noopener">fc2256a</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/f8f33bf" target="_blank" rel="noopener">f8f33bf</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/ac2d104" target="_blank" rel="noopener">ac2d104</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/070865e" target="_blank" rel="noopener">070865e</a></span>
-  <span class="commit-subject">fix: remove defer, use send_message directly to prevent timeout on Railway</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/b4d53ed" target="_blank" rel="noopener">b4d53ed</a></span>
-  <span class="commit-subject">force redeploy latest UI</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/243f21c" target="_blank" rel="noopener">243f21c</a></span>
-  <span class="commit-subject">fix: add defer before send_message to prevent interaction timeout</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/3f0c142" target="_blank" rel="noopener">3f0c142</a></span>
-  <span class="commit-subject">fix: remove global clear, fix guild sync sequence for both servers</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/d65e872" target="_blank" rel="noopener">d65e872</a></span>
-  <span class="commit-subject">fix: clear global commands on startup, force guild-only sync</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/39c83ec" target="_blank" rel="noopener">39c83ec</a></span>
-  <span class="commit-subject">feat: sync /award command to both test and main server</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/1ba3778" target="_blank" rel="noopener">1ba3778</a></span>
-  <span class="commit-subject">force redeploy</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/e86fc78" target="_blank" rel="noopener">e86fc78</a></span>
-  <span class="commit-subject">feat: persistent award UI with Change Name button, direct tank_name parameter</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/fab0c64" target="_blank" rel="noopener">fab0c64</a></span>
-  <span class="commit-subject">feat: allow selecting all awards with no limit</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  <span class="badge" style="background:#5b8dee22;color:#5b8dee;border-color:#5b8dee44">tankpit-bot-legacy</span>
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/406f1e7" target="_blank" rel="noopener">406f1e7</a></span>
-  <span class="commit-subject">feat: replace slash dropdowns with modal + interactive select menu UI</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div></div>
-<div class="tab-panel" id="tab-tankpit-bot-legacy"><div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/a616784" target="_blank" rel="noopener">a616784</a></span>
-  <span class="commit-subject">tank card fully working with stats, cups, private fallback</span>
-  <div class="commit-files"><span class="file">bot.log</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/164e490" target="_blank" rel="noopener">164e490</a></span>
-  <span class="commit-subject">tank card private stats, cups fallback fix</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/8195b21" target="_blank" rel="noopener">8195b21</a></span>
-  <span class="commit-subject">tank player card with stats, cups fix, map_data extraction</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/1cd82df" target="_blank" rel="noopener">1cd82df</a></span>
-  <span class="commit-subject">RAG working with 1320 chunks, leaderboard filters</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/aefbda5" target="_blank" rel="noopener">aefbda5</a></span>
-  <span class="commit-subject">bug fixes, leaderboard filters, log rotation prep</span>
-  <div class="commit-files"><span class="file">.gitignore</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/32b9f6f" target="_blank" rel="noopener">32b9f6f</a></span>
-  <span class="commit-subject">leaderboard image generator, help command, ask embed+cache</span>
-  <div class="commit-files"><span class="file">bot.log</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/0f80592" target="_blank" rel="noopener">0f80592</a></span>
-  <span class="commit-subject">all 4 commands working — award, tank, leaderboard, ask RAG</span>
-  <div class="commit-files"><span class="file">bot.log</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/e62469c" target="_blank" rel="noopener">e62469c</a></span>
-  <span class="commit-subject">add /leaderboard command with year and top options</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-16</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/f0d01e9" target="_blank" rel="noopener">f0d01e9</a></span>
-  <span class="commit-subject">add /ask RAG command with llama.cpp backend</span>
-  <div class="commit-files"><span class="file">PROJECT_TRACKER.html</span> <span class="file">bot.log</span> <span class="file">bot.log.1.gz</span> <span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/2d3442e" target="_blank" rel="noopener">2d3442e</a></span>
-  <span class="commit-subject">fix: remove defer from /tank command, use send_message directly</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/ff43fe3" target="_blank" rel="noopener">ff43fe3</a></span>
-  <span class="commit-subject">feat: add /tank command with full profile embed and multi-result dropdown</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/258313e" target="_blank" rel="noopener">258313e</a></span>
-  <span class="commit-subject">docs: add CLAUDE.md project context and TankPit API plans</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/fc2256a" target="_blank" rel="noopener">fc2256a</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/f8f33bf" target="_blank" rel="noopener">f8f33bf</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/ac2d104" target="_blank" rel="noopener">ac2d104</a></span>
-  <span class="commit-subject">redeploy in US East Virginia</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/070865e" target="_blank" rel="noopener">070865e</a></span>
-  <span class="commit-subject">fix: remove defer, use send_message directly to prevent timeout on Railway</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/b4d53ed" target="_blank" rel="noopener">b4d53ed</a></span>
-  <span class="commit-subject">force redeploy latest UI</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/243f21c" target="_blank" rel="noopener">243f21c</a></span>
-  <span class="commit-subject">fix: add defer before send_message to prevent interaction timeout</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/3f0c142" target="_blank" rel="noopener">3f0c142</a></span>
-  <span class="commit-subject">fix: remove global clear, fix guild sync sequence for both servers</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/d65e872" target="_blank" rel="noopener">d65e872</a></span>
-  <span class="commit-subject">fix: clear global commands on startup, force guild-only sync</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/39c83ec" target="_blank" rel="noopener">39c83ec</a></span>
-  <span class="commit-subject">feat: sync /award command to both test and main server</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/1ba3778" target="_blank" rel="noopener">1ba3778</a></span>
-  <span class="commit-subject">force redeploy</span>
-  <div class="commit-files"></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/e86fc78" target="_blank" rel="noopener">e86fc78</a></span>
-  <span class="commit-subject">feat: persistent award UI with Change Name button, direct tank_name parameter</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/fab0c64" target="_blank" rel="noopener">fab0c64</a></span>
-  <span class="commit-subject">feat: allow selecting all awards with no limit</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-15</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/tankpit-bot-legacy/commit/406f1e7" target="_blank" rel="noopener">406f1e7</a></span>
-  <span class="commit-subject">feat: replace slash dropdowns with modal + interactive select menu UI</span>
-  <div class="commit-files"><span class="file">bot.py</span></div>
-</div></div>
-<div class="tab-panel" id="tab-uk0430.github.io"><div class="commit-row">
-  <span class="commit-date mono">2026-03-19</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/5253a50" target="_blank" rel="noopener">5253a50</a></span>
-  <span class="commit-subject">Remove private pages from public repo, add gitignore</span>
-  <div class="commit-files"><span class="file">.gitignore</span> <span class="file">noc.html</span> <span class="file">ops.html</span> <span class="file">runbook.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/6075377" target="_blank" rel="noopener">6075377</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:45</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b99762a" target="_blank" rel="noopener">b99762a</a></span>
-  <span class="commit-subject">noc: mark Gitea mirrors and NPM creds as done</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c3d251b" target="_blank" rel="noopener">c3d251b</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:35</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/1f9db68" target="_blank" rel="noopener">1f9db68</a></span>
-  <span class="commit-subject">chore: update CLAUDE.md structure, clean up index.html wording</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c9954ac" target="_blank" rel="noopener">c9954ac</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:32</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/100f0a1" target="_blank" rel="noopener">100f0a1</a></span>
-  <span class="commit-subject">fix: remove JS comments from noc-data.json — invalid JSON was breaking NOC board</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/c89071e" target="_blank" rel="noopener">c89071e</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-18 23:28</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-18</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/09aa7aa" target="_blank" rel="noopener">09aa7aa</a></span>
-  <span class="commit-subject">HOMELAB: document Pi hub setup, update NOC board with 2026-03-18 work</span>
-  <div class="commit-files"><span class="file">noc-data.json</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/ab62993" target="_blank" rel="noopener">ab62993</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-17 23:37</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/d65d025" target="_blank" rel="noopener">d65d025</a></span>
-  <span class="commit-subject">footer: add [changelog] link</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b5f306b" target="_blank" rel="noopener">b5f306b</a></span>
-  <span class="commit-subject">chore: auto-update changelog 2026-03-17 23:36</span>
-  <div class="commit-files"><span class="file">changelog.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/2c6a57b" target="_blank" rel="noopener">2c6a57b</a></span>
-  <span class="commit-subject">footer: add [runbook] link alongside other private pages</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/59f8ea5" target="_blank" rel="noopener">59f8ea5</a></span>
-  <span class="commit-subject">add runbook.html — styled private WSL home lab runbook</span>
-  <div class="commit-files"><span class="file">runbook.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/eabe955" target="_blank" rel="noopener">eabe955</a></span>
-  <span class="commit-subject">add auth gate + fix noc-data from CLAUDE.md audit</span>
-  <div class="commit-files"><span class="file">assets/auth.js</span> <span class="file">noc-data.json</span> <span class="file">noc.html</span> <span class="file">ops.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/db59ad4" target="_blank" rel="noopener">db59ad4</a></span>
-  <span class="commit-subject">add NOC project tracker with noc-data.json source of truth</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">assets/main.js</span> <span class="file">index.html</span> <span class="file">noc-data.json</span> <span class="file-more">+2 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b76e870" target="_blank" rel="noopener">b76e870</a></span>
-  <span class="commit-subject">add private nav to ops and tracker pages</span>
-  <div class="commit-files"><span class="file">assets/main.js</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/198c4a1" target="_blank" rel="noopener">198c4a1</a></span>
-  <span class="commit-subject">add ops dashboard and GoatCounter placeholders</span>
-  <div class="commit-files"><span class="file">CLAUDE.md</span> <span class="file">index.html</span> <span class="file">ops.html</span> <span class="file">projects/tankpit.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/e2ec87d" target="_blank" rel="noopener">e2ec87d</a></span>
-  <span class="commit-subject">add contact form and job tracker</span>
-  <div class="commit-files"><span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file">tracker.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/87be2d4" target="_blank" rel="noopener">87be2d4</a></span>
-  <span class="commit-subject">add Now section</span>
-  <div class="commit-files"><span class="file">assets/style.css</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/fd68598" target="_blank" rel="noopener">fd68598</a></span>
-  <span class="commit-subject">add resume PDF</span>
-  <div class="commit-files"><span class="file">assets/Uzair_Khan_Resume.pdf</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/513dddd" target="_blank" rel="noopener">513dddd</a></span>
-  <span class="commit-subject">add favicon, OG tags, scroll bar, typing animation, mobile nav, copy cert, GitHub activity, terminal easter egg</span>
-  <div class="commit-files"><span class="file">assets/favicon.svg</span> <span class="file">assets/main.js</span> <span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file-more">+1 more</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/b6be3e4" target="_blank" rel="noopener">b6be3e4</a></span>
-  <span class="commit-subject">add CySA+ badge image and Credly link</span>
-  <div class="commit-files"><span class="file">assets/cysa-badge.png</span> <span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/4eeca25" target="_blank" rel="noopener">4eeca25</a></span>
-  <span class="commit-subject">add Credly badge link to cert</span>
-  <div class="commit-files"><span class="file">index.html</span></div>
-</div>
-<div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/uk0430.github.io/commit/7098756" target="_blank" rel="noopener">7098756</a></span>
-  <span class="commit-subject">restructure site</span>
-  <div class="commit-files"><span class="file">assets/main.js</span> <span class="file">assets/style.css</span> <span class="file">index.html</span> <span class="file">projects/tankpit.html</span></div>
-</div></div>
-<div class="tab-panel" id="tab-dotfiles"><div class="commit-row">
-  <span class="commit-date mono">2026-03-17</span>
-  
-  <span class="commit-hash mono"><a href="https://github.com/uk0430/dotfiles/commit/d6d4800" target="_blank" rel="noopener">d6d4800</a></span>
-  <span class="commit-subject">initial runbook</span>
-  <div class="commit-files"><span class="file">RUNBOOK.md</span></div>
-</div></div>
+  <div class="nb-filters">
+    <button class="nb-filter active" data-cat="all">All</button>
+    <button class="nb-filter" data-cat="portfolio">Portfolio</button>
+    <button class="nb-filter" data-cat="tankpit">TankPit</button>
+    <button class="nb-filter" data-cat="homelab">Homelab</button>
+    <button class="nb-filter" data-cat="learning">Learning</button>
+    <button class="nb-filter" data-cat="ops">Ops</button>
+  </div>
+  <div class="nb-count" id="nb-count"></div>
 
+  <div id="nb-list">
+    <p style="font-family:var(--mono);font-size:11px;color:var(--muted);">Loading...</p>
+  </div>
+  <div class="nb-empty" id="nb-empty">No entries in this category yet.</div>
 
-<div class="section">
-  <div class="section-header">Pending Changes</div>
-  <div class="pending-repo"><span class="pending-name" style="color:#5b8dee">tankpit-bot-legacy</span><div class="pending-files"><div class="pending-file"><span class="status-tag" style="color:#5b8dee">M</span> <span class="mono">CLAUDE.md</span></div><div class="pending-file"><span class="status-tag" style="color:#5b8dee">M</span> <span class="mono">bot.log</span></div><div class="pending-file"><span class="status-tag" style="color:#5b8dee">M</span> <span class="mono">bot.py</span></div><div class="pending-file"><span class="status-tag" style="color:#5b8dee">M</span> <span class="mono">requirements.txt</span></div><div class="pending-file"><span class="status-tag" style="color:#e05252">D</span> <span class="mono">seen_posts.json</span></div><div class="pending-file"><span class="status-tag" style="color:#e05252">D</span> <span class="mono">tank_cache.pkl</span></div><div class="pending-file"><span class="status-tag" style="color:#e05252">D</span> <span class="mono">tankpit.db</span></div><div class="pending-file"><span class="status-tag" style="color:#6b6b6b">??</span> <span class="mono">emoji_exports/</span></div><div class="pending-file"><span class="status-tag" style="color:#6b6b6b">??</span> <span class="mono">export_award_emojis.py</span></div></div></div>
-<div class="pending-repo"><span class="pending-name" style="color:#34d399">uk0430.github.io</span> <span class="clean">clean</span></div>
-<div class="pending-repo"><span class="pending-name" style="color:#e0a030">dotfiles</span> <span class="clean">clean</span></div>
+  <div class="nb-add-hint">
+    <strong>To add an entry:</strong> open <code>changelog.json</code> and prepend a new object.<br>
+    Fields: <code>"date"</code> (YYYY-MM-DD) · <code>"cat"</code> (portfolio / tankpit / homelab / learning / ops) · <code>"title"</code> · <code>"body"</code>
+  </div>
 
-</div>
+  <footer style="margin-top:80px;">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-name">Uzair Khan</div>
+        <div class="footer-tagline">Network Operations Engineer · Manassas, VA</div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Portfolio</a>
+        <a href="https://linkedin.com/in/uk0430" target="_blank">LinkedIn</a>
+        <a href="https://github.com/uk0430" target="_blank">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 · This notebook is mostly for me</span>
+    </div>
+  </footer>
 
-<div class="section">
-  <div class="section-header">Open Issues — from RUNBOOK.md</div>
-  <div class="issue-row"><span class="issue-title">Email manager scan drops** at 600–1000 emails — IMAP connection timeout. Needs exponential backoff + per-email retry.
-2. **Player card cache is stale** after stat updates — cache key is `tank_id` only. Clear with `rm -rf ~/tankpit-bot-legacy/cache/*`.
-3. **No cron for bible refresh</span><span class="issue-desc">must run `rebuild_bible.py` manually after scraping new profiles.</span></div>
-<div class="issue-row"><span class="issue-title">Leaderboard data not in RAG</span><span class="issue-desc">`leaderboards.json` not merged into `bible_chunks.json`, so `/ask` can&#x27;t answer tournament history questions accurately.</span></div>
-<div class="issue-row"><span class="issue-title">Credentials in .env files</span><span class="issue-desc">Discord token and TankPit password are in version-tracked `.env` files. Rotate if repo is ever made public.</span></div>
 </div>
 
 <script>
-'use strict';
-function setTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+const CAT_LABELS = { portfolio:'Portfolio', tankpit:'TankPit', homelab:'Homelab', learning:'Learning', ops:'Ops' };
+
+function formatDate(str) {
+  return new Date(str + 'T00:00:00').toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
 }
+
+function render(entries, filter) {
+  const list  = document.getElementById('nb-list');
+  const empty = document.getElementById('nb-empty');
+  const count = document.getElementById('nb-count');
+  const rows  = filter === 'all' ? entries : entries.filter(e => e.cat === filter);
+
+  if (!rows.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    count.textContent = '';
+    return;
+  }
+  empty.style.display = 'none';
+  count.textContent = rows.length + ' entr' + (rows.length === 1 ? 'y' : 'ies');
+  list.innerHTML = rows.map(e => `
+    <div class="nb-entry">
+      <div class="nb-entry-meta">
+        <div class="nb-date">${formatDate(e.date)}</div>
+        <span class="nb-cat nb-cat-${e.cat}">${CAT_LABELS[e.cat] || e.cat}</span>
+      </div>
+      <div>
+        <div class="nb-entry-title">${e.title}</div>
+        <div class="nb-entry-body">${e.body}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let all = [], active = 'all';
+
+fetch('changelog.json')
+  .then(r => r.json())
+  .then(data => { all = data; render(all, active); })
+  .catch(() => {
+    document.getElementById('nb-list').innerHTML =
+      '<p style="font-family:var(--mono);font-size:11px;color:var(--muted);">Could not load changelog.json.</p>';
+  });
+
+document.querySelectorAll('.nb-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nb-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    active = btn.dataset.cat;
+    render(all, active);
+  });
+});
 </script>
+
 </body>
 </html>

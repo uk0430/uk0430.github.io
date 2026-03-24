@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context — Uzair Khan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/main.js"></script>
+<style>
+  .ctx-hero {
+    padding-top: 130px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .ctx-title {
+    font-family: var(--display);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+  }
+  .ctx-title span { color: var(--accent); }
+  .ctx-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.9;
+  }
+
+  /* ── SEARCH ──────────────────────────────────────── */
+  .ctx-search-bar {
+    position: sticky;
+    top: 57px;
+    z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ctx-search-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+  }
+  .ctx-search-wrap::before {
+    content: '⌕';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  #ctx-search {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 9px 12px 9px 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #ctx-search:focus { border-color: var(--accent); }
+  #ctx-search::placeholder { color: var(--muted); }
+  #ctx-match-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .ctx-clear {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+  .ctx-clear:hover { border-color: var(--accent); color: var(--accent); }
+  .ctx-clear.visible { display: block; }
+  mark {
+    background: rgba(251,191,36,0.3);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* ── BODY LAYOUT ─────────────────────────────────── */
+  .ctx-body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0 48px;
+    padding-top: 48px;
+  }
+
+  /* ── TOC ─────────────────────────────────────────── */
+  .ctx-toc {
+    position: sticky;
+    top: 110px;
+    align-self: start;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 2;
+  }
+  .ctx-toc-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .ctx-toc a {
+    display: block;
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.15s;
+    padding: 1px 0;
+  }
+  .ctx-toc a:hover { color: var(--accent); }
+  .ctx-toc a.active { color: var(--accent); }
+
+  /* ── SECTIONS ────────────────────────────────────── */
+  .ctx-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 120px;
+  }
+  .ctx-section.hidden { display: none; }
+  .ctx-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ctx-section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .ctx-section-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .ctx-updated {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* ── TABLE ───────────────────────────────────────── */
+  .ctx-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .ctx-table th {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .ctx-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--dim);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .ctx-table tr:last-child td { border-bottom: none; }
+  .ctx-table tr:hover td { background: var(--bg2); }
+  .ctx-table td:first-child { font-family: var(--mono); font-size: 11px; color: var(--text); white-space: nowrap; }
+
+  /* ── CODE ────────────────────────────────────────── */
+  .ctx-code {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-bottom: 16px;
+    white-space: pre;
+  }
+  .ctx-code .cm { color: var(--muted); }
+  .ctx-code .hi { color: var(--accent); }
+
+  /* ── ITEMS ───────────────────────────────────────── */
+  .ctx-item {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--dim);
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .ctx-item::before { content: '›'; color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+  .ctx-item strong { color: var(--text); font-weight: 500; }
+  .ctx-item code { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+  /* ── STATUS BADGES ───────────────────────────────── */
+  .status-active  { color: var(--green);  font-family: var(--mono); font-size: 10px; }
+  .status-offline { color: var(--amber);  font-family: var(--mono); font-size: 10px; }
+  .status-infra   { color: var(--purple); font-family: var(--mono); font-size: 10px; }
+
+  /* ── CHECKLIST ───────────────────────────────────── */
+  .ctx-check {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--dim);
+    margin-bottom: 5px;
+    align-items: flex-start;
+  }
+  .ctx-check::before {
+    content: '□';
+    font-family: var(--mono);
+    color: var(--border2);
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* ── EMPTY SEARCH STATE ──────────────────────────── */
+  #ctx-no-results {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    padding: 48px 0;
+    display: none;
+    grid-column: 2;
+  }
+
+  @media (max-width: 700px) {
+    .ctx-body { grid-template-columns: 1fr; }
+    .ctx-toc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div class="glow" id="glow"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Portfolio</a></li>
+    <li><a href="changelog.html">Notebook</a></li>
+    <li><a href="ideas.html">Ideas</a></li>
+    <li><a href="context.html">Context</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <div class="ctx-hero">
+    <div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;">Master Context</div>
+      <h1 class="ctx-title">Uzair<span>.</span>ctx</h1>
+    </div>
+    <div class="ctx-meta">
+      Last synced: 2026-03-19<br>
+      Role: NOC Engineer<br>
+      Env: WSL2 Ubuntu / Windows<br>
+      Host: DESKTOP-5NSN95M
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="ctx-search-bar">
+    <div class="ctx-search-wrap">
+      <input type="text" id="ctx-search" placeholder="Search anything — ports, commands, projects..." autocomplete="off" spellcheck="false">
+    </div>
+    <span id="ctx-match-count"></span>
+    <button class="ctx-clear" id="ctx-clear">clear</button>
+  </div>
+
+  <div class="ctx-body">
+
+    <!-- TOC -->
+    <nav class="ctx-toc">
+      <div class="ctx-toc-title">Sections</div>
+      <a href="#projects">Projects</a>
+      <a href="#ports">Ports</a>
+      <a href="#commands">Commands</a>
+      <a href="#tankpit">TankPit Bot</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#homelab">Pi Homelab</a>
+      <a href="#email">Email Manager</a>
+      <a href="#envvars">Env Vars</a>
+      <a href="#jobtracker">Job Tracker</a>
+      <a href="#crons">Crons</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#issues">Known Issues</a>
+    </nav>
+
+    <div id="ctx-sections">
+
+      <!-- PROJECTS -->
+      <section class="ctx-section" id="projects">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">01</span>
+          <span class="ctx-section-title">Projects</span>
+          <span class="ctx-updated">synced 2026-03-19</span>
+        </div>
+        <table class="ctx-table">
+          <thead><tr><th>Project</th><th>Path</th><th>Deploy</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>TankPit Bot</td><td><code style="font-family:var(--mono);font-size:11px">~/tankpit-bot-legacy/</code></td><td>Railway US-East</td><td><span class="status-active">● Active</span></td></tr>
+            <tr><td>TankPit AI/KB</td><td><code style="font-family:var(--mono);font-size:11px">~/tankpit-ai/</code></td><td>Local only</td><td><span class="status-active">● Active</span></td></tr>
+            <tr><td>Portfolio</td><td><code style="font-family:var(--mono);font-size:11px">~/uk0430.github.io/</code></td><td>Local only</td><td><span class="status-offline">⏸ Offline</span></td></tr>
+            <tr><td>Email Manager</td><td><code style="font-family:var(--mono);font-size:11px">~/email_manager.py</code></td><td>localhost:5000</td><td><span class="status-active">● Active</span></td></tr>
+            <tr><td>Pi Homelab</td><td><code style="font-family:var(--mono);font-size:11px">192.168.1.254 (uzi)</code></td><td>Local network</td><td><span class="status-active">● Active</span></td></tr>
+            <tr><td>llama.cpp</td><td><code style="font-family:var(--mono);font-size:11px">~/llama.cpp/</code></td><td>Local inference</td><td><span class="status-infra">◈ AI infra</span></td></tr>
+          </tbody>
+        </table>
+        <div class="ctx-item"><strong>Non-git projects</strong> (tankpit-ai, ai-lab, email_manager) — no version control. Do NOT run git commands without confirming.</div>
+      </section>
+
+      <!-- PORTS -->
+      <section class="ctx-section" id="ports">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">02</span>
+          <span class="ctx-section-title">Ports & Services</span>
+        </div>
+        <table class="ctx-table">
+          <thead><tr><th>Port</th><th>Service</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>8080</td><td>llama-server — Mistral-7B-Instruct v0.2 Q4_K_M</td><td>Chat completions</td></tr>
+            <tr><td>8081</td><td>llama-server — nomic-embed-text-v1.5 Q4_K_M</td><td>RAG embeddings</td></tr>
+            <tr><td>5000</td><td>email_manager.py (Flask)</td><td>iCloud bulk email UI</td></tr>
+            <tr><td>8888</td><td>python3 -m http.server</td><td>Portfolio local preview</td></tr>
+            <tr><td>8053</td><td>Pi-hole (on Pi)</td><td>DNS sinkhole, 1.6M blocked</td></tr>
+            <tr><td>19999</td><td>Netdata (on Pi)</td><td>Streaming from desktop</td></tr>
+            <tr><td>3000</td><td>Gitea (on Pi)</td><td>Private Git server</td></tr>
+          </tbody>
+        </table>
+        <div class="ctx-code"><span class="cm"># Check what's running</span>
+ss -tlnp
+<span class="cm"># Health checks</span>
+curl http://127.0.0.1:8080/health   <span class="cm"># Mistral-7B</span>
+curl http://127.0.0.1:8081/health   <span class="cm"># nomic-embed</span></div>
+      </section>
+
+      <!-- COMMANDS -->
+      <section class="ctx-section" id="commands">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">03</span>
+          <span class="ctx-section-title">Quick Commands</span>
+        </div>
+        <div class="ctx-code"><span class="cm"># Start everything (embed + LLM + bot)</span>
+<span class="hi">bash ~/start-tankpit.sh</span>
+
+<span class="cm"># Individual controls</span>
+bash ~/restart-bot.sh                                 <span class="cm"># bot only</span>
+bash ~/stop-servers.sh                                <span class="cm"># kill all llama-server</span>
+bash ~/start-llm.sh                                   <span class="cm"># Mistral only</span>
+
+<span class="cm"># Email manager</span>
+ICLOUD_PASS="..." python3 ~/email_manager.py          <span class="cm"># → localhost:5000</span>
+
+<span class="cm"># Portfolio</span>
+cd ~/uk0430.github.io && python3 -m http.server 8888  <span class="cm"># preview</span>
+cd ~/uk0430.github.io && git add . && git commit -m "..." && git push  <span class="cm"># deploy</span>
+
+<span class="cm"># Pi</span>
+ssh -i ~/.ssh/id_ed25519 uk0430@192.168.1.254         <span class="cm"># SSH into Pi (uzi)</span>
+
+<span class="cm"># Backup (also runs Monday 10am via cron)</span>
+bash ~/backup.sh</div>
+      </section>
+
+      <!-- TANKPIT BOT -->
+      <section class="ctx-section" id="tankpit">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">04</span>
+          <span class="ctx-section-title">TankPit Bot</span>
+        </div>
+        <div class="ctx-item"><strong>File:</strong> <code>~/tankpit-bot-legacy/bot.py</code> (1,467 lines, single file)</div>
+        <div class="ctx-item"><strong>Full context:</strong> <code>~/tankpit-bot-legacy/CLAUDE.md</code></div>
+        <div class="ctx-item"><strong>Venv:</strong> <code>source ~/tankpit-bot-legacy/venv/bin/activate</code></div>
+        <div class="ctx-item"><strong>Commands:</strong> /award, /tank, /leaderboard, /ask, /help — all ephemeral. /ask disabled on Railway.</div>
+
+        <table class="ctx-table" style="margin-top:16px;">
+          <thead><tr><th>Data File</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>~/tankpit-ai/tankpit.db</td><td>SQLite — 13,250 players</td></tr>
+            <tr><td>~/tankpit-ai/bible_chunks.json</td><td>16,914 chunks + 768-dim nomic-embed vectors</td></tr>
+            <tr><td>~/tankpit-bot-legacy/cache/</td><td>MD5-keyed PNG render cache (player cards, leaderboards)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ctx-code"><span class="cm"># Rebuild bible (20–30 min, needs nomic-embed on :8081)</span>
+cd ~/tankpit-ai && source venv/bin/activate
+python rebuild_bible.py --scraped-dir scraped/profiles --output bible_chunks.json
+
+<span class="cm"># Clear image cache</span>
+rm -rf ~/tankpit-bot-legacy/cache/*</div>
+      </section>
+
+      <!-- PORTFOLIO -->
+      <section class="ctx-section" id="portfolio">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">05</span>
+          <span class="ctx-section-title">Portfolio Site</span>
+        </div>
+        <div class="ctx-item"><strong>Status:</strong> Offline. GitHub Pages disabled. Local preview at localhost:8888.</div>
+        <div class="ctx-item"><strong>Auth:</strong> uk0430 / 1 (all private pages)</div>
+
+        <table class="ctx-table" style="margin-top:16px;">
+          <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>index.html</td><td>Main portfolio page</td></tr>
+            <tr><td>assets/style.css</td><td>All styles — 5 theme blocks, components</td></tr>
+            <tr><td>assets/main.js</td><td>cycleTheme(), animations, terminal, GitHub activity</td></tr>
+            <tr><td>assets/auth.js</td><td>Password gate for private pages</td></tr>
+            <tr><td>changelog.json</td><td>Devlog data — prepend to add entries</td></tr>
+            <tr><td>changelog.html</td><td>Notebook page — category filter, renders changelog.json</td></tr>
+            <tr><td>noc-data.json</td><td>NOC board source of truth</td></tr>
+            <tr><td>projects/tankpit.html</td><td>TankPit Bot deep-dive</td></tr>
+            <tr><td>projects/scraper.html</td><td>Data Pipeline deep-dive</td></tr>
+            <tr><td>projects/homelab.html</td><td>Home Network Lab deep-dive</td></tr>
+            <tr><td>vault.html</td><td>Local credentials manager (gitignored)</td></tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:16px;font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">5 Themes (cycled via data-theme on &lt;html&gt;)</div>
+        <table class="ctx-table">
+          <thead><tr><th>Theme</th><th>Look</th><th>Accent</th></tr></thead>
+          <tbody>
+            <tr><td>dark</td><td>Near-black bg + sky blue</td><td>#38bdf8</td></tr>
+            <tr><td>warm</td><td>Cream bg + rust</td><td>#c2410c</td></tr>
+            <tr><td>sepia</td><td>Paper brown + warm brown</td><td>#7c5c2e</td></tr>
+            <tr><td>terminal</td><td>Black + green</td><td>#00dd55</td></tr>
+            <tr><td>nord</td><td>Muted blue-gray</td><td>#88c0d0</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- HOMELAB -->
+      <section class="ctx-section" id="homelab">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">06</span>
+          <span class="ctx-section-title">Pi Homelab</span>
+        </div>
+        <div class="ctx-item"><strong>Pi:</strong> uzi · 192.168.1.254 · user: uk0430 · Raspberry Pi OS aarch64</div>
+        <div class="ctx-item"><strong>SSH:</strong> <code>ssh -i ~/.ssh/id_ed25519 uk0430@192.168.1.254</code></div>
+        <div class="ctx-item"><strong>Docker Compose:</strong> <code>~/docker/docker-compose.yml</code> (on Pi)</div>
+
+        <table class="ctx-table" style="margin-top:16px;">
+          <thead><tr><th>Service</th><th>Port</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Pi-hole</td><td>:8053/admin</td><td>1.6M domains blocked · pw: tankpit</td></tr>
+            <tr><td>Netdata</td><td>:19999</td><td>Pi = parent, desktop streams to it</td></tr>
+            <tr><td>Gitea</td><td>:3000</td><td>Private Git server</td></tr>
+            <tr><td>Nginx Proxy Manager</td><td>:81</td><td>Reverse proxy + SSL termination</td></tr>
+            <tr><td>Watchtower</td><td>bg</td><td>Auto-updates containers at 4am</td></tr>
+          </tbody>
+        </table>
+        <div class="ctx-item" style="margin-top:8px;"><strong>Flagged:</strong> .243 (Sichuan AI-Link, unknown Chinese IoT device — earmarked for quarantine)</div>
+        <div class="ctx-item"><strong>Router:</strong> Verizon CR1000B · 192.168.1.1 · 3 SSIDs: Primary, Guest, IoT · Cannot set custom DHCP DNS (ISP locked)</div>
+      </section>
+
+      <!-- EMAIL -->
+      <section class="ctx-section" id="email">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">07</span>
+          <span class="ctx-section-title">Email Manager</span>
+        </div>
+        <div class="ctx-item"><strong>File:</strong> <code>~/email_manager.py</code> (Flask · localhost:5000)</div>
+        <div class="ctx-item"><strong>Purpose:</strong> Bulk cleanup of 46,353 iCloud inbox emails</div>
+        <div class="ctx-item"><strong>IMAP:</strong> imap.mail.me.com:993</div>
+        <div class="ctx-item"><strong>Cache:</strong> <code>~/.email_manager_cache.json</code> (15MB persistent scan cache)</div>
+        <div class="ctx-item"><strong>Known issue:</strong> Drops IMAP at 600–1000 emails — needs exponential backoff on reconnect</div>
+        <div class="ctx-code">ICLOUD_PASS="your-app-specific-password" python3 ~/email_manager.py</div>
+      </section>
+
+      <!-- ENV VARS -->
+      <section class="ctx-section" id="envvars">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">08</span>
+          <span class="ctx-section-title">Environment Variables</span>
+        </div>
+        <table class="ctx-table">
+          <thead><tr><th>Variable</th><th>Location</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>DISCORD_TOKEN</td><td>~/tankpit-bot-legacy/.env</td><td>Bot token — rotate if ever exposed</td></tr>
+            <tr><td>GUILD_ID</td><td>~/tankpit-bot-legacy/.env</td><td>615551999701811221 (test guild)</td></tr>
+            <tr><td>GUILD_ID_2</td><td>~/tankpit-bot-legacy/.env</td><td>311890399767822359 (production)</td></tr>
+            <tr><td>TANKPIT_USERNAME</td><td>~/tankpit-ai/.env</td><td>uzairkhan1</td></tr>
+            <tr><td>TANKPIT_PASSWORD</td><td>~/tankpit-ai/.env</td><td>TankPit login for scrapers</td></tr>
+            <tr><td>ICLOUD_PASS</td><td>runtime only</td><td>App-specific password from appleid.apple.com</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- JOB TRACKER -->
+      <section class="ctx-section" id="jobtracker">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">09</span>
+          <span class="ctx-section-title">Job Tracker</span>
+        </div>
+        <div class="ctx-item"><strong>URL:</strong> localhost:8888/tracker.html (private, auth-gated)</div>
+        <div class="ctx-item"><strong>Apex Systems</strong> — Field Engineer interview (fell through)</div>
+        <div class="ctx-item"><strong>Securetics</strong> — interviewed via BambooHR</div>
+        <div class="ctx-item"><strong>ISI Enterprises</strong> — resume received 2026-03-17</div>
+      </section>
+
+      <!-- CRONS -->
+      <section class="ctx-section" id="crons">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">10</span>
+          <span class="ctx-section-title">Cron Jobs</span>
+        </div>
+        <div class="ctx-code">0 10 * * 1   /home/ukhan/backup.sh   <span class="cm"># Monday 10am — backup to OneDrive</span></div>
+        <div class="ctx-item"><strong>backup.sh:</strong> Tars tankpit-bot-legacy/, tankpit-ai/, PROJECT_TRACKER.html → OneDrive/WSL-backup/. Excludes venv/, build/, __pycache__. Keeps last 7 backups.</div>
+        <div class="ctx-item"><strong>Git hook:</strong> <code>~/.git-hooks/post-commit</code> auto-prepends to changelog.json on every commit (global, all repos).</div>
+      </section>
+
+      <!-- ROADMAP -->
+      <section class="ctx-section" id="roadmap">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">11</span>
+          <span class="ctx-section-title">Open Roadmap</span>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;">TankPit Bot</div>
+        <div class="ctx-check">Wire <code>leaderboard_history</code> into /ask SQL layer</div>
+        <div class="ctx-check">SQL color/rank filters for cups/kills ("most gold cups among blue players")</div>
+        <div class="ctx-check">Player card cache: key on stats hash (currently stale — keyed on tank_id only)</div>
+        <div class="ctx-check">Bible refresh cron (no auto-rebuild schedule yet)</div>
+        <div class="ctx-check">Split bot.py: banner.py, tankpit_api.py, ask.py (at 1,467 lines)</div>
+
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin:16px 0 10px;">Portfolio</div>
+        <div class="ctx-check">GoatCounter analytics (signup at goatcounter.com)</div>
+        <div class="ctx-check">Resume auto-update via GitHub Action</div>
+        <div class="ctx-check">Re-enable GitHub Pages when ready to go public</div>
+
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin:16px 0 10px;">Email Manager</div>
+        <div class="ctx-check">Auto-reconnect on IMAP drop</div>
+        <div class="ctx-check">Scan 30–90 days → bulk delete subscriptions</div>
+
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin:16px 0 10px;">Pi Homelab</div>
+        <div class="ctx-check">Unbound local DNS resolver on Pi</div>
+        <div class="ctx-check">Mirror repos to Gitea</div>
+        <div class="ctx-check">Migrate TankPit bot to Pi Docker</div>
+        <div class="ctx-check">IoT device segmentation (move to Verizon IoT SSID)</div>
+        <div class="ctx-check">SNMP + Grafana dashboards</div>
+        <div class="ctx-check">Identify .243 (Sichuan AI-Link device)</div>
+      </section>
+
+      <!-- KNOWN ISSUES -->
+      <section class="ctx-section" id="issues">
+        <div class="ctx-section-header">
+          <span class="ctx-section-num">12</span>
+          <span class="ctx-section-title">Known Issues</span>
+        </div>
+        <div class="ctx-item"><strong>#1 Email IMAP drop</strong> — Drops at 600–1000 emails. Needs exponential backoff + per-email retry.</div>
+        <div class="ctx-item"><strong>#2 Player card cache stale</strong> — Cache keyed on tank_id only. Clear: <code>rm -rf ~/tankpit-bot-legacy/cache/*</code></div>
+        <div class="ctx-item"><strong>#3 No bible refresh cron</strong> — Must run rebuild_bible.py manually after scraping new profiles.</div>
+        <div class="ctx-item"><strong>#4 Leaderboard not in RAG</strong> — leaderboards.json not merged into bible_chunks.json, so /ask can't answer tournament history accurately.</div>
+        <div class="ctx-item"><strong>#5 Credentials in .env</strong> — Never make tankpit-bot-legacy or tankpit-ai repos public without rotating tokens.</div>
+      </section>
+
+      <div id="ctx-no-results">No matches found.</div>
+
+    </div><!-- /ctx-sections -->
+  </div><!-- /ctx-body -->
+
+  <footer style="margin-top:80px;">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-name">Uzair Khan</div>
+        <div class="footer-tagline">Network Operations Engineer · Manassas, VA</div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Portfolio</a>
+        <a href="changelog.html">Notebook</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">context file · last synced 2026-03-19</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ── SEARCH ────────────────────────────────────────────
+const searchInput  = document.getElementById('ctx-search');
+const clearBtn     = document.getElementById('ctx-clear');
+const matchCount   = document.getElementById('ctx-match-count');
+const noResults    = document.getElementById('ctx-no-results');
+const sections     = document.querySelectorAll('.ctx-section');
+
+// Store original HTML for each section to restore after clearing
+const origHTML = {};
+sections.forEach(s => { origHTML[s.id] = s.innerHTML; });
+
+function highlight(node, term) {
+  if (node.nodeType === 3) {
+    const idx = node.textContent.toLowerCase().indexOf(term);
+    if (idx === -1) return false;
+    const span = document.createElement('span');
+    span.innerHTML =
+      escHtml(node.textContent.slice(0, idx)) +
+      `<mark>${escHtml(node.textContent.slice(idx, idx + term.length))}</mark>` +
+      escHtml(node.textContent.slice(idx + term.length));
+    node.parentNode.replaceChild(span, node);
+    return true;
+  }
+  if (node.nodeType === 1 && !['SCRIPT','STYLE','MARK'].includes(node.tagName)) {
+    Array.from(node.childNodes).forEach(c => highlight(c, term));
+  }
+  return false;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function doSearch(term) {
+  term = term.trim().toLowerCase();
+
+  // Restore originals first
+  sections.forEach(s => {
+    s.innerHTML = origHTML[s.id];
+    s.classList.remove('hidden');
+  });
+  noResults.style.display = 'none';
+
+  if (!term) {
+    matchCount.textContent = '';
+    clearBtn.classList.remove('visible');
+    return;
+  }
+
+  clearBtn.classList.add('visible');
+  let total = 0;
+  let visible = 0;
+
+  sections.forEach(s => {
+    const text = s.textContent.toLowerCase();
+    if (text.includes(term)) {
+      highlight(s, term);
+      const marks = s.querySelectorAll('mark').length;
+      total += marks;
+      visible++;
+    } else {
+      s.classList.add('hidden');
+    }
+  });
+
+  matchCount.textContent = total ? `${total} match${total===1?'':'es'} in ${visible} section${visible===1?'':'s'}` : '';
+  noResults.style.display = visible === 0 ? 'block' : 'none';
+}
+
+searchInput.addEventListener('input', () => doSearch(searchInput.value));
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  doSearch('');
+  searchInput.focus();
+});
+
+// ── TOC ACTIVE HIGHLIGHT ──────────────────────────────
+const tocLinks = document.querySelectorAll('.ctx-toc a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.ctx-toc a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

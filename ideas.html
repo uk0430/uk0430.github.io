@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ideas & Roadmap — Uzair Khan</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="assets/main.js"></script>
+  <style>
+    /* ── Ideas page layout ─────────────────────────────── */
+    .ideas-hero {
+      padding: 80px 0 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ideas-hero h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 8px; }
+    .ideas-hero p  { color: var(--muted); font-family: var(--mono); font-size: 0.9rem; }
+
+    .ideas-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 32px 0 24px;
+      align-items: center;
+    }
+    .ideas-count {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Filter pills */
+    .pill {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pill:hover          { border-color: var(--accent); color: var(--accent); }
+    .pill.active         { background: var(--accent); border-color: var(--accent); color: #000; }
+    .pill[data-cat="cybersec"].active  { background: var(--green); border-color: var(--green); }
+    .pill[data-cat="homelab"].active   { background: var(--purple); border-color: var(--purple); }
+    .pill[data-cat="portfolio"].active { background: var(--amber); border-color: var(--amber); color: #000; }
+    .pill[data-cat="tankpit"].active   { background: #f97316; border-color: #f97316; color: #000; }
+    .pill[data-cat="email"].active     { background: #e879f9; border-color: #e879f9; color: #000; }
+    .pill[data-cat="ai"].active        { background: var(--accent); border-color: var(--accent); color: #000; }
+    .pill[data-cat="business"].active  { background: #10b981; border-color: #10b981; color: #000; }
+
+    /* Grid */
+    .ideas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+      padding-bottom: 80px;
+    }
+
+    .idea-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .idea-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .idea-card.hidden { display: none; }
+
+    .idea-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .idea-card-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .idea-badges { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+    .idea-badge {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge-cat-cybersec  { background: rgba(52,211,153,0.15);  color: var(--green); }
+    .badge-cat-homelab   { background: rgba(167,139,250,0.15); color: var(--purple); }
+    .badge-cat-portfolio { background: rgba(251,191,36,0.15);  color: var(--amber); }
+    .badge-cat-tankpit   { background: rgba(249,115,22,0.15);  color: #f97316; }
+    .badge-cat-email     { background: rgba(232,121,249,0.15); color: #e879f9; }
+    .badge-cat-ai        { background: rgba(56,189,248,0.15);  color: var(--accent); }
+    .badge-cat-business  { background: rgba(16,185,129,0.15);  color: #10b981; }
+    .badge-tier-1 { background: rgba(56,189,248,0.12); color: var(--accent); }
+    .badge-tier-2 { background: rgba(251,191,36,0.12); color: var(--amber); }
+    .badge-tier-3 { background: rgba(167,139,250,0.12); color: var(--purple); }
+    .badge-status-idea        { background: rgba(148,163,184,0.1); color: var(--muted); }
+    .badge-status-in-progress { background: rgba(251,191,36,0.15); color: var(--amber); }
+    .badge-status-built       { background: rgba(52,211,153,0.15); color: var(--green); }
+
+    .idea-summary {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .idea-hardware {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--amber);
+      padding: 8px 12px;
+      background: rgba(251,191,36,0.06);
+      border-left: 2px solid var(--amber);
+      border-radius: 0 6px 6px 0;
+    }
+    .idea-hardware::before { content: "⚡ Hardware: "; font-weight: 700; }
+
+    .idea-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .idea-tag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: rgba(148,163,184,0.08);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Expanded step list */
+    .idea-steps {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      margin-top: 4px;
+    }
+    .idea-steps.open { display: flex; }
+    .idea-steps h4 {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 4px;
+    }
+    .idea-step {
+      display: flex;
+      gap: 10px;
+      font-size: 0.84rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .idea-step-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 18px;
+      padding-top: 1px;
+    }
+    .idea-why {
+      font-size: 0.84rem;
+      font-style: italic;
+      color: var(--muted);
+      border-left: 2px solid var(--accent);
+      padding-left: 12px;
+      line-height: 1.6;
+    }
+
+    .expand-btn {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .expand-btn:hover { opacity: 0.7; }
+
+    .tier-section { margin-bottom: 16px; }
+    .tier-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 24px 0 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .tier-label span { color: var(--accent); }
+
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="index.html#skills">Skills</a></li>
+    <li><a href="index.html#experience">Experience</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="changelog.html">Notebook</a></li>
+    <li><a href="ideas.html" class="nav-active">Ideas</a></li>
+    <li><a href="context.html">Context</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span class="status-text">Local</span>
+    </div>
+    <button class="theme-toggle" onclick="cycleTheme()" aria-label="Toggle theme">
+      <span class="toggle-icon">🌙</span>
+      <span class="toggle-label">LIGHT MODE</span>
+    </button>
+  </div>
+</nav>
+
+<main class="container">
+
+  <div class="ideas-hero">
+    <h1>Ideas <span style="color:var(--accent)">&amp;</span> Roadmap</h1>
+    <p>Future projects — structured, catalogued, ready to build. Click any card to see steps.</p>
+  </div>
+
+  <div class="ideas-controls">
+    <button class="pill active" data-cat="all"    onclick="filterCat('all')">All</button>
+    <button class="pill"        data-cat="tankpit"   onclick="filterCat('tankpit')">TankPit</button>
+    <button class="pill"        data-cat="cybersec"  onclick="filterCat('cybersec')">Cybersec</button>
+    <button class="pill"        data-cat="homelab"   onclick="filterCat('homelab')">Homelab</button>
+    <button class="pill"        data-cat="email"     onclick="filterCat('email')">Email</button>
+    <button class="pill"        data-cat="ai"        onclick="filterCat('ai')">AI Lab</button>
+    <button class="pill"        data-cat="business"  onclick="filterCat('business')">Business</button>
+    <button class="pill"        data-cat="portfolio" onclick="filterCat('portfolio')">Portfolio</button>
+    <span class="ideas-count" id="idea-count"></span>
+  </div>
+
+  <div class="ideas-grid" id="ideas-grid">
+    <div class="empty-state">Loading ideas...</div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="footer-logo">~/uzair-khan</span>
+      <span class="footer-tagline">NOC Engineer · Network &amp; Systems</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/uk0430" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/uzairkhan1" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="changelog.html">Notebook</a>
+      <a href="ideas.html">Ideas</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2026 Uzair Khan</span>
+    <span class="footer-private">
+      <a href="ops.html">ops</a> ·
+      <a href="noc.html">noc</a> ·
+      <a href="vault.html">vault</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+let allIdeas = [];
+let activeCat = 'all';
+
+const CAT_LABEL = { cybersec: 'Cybersec', homelab: 'Homelab', portfolio: 'Portfolio', tankpit: 'TankPit', email: 'Email', ai: 'AI Lab', business: 'Business' };
+const TIER_LABEL = { 1: 'Tier 1 — Software / No Hardware', 2: 'Tier 2 — Hardware Projects', 3: 'Tier 3 — Dedicated Lab' };
+
+function filterCat(cat) {
+  activeCat = cat;
+  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('ideas-grid');
+  const filtered = activeCat === 'all' ? allIdeas : allIdeas.filter(i => i.cat === activeCat);
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state">No ideas in this category yet.</div>';
+    document.getElementById('idea-count').textContent = '';
+    return;
+  }
+
+  document.getElementById('idea-count').textContent = `${filtered.length} idea${filtered.length !== 1 ? 's' : ''}`;
+
+  // Group by tier
+  const byTier = {};
+  filtered.forEach(idea => {
+    const t = idea.tier || 1;
+    if (!byTier[t]) byTier[t] = [];
+    byTier[t].push(idea);
+  });
+
+  let html = '';
+  Object.keys(byTier).sort().forEach(tier => {
+    html += `<div class="tier-label" style="grid-column:1/-1">
+      ${TIER_LABEL[tier] || 'Tier ' + tier} — <span>${byTier[tier].length} project${byTier[tier].length !== 1 ? 's' : ''}</span>
+    </div>`;
+    byTier[tier].forEach(idea => {
+      html += buildCard(idea);
+    });
+  });
+
+  grid.innerHTML = html;
+}
+
+function buildCard(idea) {
+  const statusClass = { idea: 'badge-status-idea', 'in-progress': 'badge-status-in-progress', built: 'badge-status-built' }[idea.status] || 'badge-status-idea';
+  const statusLabel = { idea: 'Idea', 'in-progress': 'In Progress', built: 'Built' }[idea.status] || 'Idea';
+
+  const stepsHtml = idea.steps && idea.steps.length ? `
+    <div class="idea-steps" id="steps-${idea.id}">
+      <h4>Steps</h4>
+      ${idea.why ? `<p class="idea-why">${idea.why}</p>` : ''}
+      ${idea.steps.map((s, i) => `<div class="idea-step"><span class="idea-step-num">${i + 1}.</span><span>${s}</span></div>`).join('')}
+    </div>
+  ` : '';
+
+  const tagsHtml = idea.tags && idea.tags.length
+    ? `<div class="idea-tags">${idea.tags.map(t => `<span class="idea-tag">${t}</span>`).join('')}</div>`
+    : '';
+
+  const hardwareHtml = idea.hardware
+    ? `<div class="idea-hardware">${idea.hardware}</div>`
+    : '';
+
+  const hasSteps = idea.steps && idea.steps.length;
+
+  return `
+    <div class="idea-card" id="card-${idea.id}" onclick="toggleSteps('${idea.id}')">
+      <div class="idea-card-header">
+        <h3>${idea.title}</h3>
+        <div class="idea-badges">
+          <span class="idea-badge badge-cat-${idea.cat}">${CAT_LABEL[idea.cat] || idea.cat}</span>
+          <span class="idea-badge badge-tier-${idea.tier}">T${idea.tier}</span>
+          <span class="idea-badge ${statusClass}">${statusLabel}</span>
+        </div>
+      </div>
+      <p class="idea-summary">${idea.summary}</p>
+      ${hardwareHtml}
+      ${tagsHtml}
+      ${hasSteps ? `<button class="expand-btn" id="btn-${idea.id}">▶ show steps</button>` : ''}
+      ${stepsHtml}
+    </div>
+  `;
+}
+
+function toggleSteps(id) {
+  const steps = document.getElementById('steps-' + id);
+  const btn   = document.getElementById('btn-' + id);
+  if (!steps) return;
+  const isOpen = steps.classList.toggle('open');
+  if (btn) btn.textContent = isOpen ? '▼ hide steps' : '▶ show steps';
+}
+
+fetch('ideas.json')
+  .then(r => r.json())
+  .then(data => {
+    allIdeas = data;
+    renderGrid();
+  })
+  .catch(() => {
+    document.getElementById('ideas-grid').innerHTML = '<div class="empty-state">Could not load ideas.json</div>';
+  });
+</script>
+
+</body>
+</html>

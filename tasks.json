@@ -1,0 +1,128 @@
+{
+  "lastUpdated": "2026-03-23",
+  "projects": [
+    {
+      "id": "market",
+      "name": "Market Flow Dashboard",
+      "status": "active",
+      "notes": "Flask :5001. Alpaca WebSocket → SSE live screener. yfinance for options/insider. start: bash ~/market-dashboard/start.sh",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "Live screener with Alpaca WebSocket streaming", "done": true, "abandoned": false },
+        { "text": "Options flow, congress trades, insider trades, portfolio, fear & greed tabs", "done": true, "abandoned": false },
+        { "text": "Restart Claude Code to verify Alpaca MCP tools connect", "done": false, "abandoned": false },
+        { "text": "Add price alert notifications (threshold crossing)", "done": false, "abandoned": false },
+        { "text": "Paper trading order entry from dashboard", "done": false, "abandoned": false },
+        { "text": "Dockerize + deploy to Pi for always-on access", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "review",
+      "name": "Code Review Service",
+      "status": "active",
+      "notes": "Flask :5002. PostToolUse + PreToolUse hooks capture all edits. /review-code skill runs 5 parallel agents. start: bash ~/code-review-service/start.sh",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "hook_pre_write.py — PreToolUse hook fixes Write race condition", "done": true, "abandoned": false },
+        { "text": "diff context n=10, session dedup, venv python path", "done": true, "abandoned": false },
+        { "text": "FixAgent (5th agent), full file context, project-specific rules", "done": true, "abandoned": false },
+        { "text": "Dashboard: verdict filter, sort by severity, browser notifications", "done": true, "abandoned": false },
+        { "text": "Enable systemd unit: systemctl --user enable --now code-review", "done": false, "abandoned": false },
+        { "text": "Dockerize + deploy to Pi (always-on)", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "tankpit",
+      "name": "TankPit Bot",
+      "status": "active",
+      "notes": "Deployed on Pi Docker. /ask disabled (llama.cpp local-only).",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "wire leaderboard_history into /ask SQL layer", "done": false, "abandoned": false },
+        { "text": "SQL color/rank filters (e.g. most gold cups among blue players)", "done": false, "abandoned": false },
+        { "text": "player card cache: key on stats hash (currently stale — keyed on tank_id only)", "done": false, "abandoned": false },
+        { "text": "bible refresh cron (no auto-schedule yet)", "done": false, "abandoned": false },
+        { "text": "split bot.py → banner.py, tankpit_api.py, ask.py", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio Site",
+      "status": "active",
+      "notes": "Self-hosted on Pi @ 192.168.1.254:8888. Deploy: bash ~/deploy-portfolio.sh.",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "self-host on Pi via Nginx container", "done": true, "abandoned": false },
+        { "text": "rsync deploy script (~/deploy-portfolio.sh)", "done": true, "abandoned": false },
+        { "text": "Pi-hole DNS: portfolio.home → 192.168.1.254", "done": true, "abandoned": false },
+        { "text": "NPM proxy host: portfolio.home → :8888", "done": true, "abandoned": false },
+        { "text": "GoatCounter analytics (needs signup at goatcounter.com)", "done": false, "abandoned": false },
+        { "text": "resume auto-update via GitHub Action", "done": false, "abandoned": false },
+        { "text": "publish public site (re-enable GitHub Pages when ready)", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "homelab",
+      "name": "Pi Homelab",
+      "status": "active",
+      "notes": "Pi @ 192.168.1.254 (uzi). 14 Docker containers. Grafana :3001, Nextcloud :8080, Prometheus :9091.",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "Tailscale installed + subnet routing (192.168.1.0/24)", "done": true, "abandoned": false },
+        { "text": "Grafana Security NOC + Node Exporter + Docker monitoring dashboards", "done": true, "abandoned": false },
+        { "text": "Nextcloud 33 + rclone OneDrive nightly backup", "done": true, "abandoned": false },
+        { "text": "Cowrie honeypot, fail2ban, nmap daily scan", "done": true, "abandoned": false },
+        { "text": "move IoT devices to Verizon IoT SSID (manual)", "done": false, "abandoned": false },
+        { "text": "identify .243 Sichuan AI-Link device", "done": false, "abandoned": false },
+        { "text": "Suricata NIDS (network intrusion detection)", "done": false, "abandoned": false },
+        { "text": "Gotify push notifications to phone", "done": false, "abandoned": false },
+        { "text": "Enable MagicDNS in Tailscale admin", "done": false, "abandoned": false },
+        { "text": "Install Nextcloud desktop + iPhone apps", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "mail",
+      "name": "Email Manager",
+      "status": "in-progress",
+      "notes": "Flask @ localhost:5000. 46,353 iCloud inbox. Drops IMAP at 600–1000 emails.",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "auto-reconnect on IMAP drop (backoff logic)", "done": false, "abandoned": false },
+        { "text": "scan 30–90 days → bulk delete subscriptions", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "cybersec",
+      "name": "Cybersec Learning",
+      "status": "paused",
+      "notes": "Tier 1 = software projects. Tier 2 = Pi hardware (needs TP-Link TL-WN722N ~$15). Path: Security+ → eJPT → OSCP.",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "Tier 1: port scanner (raw sockets, TCP handshake)", "done": false, "abandoned": false },
+        { "text": "Tier 1: packet sniffer (Scapy, ARP/DNS/HTTP)", "done": false, "abandoned": false },
+        { "text": "Tier 1: password cracker (hashcat + wordlist builder)", "done": false, "abandoned": false },
+        { "text": "Tier 1: JWT forger (algorithm confusion)", "done": false, "abandoned": false },
+        { "text": "Tier 1: SQL injection lab (DVWA or Flask)", "done": false, "abandoned": false },
+        { "text": "Tier 1: subdomain enumerator", "done": false, "abandoned": false },
+        { "text": "CTF: HackTheBox Starting Point", "done": false, "abandoned": false },
+        { "text": "Cert: Security+", "done": false, "abandoned": false },
+        { "text": "Tier 2: Cowrie SSH honeypot on Pi", "done": true, "abandoned": false },
+        { "text": "Tier 2: evil twin AP (needs TL-WN722N)", "done": false, "abandoned": false },
+        { "text": "Tier 2: MITM proxy (mitmproxy on Pi)", "done": false, "abandoned": false }
+      ]
+    },
+    {
+      "id": "yaran",
+      "name": "Yaran Traders LLC",
+      "status": "paused",
+      "notes": "TX single-member LLC. Forfeiture notice received. Schedule C. Credit card tied to SSN — do not close.",
+      "lastUpdated": "2026-03-23",
+      "tasks": [
+        { "text": "file TX Public Information Report (due May 15)", "done": false, "abandoned": false },
+        { "text": "file TX franchise tax report", "done": false, "abandoned": false },
+        { "text": "confirm 2024/2025 revenue + expenses with CPA", "done": false, "abandoned": false },
+        { "text": "decide: rehabilitate LLC or dissolve + re-register in VA", "done": false, "abandoned": false }
+      ]
+    }
+  ]
+}

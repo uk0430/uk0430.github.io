@@ -7,28 +7,58 @@ if (glow) {
   });
 }
 
-// ── THEME TOGGLE ─────────────────────────────────────
-function toggleTheme() {
-  const html = document.documentElement;
-  const isLight = html.classList.toggle('light');
+// ── THEME SYSTEM ─────────────────────────────────────
+const THEMES      = ['dark', 'warm', 'sepia', 'terminal', 'nord'];
+const THEME_ICONS = { dark: '🌙', warm: '☀️', sepia: '📖', terminal: '>_', nord: '❄️' };
+const THEME_LABEL = { dark: 'LIGHT MODE', warm: 'SEPIA MODE', sepia: 'TERMINAL', terminal: 'NORD MODE', nord: 'DARK MODE' };
+
+// Block transitions during initial theme application to prevent FOUC.
+(function () {
+  const html  = document.documentElement;
+  const saved = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-no-transition', '');
+  html.setAttribute('data-theme', saved);
+  // Keep html.light class in sync for pages with legacy inline css
+  if (saved === 'warm') html.classList.add('light');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      html.removeAttribute('data-no-transition');
+    });
+  });
+})();
+
+function updateThemeUI(theme) {
   const label = document.getElementById('themeLabel');
   const icon  = document.querySelector('.toggle-icon');
-  if (label) label.textContent = isLight ? 'DARK MODE' : 'LIGHT MODE';
-  if (icon)  icon.textContent  = isLight ? '☀️' : '🌙';
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  if (label) label.textContent = THEME_LABEL[theme] || 'CYCLE THEME';
+  if (icon)  icon.textContent  = THEME_ICONS[theme] || '◐';
 }
 
-(function() {
-  if (localStorage.getItem('theme') === 'light') {
-    document.documentElement.classList.add('light');
-    document.addEventListener('DOMContentLoaded', () => {
-      const label = document.getElementById('themeLabel');
-      const icon  = document.querySelector('.toggle-icon');
-      if (label) label.textContent = 'DARK MODE';
-      if (icon)  icon.textContent  = '☀️';
-    });
+function cycleTheme() {
+  const html    = document.documentElement;
+  const current = html.getAttribute('data-theme') || 'dark';
+  const next    = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
+  html.setAttribute('data-theme', next);
+  if (next === 'warm') html.classList.add('light');
+  else                 html.classList.remove('light');
+  localStorage.setItem('theme', next);
+  updateThemeUI(next);
+  const icon = document.querySelector('.toggle-icon');
+  if (icon) {
+    icon.classList.remove('icon-spin');
+    void icon.offsetWidth; // reflow to restart animation
+    icon.classList.add('icon-spin');
   }
-})();
+}
+
+// Backward-compat alias (index.html still calls toggleTheme())
+const toggleTheme = cycleTheme;
+
+// Sync label/icon after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  updateThemeUI(theme);
+});
 
 // ── EXPERIENCE ACCORDION ─────────────────────────────
 function toggleExp(header) {
@@ -72,32 +102,6 @@ window.addEventListener('scroll', () => {
   bar.style.width = (total > 0 ? (window.scrollY / total) * 100 : 0) + '%';
 });
 
-// ── TYPING ANIMATION ─────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('hero-role');
-  if (!el) return;
-  const roles = [
-    'NOC Engineer',
-    'Satellite Operations',
-    'IT Infrastructure',
-    'Automation & AI',
-    'Network Systems',
-  ];
-  let ri = 0, ci = 0, deleting = false;
-  function tick() {
-    const cur = roles[ri];
-    if (deleting) {
-      el.textContent = cur.slice(0, --ci);
-      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; return setTimeout(tick, 400); }
-      setTimeout(tick, 40);
-    } else {
-      el.textContent = cur.slice(0, ++ci);
-      if (ci === cur.length) { deleting = true; return setTimeout(tick, 1800); }
-      setTimeout(tick, 80);
-    }
-  }
-  setTimeout(tick, 1400);
-});
 
 // ── COPY CERT CODE ───────────────────────────────────
 function copyCertCode() {

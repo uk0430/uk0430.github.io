@@ -1,0 +1,116 @@
+[
+  {
+    "date": "2026-03-23",
+    "cat": "tools",
+    "title": "Market Flow Dashboard + Code Review Service upgrades",
+    "body": "Built Market Flow Dashboard (~/market-dashboard, Flask :5001) — live stock screener powered by Alpaca WebSocket streaming to SSE. Prices update to the second with green/red flash animations. Tabs: Live Screener, Options Flow (unusual contracts via yfinance), Congress Trades (House+Senate watchers), Insider Trades, Paper Portfolio, Fear & Greed. Market MCP server wired with Alpaca paper trading keys. Code review service upgraded: PreToolUse hook fixes Write race condition, diff context bumped to 10 lines, session dedup merges repeated edits, FixAgent added as 5th parallel reviewer, dashboard gains verdict filter + severity sort + browser notifications on FAIL. Systemd user unit added for auto-start."
+  },
+  {
+    "date": "2026-03-23",
+    "cat": "portfolio",
+    "title": "Update portfolio and homelab page to reflect current stack",
+    "body": "Auto-logged commit in uk0430.github.io."
+  },
+  {
+    "date": "2026-03-23",
+    "cat": "homelab",
+    "title": "DNS fix, daily bookmarks, models backup, portfolio.home debug",
+    "body": "Added Daily Bookmarks section to CLAUDE.md with all Pi service URLs. Kicked off background backup of ~/models/ (Mistral-7B + nomic-embed, 4.2G) to Pi wsl-backup. Restarted stopped nginx-proxy-manager container. Fixed Pi-hole DNS: portfolio.home was pointing to Tailscale IP (100.106.118.128) \u2014 corrected to LAN IP (192.168.1.254). Set Windows DNS to Pi-hole only (removed 1.1.1.1 fallback via PowerShell admin). portfolio.home still not resolving in browser \u2014 debug continues next session."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "homelab",
+    "title": "Portfolio self-hosted on Pi, Tailscale mesh VPN, session tracking system",
+    "body": "Migrated portfolio site from local desktop preview to always-on Pi hosting via nginx-portfolio Docker container (192.168.1.254:8888). Set up Pi-hole DNS record for portfolio.home. Configured NPM proxy host (portfolio.home \u2192 nginx-portfolio:80). Created ~/deploy-portfolio.sh \u2014 one command rsync to Pi + git push. Installed Tailscale on Pi (native, v1.96.2, IP: 100.106.118.128), approved subnet routes for 192.168.1.0/24, enabled IP forwarding, persisted UDP GRO fix via systemd. Desktop and iPhone connected to Tailscale network. Built session tracking system: tasks.json drives ops.html kanban board with done/pending/abandoned states, reload button syncs from file. Updated CLAUDE.md, session_log.md, and all memory files. iPhone LTE access to portfolio.home in progress \u2014 Tailscale connectivity confirmed, hostname resolution pending."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "Project detail pages for scraper and homelab",
+    "body": "Built full breakdown pages for Data Pipeline & Web Scraper (projects/scraper.html) and Home Network Monitoring Lab (projects/homelab.html). Both follow the same structure as tankpit.html \u2014 stats row, architecture cards, pipeline diagrams, tech stack, lessons learned. Linked all three project cards on the homepage."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "Hero stats, skill icons, project visual headers, section spacing",
+    "body": "Converted hero stats from a plain flex row to individual bento cards with borders and hover lift. Added emoji icons to each skill category label. Added colored gradient header strips to project cards with Live/WIP/GitHub badges. Bumped section padding from 80px to 104px. Upgraded footer to two-row layout with brand, tagline, nav links, and dimmed private page links."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "5-theme cycle system \u2014 dark, warm, sepia, terminal, nord",
+    "body": "Replaced the two-state dark/light toggle with a 5-theme cycle system using data-theme attribute on <html>. Added full CSS variable palettes for warm (cream + rust), sepia (paper brown), terminal (black + green), and nord (muted blue-gray). Updated main.js with cycleTheme(), THEMES array, THEME_ICONS map, and FOUC-preventing IIFE. Added theme FOUC guard to auth.js for private pages."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "Removed typing animation from hero",
+    "body": "Typing animation was cycling through NOC Engineer, Satellite Operations, IT Infrastructure, Automation & AI, Network Systems. Removed the tick() function entirely. Static text NOC \u00b7 Satellite \u00b7 Infrastructure \u00b7 IT Systems now shows from the HTML directly."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "Micro-interactions and UX polish \u2014 icon spin, nav underline, press depth",
+    "body": "Added icon-spin keyframe animation (cubic-bezier overshoot) triggered on theme toggle. Fixed bug where .toggle-icon was being rotated 180deg by CSS at the same time JS changed the emoji, causing the sun to appear upside down. Added nav link underline slide-in from left via CSS ::after pseudo-element. Added .btn:active press depth (translateY 1px)."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "vault.html \u2014 local credentials manager",
+    "body": "Built a local-only password manager page (vault.html) listing all services, ports, URLs, credentials, and what each is for. Sections: local server access, Pi homelab, TankPit bot, TankPit AI, email/iCloud, external services, startup scripts. Reveal/hide toggles on sensitive values. Copy-to-clipboard buttons. Gated by auth.js. Added to .gitignore."
+  },
+  {
+    "date": "2026-03-19",
+    "cat": "portfolio",
+    "title": "Private pages moved to local-only \u2014 .gitignore",
+    "body": "tracker.html, noc.html, ops.html, runbook.html removed from public repo and added to .gitignore. Pages still exist locally and are accessible via python3 -m http.server 8888. auth.js password gate added to all private pages (credentials: uk0430 / 1). Private page links in footer dimmed to near-invisible."
+  },
+  {
+    "date": "2026-03-15",
+    "cat": "portfolio",
+    "title": "Portfolio site first built and deployed to GitHub Pages",
+    "body": "Built uk0430.github.io from scratch \u2014 index.html, assets/style.css, assets/main.js. Sections: hero with stats, skills grid, experience accordion, projects, GitHub activity feed, now section, education/certs, contact form. Dark hacker aesthetic with IBM Plex Mono, Syne display font, accent #38bdf8. Terminal modal with backtick shortcut. Scroll progress bar, cursor glow, IntersectionObserver fade-ins."
+  },
+  {
+    "date": "2026-03-15",
+    "cat": "homelab",
+    "title": "Raspberry Pi homelab stack deployed",
+    "body": "Set up Pi (uzi, 192.168.1.254) as always-on hub running Docker Compose: Pi-hole (1.6M domains blocked, 10 blocklists), Netdata (streaming from desktop), Gitea (private Git server), Nginx Proxy Manager, Watchtower (4am auto-updates). Desktop and iPhone using Pi-hole as primary DNS. Netdata parent-child streaming configured with API key."
+  },
+  {
+    "date": "2026-03-15",
+    "cat": "homelab",
+    "title": "Full home network inventory \u2014 25+ devices audited",
+    "body": "Mapped entire 192.168.1.0/24 subnet. Classified devices: trusted (desktop, iPhone, iPad, laptop), IoT to migrate (Roku, Echo, Ring camera, smart TV, printer), flagged (.243 \u2014 Sichuan AI-Link, unknown Chinese IoT device, earmarked for quarantine). Verizon CR1000B router has three SSIDs: Primary, Guest, IoT. Cannot set custom DHCP DNS \u2014 ISP locked."
+  },
+  {
+    "date": "2026-03-14",
+    "cat": "tankpit",
+    "title": "TankPit bulletin board scraper \u2014 14 years of data",
+    "body": "Built bulletin_crawler.py using Playwright async to scrape 14 years of daily bulletin board posts (2012\u20132026). 5,160 days of community discussions, tournament results, and player interactions. Handles JS-rendered content, pagination, and duplicate detection. Data feeds into rebuild_bible.py for embedding."
+  },
+  {
+    "date": "2026-03-10",
+    "cat": "tankpit",
+    "title": "RAG bible rebuild \u2014 16,914 embedded chunks",
+    "body": "Ran rebuild_bible.py against all scraped profile .txt files and bulletin board data. nomic-embed-text-v1.5 Q4_K_M on port 8081 via llama.cpp. 16,914 chunks embedded, 0 failures. Output: bible_chunks.json with text + 768-dim float32 vectors. Full rebuild takes 20-30 min. SQLite leaderboard_history table populated with 4 years of annual rankings."
+  },
+  {
+    "date": "2026-03-01",
+    "cat": "tankpit",
+    "title": "TankPit Discord Bot \u2014 Railway deploy live",
+    "body": "Bot deployed to Railway.app (US-East). discord.py slash commands: /ask (RAG+SQL hybrid), /tank (player card image via PIL), /leaderboard, /award (custom banner), /help. Local LLM (/ask) disabled on Railway \u2014 only available when running locally via start-tankpit.sh. 13,250 player profiles in SQLite, MD5-keyed PNG cache."
+  },
+  {
+    "date": "2026-02-15",
+    "cat": "learning",
+    "title": "CompTIA CySA+ passed \u2014 CS0-003",
+    "body": "Passed CySA+ exam. Candidate ID: COMP001022444115. Valid through January 27, 2027. Badge on Credly. Covers threat detection, security operations, incident response, and vulnerability management. Directly applicable to the Splunk SIEM and log analysis work done at SES Networks."
+  },
+  {
+    "date": "2026-02-01",
+    "cat": "ops",
+    "title": "llama.cpp local AI stack \u2014 Mistral 7B + nomic-embed",
+    "body": "Set up llama.cpp inference stack on WSL2. Port 8080: Mistral-7B-Instruct v0.2 Q4_K_M with GPU offloading (-ngl 999), KV cache quantization (q8_0), 4096 context. Port 8081: nomic-embed-text-v1.5 Q4_K_M for embeddings. start-tankpit.sh alias starts both servers plus the bot. Entirely local, no API costs."
+  }
+]
