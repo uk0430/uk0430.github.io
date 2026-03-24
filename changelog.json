@@ -1,9 +1,21 @@
 [
   {
     "date": "2026-03-23",
+    "cat": "tankpit",
+    "title": "Add Dockerfile, emoji exports, update bot.py, clean up stale cache files",
+    "body": "Auto-logged commit in tankpit-bot-legacy."
+  },
+  {
+    "date": "2026-03-23",
+    "cat": "portfolio",
+    "title": "Update portfolio UI, changelog, and add ideas/context/scraper pages",
+    "body": "Auto-logged commit in uk0430.github.io."
+  },
+  {
+    "date": "2026-03-23",
     "cat": "tools",
     "title": "Market Flow Dashboard + Code Review Service upgrades",
-    "body": "Built Market Flow Dashboard (~/market-dashboard, Flask :5001) — live stock screener powered by Alpaca WebSocket streaming to SSE. Prices update to the second with green/red flash animations. Tabs: Live Screener, Options Flow (unusual contracts via yfinance), Congress Trades (House+Senate watchers), Insider Trades, Paper Portfolio, Fear & Greed. Market MCP server wired with Alpaca paper trading keys. Code review service upgraded: PreToolUse hook fixes Write race condition, diff context bumped to 10 lines, session dedup merges repeated edits, FixAgent added as 5th parallel reviewer, dashboard gains verdict filter + severity sort + browser notifications on FAIL. Systemd user unit added for auto-start."
+    "body": "Built Market Flow Dashboard (~/market-dashboard, Flask :5001) \u2014 live stock screener powered by Alpaca WebSocket streaming to SSE. Prices update to the second with green/red flash animations. Tabs: Live Screener, Options Flow (unusual contracts via yfinance), Congress Trades (House+Senate watchers), Insider Trades, Paper Portfolio, Fear & Greed. Market MCP server wired with Alpaca paper trading keys. Code review service upgraded: PreToolUse hook fixes Write race condition, diff context bumped to 10 lines, session dedup merges repeated edits, FixAgent added as 5th parallel reviewer, dashboard gains verdict filter + severity sort + browser notifications on FAIL. Systemd user unit added for auto-start."
   },
   {
     "date": "2026-03-23",
