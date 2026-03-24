@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Pipeline & Web Scraper — Uzair Khan</title>
+<meta name="description" content="Deep dive into a Python async data pipeline that collected 13,250+ player profiles and 14 years of community data.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/main.js"></script>
+</head>
+<body>
+
+<div class="glow" id="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html"><span>~/</span>uzair-khan</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#skills">Skills</a></li>
+    <li><a href="../index.html#experience">Experience</a></li>
+    <li><a href="../index.html#projects">Projects</a></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span>Open to opportunities</span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="toggle-icon">🌙</span>
+      <span id="themeLabel">LIGHT MODE</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <a href="../index.html#projects" class="back-link">← Back to Projects</a>
+    <div class="page-tags">
+      <span class="tag tag-blue">Python</span>
+      <span class="tag tag-blue">aiohttp</span>
+      <span class="tag tag-blue">Playwright</span>
+      <span class="tag tag-blue">asyncio</span>
+      <span class="tag tag-green">SQLite</span>
+      <span class="tag tag-green">nomic-embed</span>
+      <span class="tag tag-amber">Data Pipeline</span>
+      <span class="tag tag-amber">Web Scraping</span>
+      <span class="tag tag-purple">RAG / Embeddings</span>
+    </div>
+    <h1 class="page-title">Data Pipeline<br><span>&amp; Web Scraper</span></h1>
+    <div class="page-sub">Async Crawler · 13,250+ Profiles · 14 Years of Community Data</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="https://github.com/uk0430" class="btn btn-primary" target="_blank">⌥ View on GitHub</a>
+      <a href="../index.html" class="btn btn-ghost">← Portfolio</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="content-block">
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-big">13,250</div>
+        <div class="stat-caption">Player Profiles Collected</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">5,160</div>
+        <div class="stat-caption">Bulletin Board Days Scraped</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">14</div>
+        <div class="stat-caption">Years of Data (2012–2026)</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">3</div>
+        <div class="stat-caption">Custom Async Scrapers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-big">16,914</div>
+        <div class="stat-caption">Embedded Knowledge Chunks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IT DOES -->
+  <div class="content-block">
+    <h3>What It Does</h3>
+    <p>
+      This pipeline collects, structures, and embeds every piece of public data from the TankPit
+      gaming community — player profiles, leaderboard rankings, and 14 years of daily bulletin board
+      posts — and transforms it into a searchable knowledge base that powers the TankPit Discord Bot's
+      AI Q&A system.
+    </p>
+    <p>
+      The end product is <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">bible_chunks.json</code>
+      — 16,914 text chunks, each paired with a 768-dimensional embedding vector from nomic-embed.
+      When a user asks the bot a question, this file is what gets searched via cosine similarity.
+    </p>
+
+    <div class="arch-grid" style="margin-top:24px;">
+      <div class="arch-card">
+        <div class="arch-card-title">crawl_profiles.py</div>
+        <div class="arch-card-desc">Hits the TankPit API for all 13,250 registered players. Async with aiohttp, rate-limited, resume-capable via --resume flag. Outputs structured .txt profiles to scraped/profiles/.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">leaderboard_crawler.py</div>
+        <div class="arch-card-desc">Crawls 1,326 pages of the overall leaderboard plus 4 years of annual rankings (2017–2023). Writes to SQLite leaderboard_history table with year, rank, player ID, and stats.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">bulletin_crawler.py</div>
+        <div class="arch-card-desc">Playwright-based scraper for the community bulletin board — 5,160 days of posts from 2012 to present. Handles JS-rendered content, pagination, and duplicate detection.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">rebuild_bible.py</div>
+        <div class="arch-card-desc">Chunks all .txt files, sends each chunk to nomic-embed (port 8081) for vectorization, and writes bible_chunks.json with text + float32 embedding arrays. 0 embedding failures across 16,914 chunks.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASYNC ARCHITECTURE -->
+  <div class="content-block">
+    <h3>Async Architecture</h3>
+    <p>
+      All three scrapers are built on Python's <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">asyncio</code>
+      with bounded concurrency — a semaphore limits simultaneous requests so the target API
+      isn't overloaded and the scraper doesn't get rate-limited mid-run.
+    </p>
+
+    <div class="pipeline-row">
+      <div class="pipeline-step"><span>Input</span><b>Profile IDs</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>asyncio.Queue</span><b>Work queue</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Semaphore(10)</span><b>Concurrency cap</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>aiohttp</span><b>Fetch profile</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Parse + validate</span><b>Structure data</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>SQLite / .txt</span><b>Persist</b></div>
+    </div>
+
+    <p style="margin-top:16px;">
+      Resume capability was critical — scraping 13,250 profiles takes hours, and a network blip
+      or rate limit shouldn't restart from zero. Each scraper checks which IDs are already saved
+      and skips them on rerun.
+    </p>
+  </div>
+
+  <!-- EMBEDDING PIPELINE -->
+  <div class="content-block">
+    <h3>The Embedding Pipeline</h3>
+    <p>
+      Once all raw data is collected, <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">rebuild_bible.py</code>
+      converts everything into vector embeddings using a local instance of nomic-embed-text-v1.5
+      running via llama.cpp on port 8081. No cloud API required.
+    </p>
+
+    <div class="pipeline-row">
+      <div class="pipeline-step"><span>scraped/profiles/</span><b>Raw .txt files</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Chunker</span><b>~512 token chunks</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>Port 8081</span><b>nomic-embed API</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>float32 array</span><b>768-dim vector</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>bible_chunks.json</span><b>Text + embedding</b></div>
+    </div>
+
+    <div class="code-block" style="margin-top:20px;">
+      <pre><span class="cm"># Each chunk in bible_chunks.json looks like:</span>
+{
+  <span class="str">"text"</span>: <span class="str">"Player: Grimlock | Rank: General | Color: Blue | Cups: 47 gold..."</span>,
+  <span class="str">"embedding"</span>: [0.0231, -0.1842, 0.0094, ... <span class="cm">768 floats</span>],
+  <span class="str">"source"</span>: <span class="str">"scraped/profiles/grimlock.txt"</span>
+}
+
+<span class="cm"># At query time, cosine similarity finds the closest 3 chunks:</span>
+scores = np.dot(query_vec, chunk_matrix.T)
+top_k  = np.argsort(scores)[-3:][::-1]</pre>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="content-block">
+    <h3>Full Tech Stack</h3>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-title">HTTP Scraping</div>
+        <div class="arch-card-desc">aiohttp for async API calls. Connection pooling, retry logic with exponential backoff, and per-domain rate limiting via asyncio.Semaphore.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">JS-Rendered Pages</div>
+        <div class="arch-card-desc">Playwright (async) for pages that require JavaScript to render content. Headless Chromium, waiting for network idle before scraping DOM.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Database</div>
+        <div class="arch-card-desc">SQLite (tankpit.db) — tanks table with 13,250 rows, leaderboard_history for year-by-year rankings, leaderboard_snapshots for point-in-time captures.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Embeddings</div>
+        <div class="arch-card-desc">nomic-embed-text-v1.5 Q4_K_M via llama.cpp on port 8081. Outputs 768-dimensional float32 vectors. Full rebuild takes ~20–30 minutes locally.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Data Format</div>
+        <div class="arch-card-desc">Structured .txt profiles for human readability and chunking flexibility. SQLite for structured queries. JSON for the final embedded knowledge base.</div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-title">Environment</div>
+        <div class="arch-card-desc">WSL2 / Ubuntu 24. Python venv in ~/tankpit-ai/. Runs on the same machine as the Discord bot and LLM servers — no cloud infrastructure needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT I LEARNED -->
+  <div class="content-block">
+    <h3>What I Learned</h3>
+    <p>
+      Building a scraper that handles 13,250 profiles reliably is a different problem than
+      building one that handles 100. At scale you need resume capability, structured error handling,
+      progress tracking, and a clear understanding of what "done" means when some requests fail.
+    </p>
+    <p>
+      The bulletin board scraper was the hardest — 14 years of JS-rendered pages with inconsistent
+      markup, missing dates, and session handling. Playwright added complexity but was necessary;
+      aiohttp alone couldn't render the content.
+    </p>
+    <p>
+      The embedding pipeline taught me what "production RAG" actually means. Chunking strategy
+      matters enormously — chunks too large lose precision, chunks too small lose context.
+      The final 512-token chunks with 64-token overlap hit the right balance for this dataset.
+    </p>
+  </div>
+
+  <footer>
+    <span>Uzair Khan · <a href="../index.html">Portfolio</a></span>
+    <span><a href="https://linkedin.com/in/uk0430" target="_blank">LinkedIn</a> · <a href="https://github.com/uk0430" target="_blank">GitHub</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
