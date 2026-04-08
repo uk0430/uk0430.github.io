@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uzair Khan — Satellite NOC Resume</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #0369a1;
+    --text: #0f172a;
+    --dim: #475569;
+    --muted: #94a3b8;
+    --border: #e2e8f0;
+    --bg: #ffffff;
+    --tag-bg: #f0f9ff;
+    --tag-border: #bae6fd;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  html { background: #f8fafc; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 820px;
+    margin: 40px auto;
+    padding: 48px 56px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  /* ── HEADER ── */
+  .header { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid var(--text); }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .name {
+    font-family: var(--sans); font-size: 26px; font-weight: 600;
+    letter-spacing: -0.02em; color: var(--text); line-height: 1.1;
+  }
+  .title {
+    font-size: 13px; color: var(--accent); font-weight: 500;
+    margin-top: 4px; letter-spacing: 0.01em;
+  }
+  .contact {
+    text-align: right;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--dim); line-height: 1.8;
+  }
+  .contact a { color: var(--accent); text-decoration: none; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); border-bottom: 1px solid var(--border);
+    padding-bottom: 4px; margin-bottom: 12px;
+  }
+
+  /* ── SUMMARY ── */
+  .summary { color: var(--dim); font-size: 12.5px; line-height: 1.65; }
+  .summary strong { color: var(--text); }
+
+  /* ── CORE SKILLS TAGS ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .tag {
+    font-family: var(--mono); font-size: 10px;
+    background: var(--tag-bg); border: 1px solid var(--tag-border);
+    color: var(--accent); padding: 2px 8px; border-radius: 3px;
+  }
+
+  /* ── JOB ── */
+  .job { margin-bottom: 18px; }
+  .job-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+  .job-title { font-weight: 600; font-size: 13px; color: var(--text); }
+  .job-date { font-family: var(--mono); font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .job-company { font-size: 12px; color: var(--accent); font-weight: 500; margin-bottom: 8px; }
+  .job-summary {
+    font-size: 12px; color: var(--dim); margin-bottom: 8px;
+    font-style: italic; line-height: 1.5;
+  }
+
+  ul { padding-left: 0; list-style: none; }
+  ul li {
+    font-size: 12px; color: var(--dim); line-height: 1.6;
+    padding-left: 14px; position: relative; margin-bottom: 4px;
+  }
+  ul li::before {
+    content: '–'; position: absolute; left: 0;
+    color: var(--accent); font-weight: 600;
+  }
+  ul li strong { color: var(--text); font-weight: 500; }
+
+  .impact {
+    font-size: 11.5px; color: var(--dim); margin-top: 6px;
+    padding: 6px 10px; background: #f8fafc; border-left: 2px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+  }
+  .impact strong { color: var(--text); }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* ── SKILLS TABLE ── */
+  .skills-grid { display: grid; grid-template-columns: 110px 1fr; gap: 5px 12px; }
+  .sk-label { font-family: var(--mono); font-size: 10px; color: var(--accent); font-weight: 500; padding-top: 1px; }
+  .sk-val { font-size: 11.5px; color: var(--dim); }
+
+  /* ── PROJECTS ── */
+  .project { margin-bottom: 10px; }
+  .project-title { font-weight: 600; font-size: 12.5px; color: var(--text); }
+  .project-sub { font-size: 11.5px; color: var(--dim); }
+
+  /* ── EDU / CERT ── */
+  .edu-item { margin-bottom: 6px; }
+  .edu-name { font-weight: 500; font-size: 12.5px; }
+  .edu-sub { font-size: 11.5px; color: var(--dim); }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  /* ── PRINT ── */
+  @media print {
+    html { background: white; }
+    body {
+      margin: 0; padding: 32px 40px;
+      box-shadow: none; font-size: 12px;
+      max-width: 100%;
+    }
+    .name { font-size: 22px; }
+    .no-print { display: none; }
+    a { color: inherit; text-decoration: none; }
+    .section { page-break-inside: avoid; }
+    .job { page-break-inside: avoid; }
+  }
+
+  /* ── SCREEN TOOLBAR ── */
+  .toolbar {
+    position: fixed; top: 16px; right: 16px;
+    display: flex; gap: 8px; z-index: 100;
+  }
+  .toolbar a, .toolbar button {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; text-decoration: none;
+    background: var(--accent); color: white;
+    border: none; border-radius: 4px; padding: 6px 14px;
+    cursor: pointer;
+  }
+  .toolbar a.secondary {
+    background: white; color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  @media print { .toolbar { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <a href="resume-v2.html" class="secondary">V2 Broad</a>
+  <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="name">Uzair Khan</div>
+      <div class="title">Network Operations Engineer · Satellite NOC Specialist</div>
+    </div>
+    <div class="contact">
+      Manassas, VA<br>
+      linkedin.com/in/uk0430<br>
+      github.com/uk0430<br>
+      CompTIA CySA+ (CS0-003, through 2027)
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="section">
+  <div class="section-title">Summary</div>
+  <p class="summary">
+    Network Operations Engineer with 8+ years in satellite and enterprise NOC environments.
+    <strong>Hands-on iDirect platform experience</strong> across GEO and MEO (O3b/SKALA) constellations —
+    terminal restoration, beam switching, P1dB test coordination, commissioning, and real-time capacity management.
+    Proven in 24/7 Tier 2/3 NOC operations supporting maritime vessels, aero/inflight connectivity, and
+    fixed VSAT for global satellite operators. Experienced in BGP/OSPF operations, Juniper MX5/EX,
+    Cisco ASA, and Splunk SIEM. Strong incident command, RCA documentation, and ServiceNow lifecycle management.
+  </p>
+  <div class="tags">
+    <span class="tag">iDirect</span>
+    <span class="tag">O3b MEO / SKALA</span>
+    <span class="tag">DVB-S2 / ModCod</span>
+    <span class="tag">P1dB Testing</span>
+    <span class="tag">Beam Switching</span>
+    <span class="tag">VSAT Commissioning</span>
+    <span class="tag">BGP / OSPF</span>
+    <span class="tag">Juniper MX5</span>
+    <span class="tag">Cisco ASA</span>
+    <span class="tag">Splunk SIEM</span>
+    <span class="tag">SolarWinds</span>
+    <span class="tag">ServiceNow</span>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<div class="section">
+  <div class="section-title">Professional Experience</div>
+
+  <!-- SES -->
+  <div class="job">
+    <div class="job-header">
+      <div class="job-title">Network Engineer — Network Operations Center</div>
+      <div class="job-date">2022 – 2024</div>
+    </div>
+    <div class="job-company">SES Networks · Manassas, VA</div>
+    <div class="job-summary">
+      Tier 2/3 NOC operations for a global satellite and IP network serving maritime vessels, fixed VSAT,
+      and aero (inflight connectivity) across GEO and MEO constellations. Primary NOC contact for SKALA
+      (O3b MEO) customers and Virtual Network Operators (VNOs).
+    </div>
+    <ul>
+      <li><strong>Terminal Restoration & Configuration:</strong> Logged directly into iDirect, Hughes, and Comtech terminals via in-band and out-of-band redundant connections (management VLAN, cellular backup, Cisco ASA VPN) to clear equipment faults, push configuration changes, and restore customer traffic. Executed port forwarding corrections and parameter adjustments during active service-affecting events.</li>
+      <li><strong>iDirect Platform Operations:</strong> Administered terminals daily via iVantage NMS and iQ Desktop — monitored Eb/No, Ec/No, RX/TX power levels, ACM state, symbol rates, BER, and burst timing. Pulled and analyzed modem logs (network_entry, burst_timing, demod_lock) to isolate RF vs. network layer faults.</li>
+      <li><strong>Beam Switching & Capacity Management:</strong> Executed manual beam switches for maritime vessels via GUI pre-config profiles and direct CLI on iDirect modems. Monitored beam utilization across the fleet and rebalanced vessel distribution to resolve congestion — coordinating with capacity planning on significant migrations.</li>
+      <li><strong>SKALA / O3b MEO Operations:</strong> Managed bandwidth package changes for SKALA MEO customers via GUI and CLI; monitored MEO satellite handoffs; intervened on failed handoff events. Acted as primary NOC contact for SKALA VNO service events on the O3b MEO constellation.</li>
+      <li><strong>DVB-S2 / RF Management:</strong> Performed real-time ModCod adjustments on DVB-S2 forward and return carriers. Differentiated rain fade from RFI and coordinated appropriate response — including spectrum analysis escalations to RF engineering.</li>
+      <li><strong>P1dB Test Coordination:</strong> Coordinated and bridged P1dB transmit power tests for SKALA, VSAT, and VNO customers. Managed call bridge between site technician, ground station RF engineers, and NOC — stepped through power increments, documented compression points, locked approved TX ceilings into NMS terminal profiles, and cleared carriers for operational use.</li>
+      <li><strong>Site Commissioning & Recommissioning:</strong> Commissioned new fixed and maritime VSAT terminals end-to-end: alignment verification, modem registration, link margin validation, P1dB test, service activation, as-built documentation. Recommissioned sites after equipment swaps and vessel dry-dock returns.</li>
+      <li><strong>Root Cause Investigation:</strong> Conducted historic RCA investigations by reviewing configuration changes, beam architecture modifications, local interference sources, and modem logs. Coordinated remote technician site visits for physical layer fault resolution. Authored structured RCA reports in ServiceNow.</li>
+      <li><strong>Network Layer Operations:</strong> Monitored OSPF backbone links and escalated path failures with structured summaries. Performed BGP diagnostics on Juniper MX5 vessel CPE — neighbor state, prefix advertisements, session reset analysis. Used Cisco ASA for out-of-band management access to dark remote sites.</li>
+      <li><strong>Splunk SIEM:</strong> Onboarded 30+ log sources; built SPL searches and threshold alerts for recurring fault patterns, reducing MTTD across the environment.</li>
+      <li><strong>Incident Command:</strong> Led incident bridges during service-affecting events, coordinating across satellite ops, terrestrial engineering, ground station teams, and vendor NOCs. Authored post-incident RCA reports and maintained shift handover documentation.</li>
+      <li><strong>Training & Documentation:</strong> Created commissioning runbooks, P1dB test procedures, and troubleshooting flowcharts. Mentored junior NOC analysts on iDirect log analysis and escalation procedures.</li>
+    </ul>
+    <div class="impact">
+      <strong>Impact:</strong> Maintained 99.9%+ availability across maritime and aero links.
+      Splunk integration improved fault correlation across 30+ nodes.
+      P1dB bridge coordination reduced SKALA and VNO customer activation delays.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- VIAPATH -->
+  <div class="job">
+    <div class="job-header">
+      <div class="job-title">Enterprise Network Technician — Network Operations Center</div>
+      <div class="job-date">2021 – 2022</div>
+    </div>
+    <div class="job-company">ViaPath · Falls Church, VA</div>
+    <ul>
+      <li><strong>WAN/LAN Monitoring:</strong> Monitored infrastructure across 100+ correctional facility sites using SolarWinds NPM/NTA; responded to SNMP-triggered alerts within 15-minute SLA windows.</li>
+      <li><strong>Incident Triage:</strong> Triaged events using IR playbooks; coordinated with on-site contacts and LECs to validate circuit-level disruptions and maintenance windows.</li>
+      <li><strong>Satellite Failover:</strong> Initiated ViaSat satellite failover circuits for remote sites; documented activation and restoration procedures per site runbook.</li>
+      <li><strong>Change Management:</strong> Tracked planned maintenance through structured CR processes; cross-referenced schedules with live alerts to suppress false-positive escalations.</li>
+    </ul>
+    <div class="impact"><strong>Impact:</strong> Improved uptime across mission-critical correctional infrastructure through rapid SLA response and structured carrier coordination.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- MDTHINK -->
+  <div class="job">
+    <div class="job-header">
+      <div class="job-title">IT Functional Analyst II / Systems Administrator</div>
+      <div class="job-date">2024 – 2025</div>
+    </div>
+    <div class="job-company">MDThink – DoIT: Maryland Benefits (SNAP/DHS) · Linthicum, MD</div>
+    <ul>
+      <li><strong>Endpoint Fleet Management:</strong> Managed 200+ Windows 10/11 devices using Microsoft Intune, SCCM, and Autopilot. Administered Azure AD/Entra ID conditional access, group-based licensing, and MFA enforcement.</li>
+      <li><strong>Asset Inventory Automation:</strong> Built Python/PowerShell scan script to inventory state-owned and vendor devices; automated reporting to Confluence and distributed to VP and management.</li>
+      <li><strong>SOP Authoring:</strong> Authored enterprise KB articles and SOPs covering endpoint lifecycle workflows adopted organization-wide.</li>
+      <li><strong>AI Chatbot:</strong> Prototyped AI-powered IT helpdesk chatbot for Google Spaces to reduce tier-1 ticket volume.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CARFAX -->
+  <div class="job">
+    <div class="job-header">
+      <div class="job-title">Enterprise Account & Operations Support</div>
+      <div class="job-date">2017 – 2020</div>
+    </div>
+    <div class="job-company">Carfax · Centreville, VA</div>
+    <ul>
+      <li>Tier 2 support for CARFAX RESTful API and POS software integrations. Diagnosed OAuth/authentication issues between dealer management systems and vehicle history APIs.</li>
+      <li>Managed ticket lifecycle in Salesforce CRM; collaborated with engineering on structured API defect escalations with reproduction steps and log artifacts.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ATT -->
+  <div class="job">
+    <div class="job-header">
+      <div class="job-title">Retail Operations Manager</div>
+      <div class="job-date">2012 – 2016</div>
+    </div>
+    <div class="job-company">AT&T Mobility · Oakton, VA</div>
+    <ul>
+      <li>Operated AT&T OPUS NCR tablet POS and backend CLI provisioning system for wireless service activation, SIM configuration, and provisioning failure resolution at carrier backend level.</li>
+      <li>MDM enrollment for business accounts; enterprise email, VPN, and MAM policy configuration. Led team of 10.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="section">
+  <div class="section-title">Technical Skills</div>
+  <div class="skills-grid">
+    <div class="sk-label">Satellite / RF</div>
+    <div class="sk-val">iDirect (iVantage, iQ Desktop), O3b MEO/SKALA, Hughes, Comtech CDM series, DVB-S2, SCPC/MCPC, ModCod/ACM, P1dB testing, beam switching, VSAT commissioning, HTS/FSS, aero IFC, maritime NOC, satellite handoffs</div>
+    <div class="sk-label">Networking</div>
+    <div class="sk-val">OSPF, BGP, EIGRP, MPLS, VLANs, STP, LACP, DNS, DHCP, NTP, VPN, LAN/WAN/MAN, Juniper MX5/EX (JunOS), Cisco ASA/IOS/NXOS</div>
+    <div class="sk-label">Monitoring</div>
+    <div class="sk-val">SolarWinds NPM/NTA, Splunk SIEM, SNMP, NetFlow, syslog, Wireshark, tcpdump, NMS (multi-vendor)</div>
+    <div class="sk-label">Automation</div>
+    <div class="sk-val">Python, PowerShell, bash scripting, Splunk SPL</div>
+    <div class="sk-label">ITSM</div>
+    <div class="sk-val">ServiceNow, Jira (JQL, dashboards), Confluence, Google Workspace</div>
+    <div class="sk-label">Documentation</div>
+    <div class="sk-val">As-builts, SOP/KB authoring, RCA reports, CR management, commissioning runbooks</div>
+    <div class="sk-label">Endpoint / MDM</div>
+    <div class="sk-val">Microsoft Intune, SCCM, Autopilot, Azure AD/Entra ID, Active Directory, GPO</div>
+  </div>
+</div>
+
+<!-- PROJECTS + EDU -->
+<div class="two-col">
+  <div class="section">
+    <div class="section-title">Projects</div>
+    <div class="project">
+      <div class="project-title">Home Network Monitoring Lab (Raspberry Pi)</div>
+      <div class="project-sub">Enterprise-grade home NOC: Grafana, Prometheus, Netdata, Cowrie SSH honeypot, Pi-hole DNS (DNSSEC), fail2ban, Tailscale VPN. SNMP polling, syslog aggregation, security dashboards.</div>
+    </div>
+    <div class="project">
+      <div class="project-title">TankPit Discord Bot & RAG AI System · github.com/uk0430</div>
+      <div class="project-sub">Full-stack Discord bot with hybrid RAG + SQL AI engine. Local LLM inference (Mistral 7B / llama.cpp), nomic-embed vector store, 13,250-player SQLite database. Python, asyncio, Docker.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Education & Certifications</div>
+    <div class="edu-item">
+      <div class="edu-name">CompTIA CySA+ (CS0-003)</div>
+      <div class="edu-sub">Valid through 2027</div>
+    </div>
+    <div class="edu-item" style="margin-top:10px;">
+      <div class="edu-name">B.S. Information Technology — In Progress</div>
+      <div class="edu-sub">Strayer University (starting March 2026)</div>
+    </div>
+    <div class="edu-item" style="margin-top:6px;">
+      <div class="edu-name">A.A.S. Business Administration</div>
+      <div class="edu-sub">Northern Virginia Community College</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
