@@ -1,5 +1,53 @@
 [
   {
+    "date": "2026-04-08",
+    "cat": "tankpit",
+    "title": "Make EMBED_URL and LLM_URL configurable via environment variables",
+    "body": "Auto-logged commit in tankpit-bot-legacy."
+  },
+  {
+    "date": "2026-03-25",
+    "cat": "ops",
+    "title": "chore: add .gitignore, remove build artifacts from tracking",
+    "body": "Auto-logged commit in stockwatch."
+  },
+  {
+    "date": "2026-03-25",
+    "cat": "ops",
+    "title": "init: stockwatch restock tracker",
+    "body": "Auto-logged commit in stockwatch."
+  },
+  {
+    "date": "2026-03-25",
+    "cat": "ops",
+    "title": "feat: graph analyzer with Claude Vision",
+    "body": "Auto-logged commit in nexus-extension."
+  },
+  {
+    "date": "2026-03-25",
+    "cat": "ops",
+    "title": "fix: page type detection + add snip tool",
+    "body": "Auto-logged commit in nexus-extension."
+  },
+  {
+    "date": "2026-03-25",
+    "cat": "ops",
+    "title": "init: nexus extension scaffold",
+    "body": "Auto-logged commit in nexus-extension."
+  },
+  {
+    "date": "2026-03-23",
+    "cat": "tankpit",
+    "title": "Fix /ask error message when embed server unavailable on Pi",
+    "body": "Auto-logged commit in tankpit-bot-legacy."
+  },
+  {
+    "date": "2026-03-23",
+    "cat": "tools",
+    "title": "Code Review Service \u2014 built, first run, 3 FAILs fixed. Market dashboard audited.",
+    "body": "Built code review service from scratch (Flask :5002, SQLite WAL, PostToolUse + PreToolUse hooks). /review-code skill dispatches 5 parallel Claude sub-agents per change (Security, Bug, Frontend, Quality, Fix) after reading full file context. Added session-status.sh for live startup snapshots covering ports, pending reviews, git status, Pi bot health, and disk. First full review pass covered 27 changes \u2014 found and immediately fixed 3 FAILs: hook_pre_write.py (MD5\u2192SHA256, UTF-8 encoding, /tmp write in try/except), db.py (rowcount check on update, minutes validation), index.html (dead DOMContentLoaded wrapper, disruptive auto-refresh mode). Reviewed market-dashboard built in the parallel session \u2014 flagged FAIL on both files: 6 XSS vectors across news/congress/insider/options panels, _ws_instance assigned in wrong WebSocket callback causing silent subscription loss, _cache dict not thread-safe. Fixes queued for next session."
+  },
+  {
     "date": "2026-03-23",
     "cat": "tankpit",
     "title": "Add Dockerfile, emoji exports, update bot.py, clean up stale cache files",

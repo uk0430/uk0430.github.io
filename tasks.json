@@ -10,6 +10,8 @@
       "tasks": [
         { "text": "Live screener with Alpaca WebSocket streaming", "done": true, "abandoned": false },
         { "text": "Options flow, congress trades, insider trades, portfolio, fear & greed tabs", "done": true, "abandoned": false },
+        { "text": "FAIL fix: app.py — move _ws_instance to ws_on_open, add _cache_lock, clamp limit params, bind 127.0.0.1, WS backoff", "done": false, "abandoned": false },
+        { "text": "FAIL fix: index.html — add esc() helper for 6 XSS vectors, fix setTF() window.event, SSE reconnect, ResizeObserver leak", "done": false, "abandoned": false },
         { "text": "Restart Claude Code to verify Alpaca MCP tools connect", "done": false, "abandoned": false },
         { "text": "Add price alert notifications (threshold crossing)", "done": false, "abandoned": false },
         { "text": "Paper trading order entry from dashboard", "done": false, "abandoned": false },
