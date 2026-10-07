@@ -183,6 +183,7 @@ const CMDS = {
     '',
   ],
   'cat experience': () => [
+    '2026–now   Apex Systems — Satellite Technician, Mt. Weather',
     '2024–2025  MDThink — IT Functional Analyst II',
     '2022–2024  SES Networks — Network Engineer (NOC)',
     '2021–2022  ViaPath — Enterprise Network Technician',

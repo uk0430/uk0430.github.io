@@ -38,10 +38,6 @@
     <li><a href="context.html">Context</a></li>
   </ul>
   <div class="nav-right">
-    <div class="nav-status">
-      <span class="status-dot"></span>
-      <span>Open to opportunities</span>
-    </div>
     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
       <span class="toggle-icon">🌙</span>
       <span id="themeLabel">LIGHT MODE</span>
@@ -190,6 +186,28 @@
     <div class="exp-list">
 
       <div class="exp-card open">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-company">Apex Systems — contractor to AT&amp;T Global Public Sector</div>
+            <div class="exp-title">NOC Specialist (Satellite) · Mount Weather Emergency Operations Center</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <div class="exp-meta"><span class="exp-date">2026 – Present</span><span class="exp-loc">Bluemont, VA</span></div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <ul class="exp-bullets">
+            <li><b>Tier 1 NOC:</b> Monitor, troubleshoot and configure the DHS/FEMA voice, data and satellite network on a weekend and after-hours rotation.</li>
+            <li><b>Satellite Hub Operations:</b> Operate earth station equipment at an iDirect satellite hub supporting FEMA mobile units; change space-segment bandwidth assignments for new and changed mission requirements.</li>
+            <li><b>Reporting:</b> Produce bandwidth usage, traffic analysis and daily schedule reports for the government task order.</li>
+            <li><b>Remote Access:</b> Maintain remote access servers and remote client systems, including software patches and updates.</li>
+            <li><b>Clearance:</b> Public Trust (Top Secret in process).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-card">
         <div class="exp-header" onclick="toggleExp(this)">
           <div>
             <div class="exp-company">MDThink — DoIT: Maryland Benefits (SNAP/DHS)</div>
@@ -413,9 +431,9 @@
         <div class="project-title">Home Network Monitoring Lab</div>
         <div class="project-sub">Raspberry Pi · Enterprise NOC at Home</div>
         <p class="project-desc">
-          Raspberry Pi running 14 Docker services — Pi-hole, Grafana, Prometheus, cAdvisor,
-          Cowrie SSH honeypot, fail2ban, Nextcloud, Netdata, Gitea, and more. Full Security NOC
-          dashboard live with container metrics, threat intel, and nmap network scanning.
+          Raspberry Pi running 15 Docker containers — Pi-hole + Unbound, Grafana, Prometheus,
+          Cowrie SSH honeypot, fail2ban, Nextcloud, Gitea, ntfy alerts, and more. Security NOC
+          dashboard, nmap network scanning, and Tailscale-only remote access.
         </p>
         <div class="project-tags">
           <span class="tag tag-amber">Raspberry Pi</span>
@@ -455,15 +473,15 @@
           <div class="now-dot"></div>
           <div>
             <div class="now-item-title">TankPit Discord Bot</div>
-            <div class="now-item-desc">Adding year-specific leaderboard queries to the /ask SQL layer and testing 14 years of bulletin board data now in the RAG bible.</div>
+            <div class="now-item-desc">Running 24/7 in Docker on the homelab Pi. Next: color/rank SQL filters, a stats-keyed player-card cache, and splitting bot.py into modules. Local-LLM /ask returns once the GPU node is built.</div>
           </div>
         </div>
 
         <div class="now-item">
           <div class="now-dot" style="background:var(--amber);box-shadow:0 0 8px var(--amber);animation-delay:0.5s;"></div>
           <div>
-            <div class="now-item-title">Next Certification</div>
-            <div class="now-item-desc">Studying for CCNA or CompTIA Network+ — weighing vendor-specific depth vs. broad coverage.</div>
+            <div class="now-item-title">NOC Specialist (Satellite) · Mount Weather EOC</div>
+            <div class="now-item-desc">Apex Systems contract with AT&amp;T Global Public Sector since 2026, while studying Information Systems Technology at NVCC.</div>
           </div>
         </div>
 
@@ -471,7 +489,7 @@
           <div class="now-dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple);animation-delay:1s;"></div>
           <div>
             <div class="now-item-title">This Portfolio Site</div>
-            <div class="now-item-desc">GitHub Actions for auto-resume updates coming next. Work in progress.</div>
+            <div class="now-item-desc">October 2026 refresh: updated projects, and the public portfolio separated from my private ops dashboards.</div>
           </div>
         </div>
 
@@ -479,7 +497,7 @@
           <div class="now-dot" style="background:var(--green);box-shadow:0 0 8px var(--green);animation-delay:1.5s;"></div>
           <div>
             <div class="now-item-title">Home Network Lab</div>
-            <div class="now-item-desc">Pi running 14 Docker services with Grafana Security NOC live — Cowrie honeypot, fail2ban, Prometheus, cAdvisor, Nextcloud, and nmap daily network scans.</div>
+            <div class="now-item-desc">Outgrew the Pi (15 containers on 1.8 GB RAM froze it). Migrating to a mini PC on Proxmox with the Pi as backup DNS, plus a router hardening pass.</div>
           </div>
         </div>
 
@@ -499,7 +517,7 @@
       <img src="assets/cysa-badge.png" alt="CompTIA CySA+" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
       <div>
         <div class="cert-name">CompTIA CySA+</div>
-        <div class="cert-meta">CS0-003 · Candidate ID: COMP001022444115 · Code: PJBBZTSS5ERQQ1GJ<button class="copy-btn" id="copy-cert-btn" onclick="copyCertCode();event.preventDefault()">copy</button></div>
+        <div class="cert-meta">CS0-003 · Verification code: PJBBZTSS5ERQQ1GJ<button class="copy-btn" id="copy-cert-btn" onclick="copyCertCode();event.preventDefault()">copy</button></div>
         <div class="cert-valid">✓ Valid through January 27, 2027</div>
         <div class="cert-link">View Credly Badge ↗</div>
       </div>
@@ -507,9 +525,9 @@
 
     <div class="edu-grid">
       <div class="edu-card">
-        <div class="edu-school">Strayer University</div>
-        <div class="edu-degree">B.S. Information Technology — In Progress</div>
-        <div class="edu-meta">Prerequisite coursework at NVCC · In Progress, March 2026</div>
+        <div class="edu-school">Northern Virginia Community College</div>
+        <div class="edu-degree">Information Systems Technology (A.A.S.)</div>
+        <div class="edu-meta">NVCC · In Progress, 2026</div>
       </div>
       <div class="edu-card">
         <div class="edu-school">Northern Virginia Community College</div>
@@ -527,7 +545,7 @@
       <div class="section-line"></div>
     </div>
     <p style="font-size:15px;color:var(--dim);margin-bottom:28px;max-width:480px;">
-      Open to NOC, network engineering, and IT infrastructure roles in the DC/VA area.
+      Satellite and network operations in the DC/VA area.
       Reach out via LinkedIn or check out my work on GitHub.
     </p>
     <div class="contact-grid">

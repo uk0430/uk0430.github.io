@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home Network Monitoring Lab — Uzair Khan</title>
-<meta name="description" content="Raspberry Pi homelab replicating enterprise NOC workflows — Pi-hole, Netdata, Grafana, SNMP, and a full home network inventory.">
+<meta name="description" content="Raspberry Pi homelab replicating enterprise NOC workflows — Pi-hole, Grafana, Prometheus, ntfy alerting, Tailscale, and network segmentation.">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
@@ -24,10 +24,6 @@
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <div class="nav-status">
-      <span class="status-dot"></span>
-      <span>Open to opportunities</span>
-    </div>
     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
       <span class="toggle-icon">🌙</span>
       <span id="themeLabel">LIGHT MODE</span>
@@ -47,7 +43,7 @@
       <span class="tag tag-green">Prometheus</span>
       <span class="tag tag-purple">Docker</span>
       <span class="tag tag-green">Cowrie</span>
-      <span class="tag tag-green">Netdata</span>
+      <span class="tag tag-green">Tailscale</span>
       <span class="tag tag-blue">Nextcloud</span>
       <span class="tag tag-amber">Live</span>
     </div>
@@ -71,8 +67,8 @@
         <div class="stat-caption">Domains Blocked (Pi-hole)</div>
       </div>
       <div class="stat-item">
-        <div class="stat-big">14</div>
-        <div class="stat-caption">Docker Services Running</div>
+        <div class="stat-big">15</div>
+        <div class="stat-caption">Docker Containers on 1.8 GB RAM</div>
       </div>
       <div class="stat-item">
         <div class="stat-big">24/7</div>
@@ -80,7 +76,7 @@
       </div>
       <div class="stat-item">
         <div class="stat-big">2</div>
-        <div class="stat-caption">Nodes Streaming to Netdata</div>
+        <div class="stat-caption">DNS Paths: LAN + Tailscale</div>
       </div>
     </div>
   </div>
@@ -96,12 +92,22 @@
     </p>
     <p>
       The Pi (hostname: <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">uzi</code>,
-      192.168.1.254) runs a 14-container Docker Compose stack including Pi-hole for DNS-level
+      Raspberry Pi 4) runs a 15-container Docker stack including Pi-hole + Unbound for DNS-level
       ad blocking, Prometheus + Grafana for metrics and dashboards, a Cowrie SSH honeypot on
-      port 22, fail2ban for automated banning, Nextcloud for personal cloud storage, Netdata
-      for real-time telemetry, Gitea for self-hosted Git, and Nginx Proxy Manager for reverse
-      proxy and SSL. The TankPit Discord bot runs here too — migrated from Railway. Watchtower
-      handles automatic container updates at 4am.
+      port 22, fail2ban for automated banning, Nextcloud for personal cloud storage, Gitea for
+      self-hosted Git, ntfy for push alerts, and Nginx Proxy Manager as the reverse proxy.
+      The TankPit Discord bot runs here too — migrated from Railway. Watchtower handles
+      automatic container updates at 4am. Remote access is Tailscale only — no inbound ports.
+    </p>
+    <p>
+      <strong>October 2026 incident:</strong> after a router DHCP change the Pi moved addresses,
+      and once it was pinned back with a reservation it froze — kernel still accepting TCP,
+      nothing in userland answering. Root cause was memory: 15 containers on 1.8 GB RAM with
+      swap pinned near 100%. I power-cycled it, shed the two heaviest monitoring agents
+      (Netdata, cAdvisor), and load dropped from ~16 to ~1.4. A second issue surfaced along the
+      way: desktop DNS queries reached the Pi over the Tailscale subnet route, so Pi-hole dropped
+      them as "non-local" — fixed by changing its listening mode. Next step is moving the stack
+      to a mini PC and keeping the Pi as backup DNS.
     </p>
   </div>
 
@@ -115,15 +121,15 @@
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Grafana · :3001</div>
-        <div class="arch-card-desc">Security NOC dashboard showing Cowrie attack data, fail2ban bans, nmap network scans, and full container performance metrics via cAdvisor and Node Exporter. Home dashboard: Docker & Host Monitoring.</div>
+        <div class="arch-card-desc">Security NOC dashboard showing Cowrie attack data, fail2ban bans, nmap network scans, and host metrics via Node Exporter. Home dashboard: Docker & Host Monitoring.</div>
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Prometheus · :9091</div>
-        <div class="arch-card-desc">Metrics backend scraping node-exporter (system metrics) and cAdvisor (container metrics) every 30s. 30-day retention. Powers all Grafana dashboards.</div>
+        <div class="arch-card-desc">Metrics backend scraping node-exporter (system metrics) every 30s. 30-day retention. Powers the Grafana dashboards. cAdvisor container metrics are paused to save RAM.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">cAdvisor · :8090</div>
-        <div class="arch-card-desc">Google's Container Advisor — exposes per-container CPU, memory, network, and disk I/O metrics to Prometheus. Gives visibility into every running container in real time.</div>
+        <div class="arch-card-title">ntfy · push alerts</div>
+        <div class="arch-card-desc">Self-hosted push notifications to my phone over Tailscale: new devices found by the daily nmap scan, backup failures, and container down/recovered events from a 5-minute watchdog.</div>
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Cowrie · :22</div>
@@ -131,11 +137,11 @@
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Nextcloud · :8080</div>
-        <div class="arch-card-desc">Self-hosted personal cloud with MariaDB backend. Replaces OneDrive as primary file storage. Nightly rclone backup to OneDrive at 2am. Accessible on LAN and via Tailscale from iPhone.</div>
+        <div class="arch-card-desc">Self-hosted personal cloud with MariaDB backend. Nightly rclone backup to OneDrive with push alerts on failure; a silent month-long outage traced to an expired OAuth grant plus a distro rclone too old for OneDrive's 2024 upload-session change, fixed by re-authorizing and pinning the upstream build. Accessible on LAN and via Tailscale from iPhone.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Netdata · :19999</div>
-        <div class="arch-card-desc">Real-time performance monitoring. Pi is the parent node — desktop streams metrics to it via the Netdata streaming protocol. Covers CPU, memory, disk I/O, network traffic, and per-process stats.</div>
+        <div class="arch-card-title">Netdata · paused</div>
+        <div class="arch-card-desc">Real-time telemetry with the desktop streaming to the Pi as a parent node. Paused in October 2026 to free memory; returns on the new server.</div>
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Gitea · :3000</div>
@@ -143,7 +149,7 @@
       </div>
       <div class="arch-card">
         <div class="arch-card-title">Nginx Proxy Manager · :80/:81</div>
-        <div class="arch-card-desc">Reverse proxy and SSL termination for all Pi-hosted services. Routes portfolio.home → nginx-portfolio, manages Let's Encrypt cert renewal, and handles internal service URLs.</div>
+        <div class="arch-card-desc">Reverse proxy and SSL termination for all Pi-hosted services. Routes portfolio.home → nginx-portfolio and handles internal service URLs on the LAN.</div>
       </div>
       <div class="arch-card">
         <div class="arch-card-title">TankPit Bot · background</div>
@@ -168,19 +174,19 @@
     <div class="arch-grid">
       <div class="arch-card">
         <div class="arch-card-title">Trusted Devices</div>
-        <div class="arch-card-desc">Desktop (ASUS, .160), iPhone (.166), iPad (.184), laptop (.183), Mac Time Machine (.156). Full LAN access, Pi-hole DNS enforced.</div>
+        <div class="arch-card-desc">Desktops, laptops, phones and tablets on the primary 5 GHz network. Full LAN access, Pi-hole DNS enforced.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">IoT / Media (move to IoT SSID)</div>
-        <div class="arch-card-desc">Smart TV (.168), Echo/Fire (.157, .245), Ring camera (.159), Roku (.155), smart diffuser (.151), Epson printer (.170), Android TV (.244).</div>
+        <div class="arch-card-title">IoT / Media → IoT SSID</div>
+        <div class="arch-card-desc">Cameras, smart plugs and diffusers, speakers, printer and kids' devices move to the router's isolated 2.4 GHz IoT network; streaming TVs stay on 5 GHz.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Flagged / Quarantine</div>
-        <div class="arch-card-desc">.243 — Sichuan AI-Link device. Unidentified manufacturer, no known owner, active on the network. Flagged for isolation pending identification.</div>
+        <div class="arch-card-title">Flagged / Unknown</div>
+        <div class="arch-card-desc">Any device that can't be tied to an owner by MAC vendor and behavior is flagged and blocked at the router until identified.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Infrastructure</div>
-        <div class="arch-card-desc">Pi at .254 (static, DHCP reserved). Verizon CR1000B router at .1. Linksys AP at .100. Three SSIDs: Primary, Guest, IoT.</div>
+        <div class="arch-card-title">Infrastructure & Hardening</div>
+        <div class="arch-card-desc">Pi pinned by DHCP reservation, wired only. Verizon router plus a Fios Wi-Fi extender. Hardening pass under way (October 2026): guest network, UPnP off with one explicit Tailscale forward, WPS off.</div>
       </div>
     </div>
   </div>
@@ -190,33 +196,22 @@
     <h3>Monitoring & Telemetry</h3>
     <p>
       The monitoring stack mirrors what I ran at SES Networks and ViaPath — continuous polling,
-      a single pane of glass for network and container health, and security alerting. Two parallel
-      stacks run simultaneously: Netdata for real-time telemetry and Prometheus + Grafana for
-      metrics, dashboards, and Security NOC views.
+      a single pane of glass for network and container health, and security alerting.
+      Prometheus + Grafana carry metrics and Security NOC views; ntfy pushes the alerts.
     </p>
-
-    <div class="pipeline-row">
-      <div class="pipeline-step"><span>Desktop</span><b>Netdata agent</b></div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step"><span>stream.conf</span><b>API key auth</b></div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step"><span>Pi parent</span><b>:19999 receiver</b></div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step"><span>Netdata UI</span><b>Unified dashboard</b></div>
-    </div>
 
     <div class="pipeline-row" style="margin-top:16px;">
       <div class="pipeline-step"><span>node-exporter</span><b>:9100</b></div>
       <div class="pipeline-arrow">→</div>
-      <div class="pipeline-step"><span>cAdvisor</span><b>:8090</b></div>
-      <div class="pipeline-arrow">→</div>
       <div class="pipeline-step"><span>Prometheus</span><b>:9091 scrape</b></div>
       <div class="pipeline-arrow">→</div>
       <div class="pipeline-step"><span>Grafana</span><b>:3001 dashboards</b></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step"><span>ntfy</span><b>phone alerts</b></div>
     </div>
 
     <p style="margin-top:16px;">
-      Grafana has three active dashboards: Docker & Host Monitoring (all 14 containers, CPU/mem/net),
+      Grafana has three active dashboards: Docker & Host Monitoring (CPU/mem/net),
       Node Exporter Full (Pi system metrics), and Security NOC (Cowrie attack logs, fail2ban bans,
       nmap network scan diffs). SNMP polling is next — targeting the Verizon router to add
       interface-level traffic data, mirroring the SolarWinds NPM/NTA setup from production.
@@ -240,16 +235,16 @@
         <div class="arch-card-desc">Migrate all IoT devices to the Verizon built-in IoT SSID. Reduces attack surface — compromised smart device can't reach desktop or Pi on the primary subnet.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Gotify Push Notifications</div>
-        <div class="arch-card-desc">Self-hosted push notification server. Alert on Cowrie attack spikes, fail2ban bans, and nmap new device detection — delivered to iPhone via Tailscale without a cloud relay.</div>
+        <div class="arch-card-title">Move Off the Pi</div>
+        <div class="arch-card-desc">Migrate the stack to a low-power mini PC running Proxmox; the Pi becomes a backup DNS resolver so one box failing can't take the house offline. Repurposed ex-mining GPUs become an on-demand local AI node.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Identify .243 (Sichuan AI-Link)</div>
-        <div class="arch-card-desc">Unknown device with a Chinese manufacturer active on the LAN. Flagged for physical identification or router-level isolation pending investigation.</div>
+        <div class="arch-card-title">3-2-1 Backups</div>
+        <div class="arch-card-desc">Restic / Proxmox Backup Server to local disk plus an off-site copy, with every job reporting failures to ntfy instead of failing silently.</div>
       </div>
       <div class="arch-card">
-        <div class="arch-card-title">Nextcloud Client Sync</div>
-        <div class="arch-card-desc">Install Nextcloud desktop client on Windows and mobile app on iPhone. Migrate OneDrive files into the self-hosted instance to complete the personal cloud migration.</div>
+        <div class="arch-card-title">Isolate the Honeypot</div>
+        <div class="arch-card-desc">Move Cowrie off the box that holds personal data — onto its own VLAN or a small cloud VPS.</div>
       </div>
     </div>
   </div>
@@ -269,9 +264,15 @@
       and volume mounts for persistence are the same patterns that appear in Kubernetes at scale.
     </p>
     <p>
-      Identifying the Sichuan AI-Link device (.243) was a real moment — an unknown device with a
-      Chinese manufacturer on a home LAN is exactly what Splunk SIEM alerts are designed to catch
-      in production. The homelab makes the professional context click.
+      Finding an unidentified device on my own LAN was a real moment — an unknown device with no
+      owner is exactly what Splunk SIEM alerts are designed to catch in production. The homelab
+      makes the professional context click.
+    </p>
+    <p>
+      The October 2026 freeze taught the oldest NOC lesson again: capacity planning is part of
+      reliability. Every container I added was cheap on its own, and together they put the
+      single box I depended on for DNS into swap until it stopped answering. Monitoring didn't
+      catch it because the monitoring agents were part of the load.
     </p>
   </div>
 
